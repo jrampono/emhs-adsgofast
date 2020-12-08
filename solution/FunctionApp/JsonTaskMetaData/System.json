@@ -1,0 +1,23 @@
+[
+  {
+    "SystemId": 1,
+    "SystemName": "AWSample2",
+    "SystemType": "Microsoft SQL Server",
+    "Server": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+    "Database": "AWSample"
+  },
+  {
+    "SystemId": 2,
+    "SystemName": "ADLS Test",
+    "SystemType": "Azure Storage - ADLS",
+    "StorageAccountName": "adsgofastdatalakeaccelst",
+    "Database": "AWSample"
+  },
+  {
+    "SystemId": 3,
+    "SystemName": "Blob Test",
+    "SystemType": "Azure Storage - BLOB",
+    "Server": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+    "Database": "AWSample"
+  }
+]

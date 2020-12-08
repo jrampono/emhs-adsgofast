@@ -1,0 +1,16 @@
+[{
+    "TaskInstanceId": 1,
+    "TaskMasterId": 1,
+    "Source": {
+                "ResolvedTableName": null,            
+                "ResolvedSqlStatement": {
+                                    "StatementType": null,
+                                    "SQL": null
+    }},    
+    "Target": {
+                "ResolvedRelativePath":"/Unprocessed/2020/06/08/17/",
+                "ResolvedFileName": null
+    },
+    "TaskStatus": "Untried",
+    "Enabled": true
+}]

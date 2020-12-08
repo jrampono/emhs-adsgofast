@@ -1,0 +1,25 @@
+﻿@page
+@model WebApplication.Pages.ClaimsModel
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-responsive table-striped">
+            @if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                foreach (WebApplication.Models.Options.SecurityRole c in Model.Roles)
+                {
+                    <tr>
+                        <td>Role: @c.Name</td>                        
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>Current Status</td>
+                    <td><strong>Not Authenticated</strong></td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

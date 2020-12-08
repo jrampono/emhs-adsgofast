@@ -1,0 +1,112 @@
+
+@{
+    ViewData["Title"] = "ADFActivityErrors";
+}
+
+<h1>ADF Activity Errors</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "ADFActivityErrors";
+
+        var GridOptions = {
+            "GridColumns": [
+                {
+                    "data": "ExecutionUid",
+                    "name": "ExecutionUid",
+                    "visible": false,
+                    "autoWidth": true
+                },
+                {
+                    "data": "TaskInstanceId",
+                    "name": "TaskInstanceId",
+                    "visible": false,
+                    "autoWidth": true
+                },
+                {
+                    "data": "Start",
+                    "name": "Start",
+                    "autoWidth": true,
+                    "ads_format": "datetime",
+                    "orderable": false
+                },
+                {
+                    "data": "End",
+                    "name": "End",
+                    "autoWidth": true,
+                    "visible": true,
+                    "ads_format": "datetime",
+                    "orderable": false
+                },
+                {
+                    "data": "PipelineRunStatus",
+                    "name": "PipelineRunStatus",
+                    "autoWidth": true,
+                    "orderable": false
+                },
+                {
+                    "data": "PipelineName",
+                    "name": "PipelineName",
+                    "autoWidth": true,
+                    "orderable": false
+                },
+                {
+                    "data": "OperationName",
+                    "name": "OperationName",
+                    "autoWidth": true,
+                    "orderable": false
+                },
+                {
+                    "data": "ErrorMessage",
+                    "name": "ErrorMessage",
+                    "autoWidth": true,
+                    "orderable": false
+                },
+                {
+                    "data": "Input",
+                    "name": "Input",
+                    "autoWidth": true,
+                    "orderable": false
+                },
+                {
+                    "data": "Output",
+                    "name": "Output",
+                    "autoWidth": true,
+                    "orderable": false
+                },
+                {
+                    "data": "ActivityName",
+                    "name": "ActivityName",
+                    "autoWidth": true,
+                    "orderable": false
+                },
+                {
+                    "data": "ActivityType",
+                    "name": "ActivityType",
+                    "autoWidth": true,
+                    "orderable": false
+                }
+            ],
+            "ModelName": ModelName,
+            "PrimaryKeyColumns": [
+                0
+            ],
+            "Navigations": [],
+            "SuppressCrudButtons": true,
+            "InitialOrder": [[2,"desc"]]
+        }
+
+        $(document).ready(function () {
+             DataTablesGridStart(GridOptions);
+            });
+    </script>
+}  

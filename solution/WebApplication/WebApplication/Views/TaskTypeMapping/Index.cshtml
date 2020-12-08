@@ -1,0 +1,108 @@
+﻿@model IEnumerable<WebApplication.Models.TaskTypeMapping>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>TaskTypeMappings - Browse</h1>
+
+<p>
+    <a class="btn-sm btn-dark details" asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th></th>
+             <th>
+                @Html.DisplayNameFor(model => model.TaskTypeMappingId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskTypeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MappingType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MappingName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SourceSystemType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SourceType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TargetSystemType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TargetType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskDatafactoryIr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskTypeJson)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActiveYn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskMasterJsonSchema)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskInstanceJsonSchema)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TaskTypeMappingId" class="btn-sm btn-warning details" title="Edit"><i class="fa fa-pencil-square-o"></i></a> |
+                <a asp-action="Details" asp-route-id="@item.TaskTypeMappingId" class="btn-sm btn-info details" title="Details"><i class="fa fa-list-alt" aria-hidden="true"></i></a> |
+                <a asp-action="Delete" asp-route-id="@item.TaskTypeMappingId" class="btn-sm btn-danger details" title="Delete"><i class="fa fa-trash"></i></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskTypeMappingId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MappingType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MappingName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SourceSystemType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SourceType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetSystemType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskDatafactoryIr)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskTypeJson)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActiveYn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterJsonSchema)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskInstanceJsonSchema)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

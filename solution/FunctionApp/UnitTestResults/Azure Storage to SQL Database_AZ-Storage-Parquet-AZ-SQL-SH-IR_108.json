@@ -1,0 +1,58 @@
+{
+  "TaskInstanceId": 7626,
+  "TaskMasterId": 108,
+  "TaskStatus": "InProgress",
+  "TaskType": "Azure Storage to SQL Database",
+  "Enabled": 1,
+  "ExecutionUid": "041b98e5-ddfb-422a-869c-3cc7b59914b7",
+  "NumberOfRetries": 2,
+  "DegreeOfCopyParallelism": 1,
+  "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+  "ScheduleMasterId": "2",
+  "TaskGroupConcurrency": "10",
+  "TaskGroupPriority": 0,
+  "TaskExecutionType": "ADF",
+  "DataFactory": {
+    "Id": 1,
+    "Name": "adsgofastdatakakeacceladf",
+    "ResourceGroup": "AdsGoFastDataLakeAccel",
+    "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
+    "ADFPipeline": "AZ-Storage-Parquet-AZ-SQL-SH-IR"
+  },
+  "Source": {
+    "Type": "Azure Blob",
+    "SystemId": 3,
+    "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+    "StorageAccountAccessMethod": "MSI",
+    "StorageAccountContainer": "datalakeraw",
+    "DataFileName": "Production.UnitMeasure.parquet",
+    "SchemaFileName": "Production.UnitMeasure.json",
+    "FirstRowAsHeader": null,
+    "SheetName": null,
+    "SkipLineCount": null,
+    "MaxConcorrentConnections": null,
+    "Recursively": null,
+    "DeleteAfterCompletion": null,
+    "UserId": null,
+    "Host": null,
+    "PasswordKeyVaultSecretName": null,
+    "RelativePath": "AdventureWorks2017/Production/UnitMeasure/2020/8/8/20/0/"
+  },
+  "Target": {
+    "Type": "Table",
+    "Database": {
+      "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+      "AuthenticationType": "MSI",
+      "Name": "Staging"
+    },
+    "TableSchema": "Production",
+    "TableName": "UnitMeasure",
+    "StagingTableSchema": "Production",
+    "StagingTableName": "stg_UnitMeasure",
+    "AutoCreateTable": "True",
+    "PreCopySQL": "IF OBJECT_ID('Production.stg_UnitMeasure') IS NOT NULL \r\n Truncate Table Production.stg_UnitMeasure",
+    "PostCopySQL": "",
+    "MergeSQL": "",
+    "AutoGenerateMerge": "True"
+  }
+}

@@ -1,0 +1,55 @@
+@using Humanizer;
+@model WebApplication.Models.TaskGroup
+
+@{
+    ViewData["Title"] = "Create - " + "TaskGroup".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4> @("TaskGroup".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TaskGroupName" class="control-label"></label>
+                <input asp-for="TaskGroupName" class="form-control" />
+                <span asp-validation-for="TaskGroupName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskGroupPriority" class="control-label"></label>
+                <input asp-for="TaskGroupPriority" class="form-control" />
+                <span asp-validation-for="TaskGroupPriority" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskGroupConcurrency" class="control-label"></label>
+                <input asp-for="TaskGroupConcurrency" class="form-control" />
+                <span asp-validation-for="TaskGroupConcurrency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskGroupJson" class="control-label"></label>
+                <input asp-for="TaskGroupJson" class="form-control" />
+                <span asp-validation-for="TaskGroupJson" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SubjectAreaId" class="control-label"></label>
+                <select asp-for="SubjectAreaId" class ="form-control" asp-items="ViewBag.SubjectAreaId"></select>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveYn" /> @Html.DisplayNameFor(model => model.ActiveYn)
+                </label>
+            </div>
+
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary" ><i class="fa fa-arrow-circle-left"></i> Back</a>            
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

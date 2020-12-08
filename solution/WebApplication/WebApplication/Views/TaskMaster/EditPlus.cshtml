@@ -1,0 +1,615 @@
+@model WebApplication.Models.TaskMaster
+
+@{
+    ViewData["Title"] = "EditPlus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit - Task Master - @Model.TaskMasterName</h1>
+<hr />
+<!-- MultiStep Form -->
+<div id="smartwizard">
+    <ul class="nav">
+        <li>
+            <a class="nav-link" href="#step-1">
+                <strong>Step 1</strong>
+                <br /> Task Name, Basic Settings And Type
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-2">
+                <strong>Step 2</strong>
+                <br /> Source System
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-3">
+                <strong>Step 3</strong>
+                <br /> Target System
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-4">
+                <strong>Step 4</strong>
+                <br /> Task Type Specific Settings
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-5">
+                <strong>Step 5</strong>
+                <br /> Performance, Dependencies and Advanced Settings
+            </a>
+        </li>
+
+    </ul>
+    <form asp-action="EditPlus">
+        <div class="tab-content">
+            <div id="step-1" class="tab-pane" role="tabpanel">
+                <div class="row">
+                    <div class="mx-auto">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="TaskMasterId" />
+                        <div class="form-group">
+                            <label asp-for="TaskMasterName" class="control-label"></label>
+                            <input asp-for="TaskMasterName" class="form-control" />
+                            <span asp-validation-for="TaskMasterName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TaskGroupId" class="control-label"></label>
+                            <select asp-for="TaskGroupId" class="form-control" asp-items="ViewBag.TaskGroupId"></select>
+                            <span asp-validation-for="TaskGroupId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ScheduleMasterId" class="control-label"></label>
+                            <select asp-for="ScheduleMasterId" class="form-control" asp-items="ViewBag.ScheduleMasterId"></select>
+                            <span asp-validation-for="ScheduleMasterId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="ActiveYn" /> @Html.DisplayNameFor(model => model.ActiveYn)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TaskTypeId" class="control-label"></label>
+                            <select asp-for="TaskTypeId" class="form-control" asp-items="ViewBag.TaskTypeId"></select>
+                            <span asp-validation-for="TaskTypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="step-2" class="tab-pane" role="tabpanel">
+                <div class="row">
+                    <div class="mx-auto">
+                        <div class="form-group">
+                            <label asp-for="SourceSystemId" class="control-label"></label>
+                            <select asp-for="SourceSystemId" class="form-control" asp-items="ViewBag.SourceSystemId"></select>
+                            <span asp-validation-for="SourceSystemId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="step-3" class="tab-pane" role="tabpanel">
+                <div class="row">
+                    <div class="mx-auto">
+                        <div class="form-group">
+                            <label asp-for="TargetSystemId" class="control-label"></label>
+                            <select asp-for="TargetSystemId" class="form-control" asp-items="ViewBag.TargetSystemId"></select>
+                            <span asp-validation-for="TargetSystemId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="step-4" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="card mb-3">
+                    <div class="card-header text-center">
+                        <div class="row">
+                            <div class="col">
+                                <label class="control-label">Source Sub-Type</label>
+                                <select id="TaskMasterJsonSourceType"></select>
+                            </div>
+                            <div class="col">
+                                <label class="control-label">Target Sub-Type</label>
+                                <select id="TaskMasterJsonTargetType"></select>
+                            </div>
+                            <div class="col">
+                                <label class="control-label">Data Factory IR</label>
+                                <select id="TaskDatafactoryIrSelect"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="mx-auto" style="min-width: 100%">
+                                <div class="form-group">
+                                    <div id='editor_holder'></div>
+                                    <div id="TaskMasterJsonShowHide">
+                                        <label asp-for="TaskMasterJson" class="control-label"></label>
+                                        <textarea asp-for="TaskMasterJson" class="form-control" rows="25"> </textarea>
+                                        <span asp-validation-for="TaskMasterJson" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          
+            </div>
+            <div id="step-5" class="tab-pane" role="tabpanel">
+                <div class="row">
+                    <div class="mx-auto">
+                        <div class="form-group">
+                            <label asp-for="DegreeOfCopyParallelism" class="control-label"></label>
+                            <input asp-for="DegreeOfCopyParallelism" class="form-control" />
+                            <span asp-validation-for="DegreeOfCopyParallelism" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="AllowMultipleActiveInstances" /> @Html.DisplayNameFor(model => model.AllowMultipleActiveInstances)
+                            </label>
+                        </div>
+                        <div class="form-group" style="display:none">
+                            <label asp-for="TaskDatafactoryIr" class="control-label"></label>
+                            <input asp-for="TaskDatafactoryIr" class="form-control" />
+                            <span asp-validation-for="TaskDatafactoryIr" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DependencyChainTag" class="control-label"></label>
+                            <input asp-for="DependencyChainTag" class="form-control" />
+                            <span asp-validation-for="DependencyChainTag" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DataFactoryId" class="control-label"></label>
+                            <input asp-for="DataFactoryId" class="form-control" />
+                            <span asp-validation-for="DataFactoryId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Back</a>
+                            <input type="submit" value="Save" class="btn btn-danger" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </form>
+</div>
+
+        @section Scripts
+{
+            <link rel="stylesheet" href="~/lib//smartwizard/dist/css/smart_wizard_all.min.css" />
+            <script src="~/lib/smartwizard/dist/js/jquery.smartWizard.min.js" asp-append-version="true"></script>
+            <script src="~/lib/json-editor/jsoneditor.js" asp-append-version="true"></script>
+            <script type="text/javascript">
+                var taskTypeMappings;
+                var editor;
+                $(document).ready(function () {
+                    // SmartWizard initialize
+                    $('#smartwizard').smartWizard({
+                        theme: 'dots',
+                        autoAdjustHeight: false,
+                        keyboardSettings: {
+                            keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+                            keyLeft: [37], // Left key code
+                            keyRight: [39] // Right key code
+                        },
+                        anchorSettings: {                            
+                            anchorClickable: false, // Enable/Disable anchor navigation
+                            enableAllAnchors: false, // Activates all anchors clickable all times
+                            markDoneStep: true, // Add done state on navigation
+                            markAllPreviousStepsAsDone: true, // When a step selected by url hash, all previous steps are marked done
+                            removeDoneStepOnNavigateBack: true, // While navigate back done step after active step will be cleared
+                            enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+                        } });
+                });
+
+                // Initialize the leaveStep event
+                $("#smartwizard").on("leaveStep", function (e, anchorObject, currentStepIndex, nextStepIndex, stepDirection) {
+                    if (currentStepIndex === 0 && nextStepIndex === 1) { GetTaskTypeMappings(); return true; }
+                    if (currentStepIndex === 1 && nextStepIndex === 2) { EnterStep3(); return true; }
+                    if (currentStepIndex === 2 && nextStepIndex === 3) { EnterStep4a(); return true; }
+                    if (currentStepIndex === 3 && nextStepIndex === 4) { EnterStep5(); return true; }
+                    return true;
+                });
+
+                $("#TaskMasterJsonSourceType").change(function () {                    
+                    SetSourceSubType($(':selected', $('#TaskMasterJsonSourceType')).val());
+                    EnterStep4b();
+                }
+                ); 
+
+                $("#TaskMasterJsonTargetType").change(function () {
+                    SetTargetSubType($(':selected', $('#TaskMasterJsonTargetType')).val());
+                    CreateJsonEditor();
+                }
+                ); 
+                
+
+
+                function GetTaskTypeMappings() {
+                    var DataToPost = {};
+                    
+                    DataToPost = {
+                        TaskTypeId: $('#TaskTypeId').val()
+                    };
+                    
+
+                    //if (Step === 2) {
+                    //    DataToPost = {
+                    //        SourceSystemId: $('#SourceSystemId').val(),
+                    //        TaskTypeId: $('#TaskTypeId').val()
+                    //    };
+                    //}
+
+                    //if (Step === 3) {
+                    //    DataToPost = {
+                    //        SourceSystemId: $('#SourceSystemId').val(),
+                    //        TargetSystemId: $('#TargetSystemId').val(),
+                    //        TaskTypeId: $('#TaskTypeId').val()
+                    //    };
+                    //}
+
+                    //if (Step === 4) {
+                    //    DataToPost = {
+                    //        TaskMasterJson: $('#TaskMasterJson').val(),
+                    //        SourceSystemId: $('#SourceSystemId').val(),
+                    //        TargetSystemId: $('#TargetSystemId').val(),
+                    //        TaskTypeId: $('#TaskTypeId').val()
+                    //    };
+                    //}
+
+                    $.ajax({
+                        url: "/TaskTypeMapping/FindMapping",
+                        dataType: "json",
+                        type: "post",
+                        data: DataToPost,
+                        success: function (data, textStatus, jqXHR) {
+                            taskTypeMappings = data;
+                            EnterStep2();
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert("Error");
+                        }
+                    });
+
+
+
+                }
+
+
+                function EnterStep2() {                 
+                    currentSourceSystemSelectedOption = $(':selected', $('#SourceSystemId'));
+                    $('#SourceSystemId option').remove();
+                    $.each(taskTypeMappings.ValidSourceSystems, function (key, value) {
+                        var opt = $('<option value="' + value.SystemId + '">' + value.SystemName + ' (' + value.SystemType + ') ' + '</option>')
+                        if (opt.val() == currentSourceSystemSelectedOption.val()) {
+                            opt.selected = true;
+                        }
+                        $('#SourceSystemId').append(opt);
+                    })
+               
+                }
+
+                function EnterStep3() {
+                    //Find Selected SourceSystem
+                    var currentSourceSystemSelectedOption=  $(':selected', $('#SourceSystemId'));;
+                    $.each(taskTypeMappings.ValidSourceSystems, function (key, value) {
+                        if (value.SystemId.toString() === $(':selected', $('#SourceSystemId')).val()) {
+                            currentSourceSystemSelectedOption = value;
+                        }
+                    })
+
+                    var validTargetSystemTypes = [];
+                    //FindAll taskTypeMappings that Match Selected Source System Type
+                    $.each(taskTypeMappings.TaskTypeMappings, function (key, value) {
+                        if (value.SourceSystemType === currentSourceSystemSelectedOption.SystemType) {
+                            validTargetSystemTypes.push(value.TargetSystemType);
+                        }
+                    })
+
+                    //Populate Valid Target Systems Select
+                    currentTargetSystemSelectedOption = $(':selected', $('#TargetSystemId'));
+                    $('#TargetSystemId option').remove();
+
+                    $.each(taskTypeMappings.ValidTargetSystems, function (key, value) {
+                        var opt = $('<option value="' + value.SystemId + '">' + value.SystemName + ' (' + value.SystemType + ') ' + '</option>')
+                        if (opt.val() == currentTargetSystemSelectedOption.val()) {
+                            opt.selected = true;
+                        }
+                        if (validTargetSystemTypes.includes(value.SystemType)) {
+                            $('#TargetSystemId').append(opt);
+                        }
+                    })
+
+                }
+
+                function EnterStep4a() {
+                    //Find Selected SourceSystem && SelectedTargetSystem
+                    var currentSourceSystemSelectedOption;
+                    var currentTargetSystemSelectedOption;
+                    $.each(taskTypeMappings.ValidSourceSystems, function (key, value) {
+                        if (value.SystemId.toString() === $(':selected', $('#SourceSystemId')).val()) {
+                            currentSourceSystemSelectedOption = value;
+                        }
+                    })
+                    $.each(taskTypeMappings.ValidTargetSystems, function (key, value) {
+                        if (value.SystemId.toString() === $(':selected', $('#TargetSystemId')).val()) {
+                            currentTargetSystemSelectedOption = value;
+                        }
+                    })
+
+                    var validSourceSubTypes = [];
+                    //FindAll taskTypeMappings that Match Selected Source System Type && Target System Type && Extract Just the SourceType
+                    $.each(taskTypeMappings.TaskTypeMappings, function (key, value) {
+                        if (value.SourceSystemType === currentSourceSystemSelectedOption.SystemType && value.TargetSystemType === currentTargetSystemSelectedOption.SystemType) {
+                            if (!validSourceSubTypes.includes(value.SourceType)) { validSourceSubTypes.push(value.SourceType); }
+                        }
+                    })
+
+                    //Populate Valid Source Sub Types 
+                    currentSourceSubType = GetCurrentlySelectedSourceSubType();
+                    $('#TaskMasterJsonSourceType option').remove();
+
+                    $.each(validSourceSubTypes, function (key, value) {
+                        var opt = $('<option value="' + value+ '">' + value + '</option>')
+                        if (opt.val() == currentSourceSubType) {
+                            opt.attr('selected', 'selected');
+                        }
+                        $('#TaskMasterJsonSourceType').append(opt);
+                    })
+
+                    if ($(':selected', $('#TaskMasterJsonSourceType')).length > 0) {
+                        EnterStep4b();
+                    }
+                }
+
+                function EnterStep4b() {
+                    //Find Selected SourceSystem && SelectedTargetSystem
+                    var currentSourceSystemSelectedOption;
+                    var currentTargetSystemSelectedOption;
+                    $.each(taskTypeMappings.ValidSourceSystems, function (key, value) {
+                        if (value.SystemId.toString() === $(':selected', $('#SourceSystemId')).val()) {
+                            currentSourceSystemSelectedOption = value;
+                        }
+                    })
+                    $.each(taskTypeMappings.ValidTargetSystems, function (key, value) {
+                        if (value.SystemId.toString() === $(':selected', $('#TargetSystemId')).val()) {
+                            currentTargetSystemSelectedOption = value;
+                        }
+                    })
+
+                    var currentSourceSubType = GetCurrentlySelectedSourceSubType();
+
+                    //Update SourceSubType in JSON Object
+                    GetTaskMasterJson_Source();
+
+                    var validTargetSubTypes = [];
+                    //FindAll taskTypeMappings that Match Selected Source System Type && Target System Type && SourceSub Type then  Extract Just the SourceType
+                    $.each(taskTypeMappings.TaskTypeMappings, function (key, value) {
+                        if (value.SourceSystemType === currentSourceSystemSelectedOption.SystemType && value.TargetSystemType === currentTargetSystemSelectedOption.SystemType && value.SourceType === currentSourceSubType) {
+                            if (!validTargetSubTypes.includes(value.TargetType)) { validTargetSubTypes.push(value.TargetType); }
+                        }
+                    })
+
+                    //Populate Valid Target Sub Types 
+                    currentTargetSubType = GetCurrentlySelectedTargetSubType();
+                    $('#TaskMasterJsonTargetType option').remove();
+
+                    $.each(validTargetSubTypes, function (key, value) {
+                        var opt = $('<option value="' + value + '">' + value + '</option>')
+                        if (opt.val() == currentTargetSubType) {
+                            opt.attr('selected', 'selected');
+                        }
+                        $('#TaskMasterJsonTargetType').append(opt);
+                    })
+
+                    if ($(':selected', $('#TaskMasterJsonTargetType')).length > 0) {
+                        EnterStep4c();
+                    }
+                    
+
+                }
+
+                function EnterStep4c() {                                        
+                    var TargetSystemType = GetCurrentlySelectedTargetSystem().SystemType;
+                    var SourceSystemType = GetCurrentlySelectedSourceSystem().SystemType;
+                    var TargetSubType = GetCurrentlySelectedTargetSubType();
+                    var SourceSubType = GetCurrentlySelectedSourceSubType();                 
+
+                    //Update TargetSubType in JSON Object
+                    GetTaskMasterJson_Target();
+
+
+                    var validDatafactoryIrs = [];
+                    $.each(taskTypeMappings.TaskTypeMappings, function (key, value) {
+                        if (value.SourceSystemType === SourceSystemType && value.TargetSystemType === TargetSystemType && value.SourceType === SourceSubType && value.TargetType === TargetSubType) {
+                            if (!validDatafactoryIrs.includes(value.TaskDatafactoryIr)) { validDatafactoryIrs.push(value.TaskDatafactoryIr); }
+                        }
+                    })
+
+                    //Populate Valid Target Sub Types 
+                    var TaskDatafactoryIrSelect = GetCurrentlySelectedDatafactoryIr();   
+                    $('#TaskDatafactoryIrSelect option').remove();
+
+                    $.each(validDatafactoryIrs, function (key, value) {
+                        var opt = $('<option value="' + value + '">' + value + '</option>')
+                        if (opt.val() == TaskDatafactoryIrSelect) {
+                            opt.attr('selected', 'selected');
+                        }
+                        $('#TaskDatafactoryIrSelect').append(opt);
+                    })
+
+                    if ($(':selected', $('#TaskDatafactoryIrSelect')).length > 0) {
+                        CreateJsonEditor();
+                    }
+
+
+                }
+
+                function EnterStep5() {
+                    if (editor !== undefined) {
+                        $('#TaskMasterJson').val(JSON.stringify(editor.getValue()));
+                    }
+                }
+
+
+                
+
+                function CreateJsonEditor() {                                        
+                    var TargetSystemType = GetCurrentlySelectedTargetSystem().SystemType;
+                    var SourceSystemType = GetCurrentlySelectedSourceSystem().SystemType;                    
+                    var TargetSubType = GetCurrentlySelectedTargetSubType();
+                    var SourceSubType = GetCurrentlySelectedSourceSubType();
+                    var DatafactoryIr = GetCurrentlySelectedDatafactoryIr();
+
+                    //Update DatafactoryIr in Form Input
+                    $('#TaskDatafactoryIr').val(DatafactoryIr);
+                    
+                    var SelectedTaskTypeMapping;
+                    $.each(taskTypeMappings.TaskTypeMappings, function (key, value) {
+                        if (value.SourceSystemType === SourceSystemType && value.TargetSystemType === TargetSystemType && value.TargetType === TargetSubType && value.SourceType === SourceSubType && value.TaskDatafactoryIr === DatafactoryIr ) {
+                            SelectedTaskTypeMapping = value;
+                        }
+                    })
+
+                    if (SelectedTaskTypeMapping !== undefined) {
+                        try {
+                            if ($('#editor_holder').children().length > 0) {
+                                editor.destroy();
+                            }
+                            editor = new JSONEditor(document.getElementById('editor_holder'), {
+                                theme: 'bootstrap4',
+                                iconlib: "fontawesome5",
+                                schema: JSON.parse(SelectedTaskTypeMapping.TaskMasterJsonSchema),
+                                startval: JSON.parse($('#TaskMasterJson').val())
+                            });
+                            $('.je-switcher').parent().addClass("alert-warning");
+                            $('#editor_holder').show();
+                            $('#TaskMasterJsonShowHide').hide();
+                        }
+                        catch (err)
+                        {
+                            HideJsonEditor(err);
+                        }
+                    }
+                    else {
+                        HideJsonEditor(err);
+                    }
+
+
+                }
+
+                function HideJsonEditor(err) {
+                    toastr.warning("Validation errors are preventing the use of the enahanced editor. " + err, "Enhanced Editor Error");
+                    $('#editor_holder').hide();
+                    $('#TaskMasterJsonShowHide').show();
+                }
+
+                function GetCurrentlySelectedSourceSystem() {
+                    var Selected;                    
+                    $.each(taskTypeMappings.ValidSourceSystems, function (key, value) {
+                        if (value.SystemId.toString() === $(':selected', $('#SourceSystemId')).val()) {
+                            Selected = value;
+                        }
+                    });
+                    return Selected;
+                }
+                
+                function GetCurrentlySelectedTargetSystem() {
+                    var Selected;
+                    $.each(taskTypeMappings.ValidTargetSystems, function (key, value) {
+                        if (value.SystemId.toString() === $(':selected', $('#TargetSystemId')).val()) {
+                            Selected = value;
+                        }
+                    });
+                    return Selected;
+                }
+
+                function GetCurrentlySelectedDatafactoryIr() {
+                    var Selected = $(':selected', $('#TaskDatafactoryIrSelect')).val();                    
+                    return Selected;
+                }
+
+                function GetCurrentlySelectedTargetSubType() {
+                    if (JSON.parse($('#TaskMasterJson').val()) === undefined) {
+                        return "";
+                    }
+                    else {
+                        if (JSON.parse($('#TaskMasterJson').val()).Target !== undefined) {
+                            return JSON.parse($('#TaskMasterJson').val()).Target.Type;
+                        }
+                        else {
+                            return "";
+                        }
+                    }
+
+                    
+                }
+
+                function GetCurrentlySelectedSourceSubType() {
+                    if (JSON.parse($('#TaskMasterJson').val()) === undefined) {
+                        return "";
+                    }
+                    else {
+                        if (JSON.parse($('#TaskMasterJson').val()).Source !== undefined) {
+                            return JSON.parse($('#TaskMasterJson').val()).Source.Type;
+                        }
+                        else {
+                            return "";
+                        }
+                    }
+                }
+
+                function SetSourceSubType(Type) {
+                    var TemplateJson = JSON.parse('{"Source":{}, "Target":{}}');
+                    if (JSON.parse($('#TaskMasterJson').val()) !== undefined) {
+                        TemplateJson = JSON.parse($('#TaskMasterJson').val());
+                        if (TemplateJson.Source === undefined) {
+                            TemplateJson.Source = {};
+                        }
+                        TemplateJson.Source.Type = Type;
+                    }                    
+
+                    $('#TaskMasterJson').val(JSON.stringify(TemplateJson));
+                }
+
+                function SetTargetSubType(Type) {
+                    var TemplateJson = JSON.parse('{"Source":{}, "Target":{}}');
+                    if (JSON.parse($('#TaskMasterJson').val()) !== undefined) {
+                        TemplateJson = JSON.parse($('#TaskMasterJson').val());
+                        if (TemplateJson.Target === undefined) {
+                            TemplateJson.Target = {};
+                        }
+                        TemplateJson.Target.Type = Type;
+                    }
+
+                    $('#TaskMasterJson').val(JSON.stringify(TemplateJson));
+                }
+
+                function GetTaskMasterJson() {                    
+                    return JSON.parse($('#TaskMasterJson').val());                    
+                }
+
+                function GetTaskMasterJson_Source() {
+                    var tmj = GetTaskMasterJson();
+                    if  (tmj.Source === undefined) {
+                            tmj.Source = {};
+                    }                                        
+                    $('#TaskMasterJson').val(JSON.stringify(tmj));
+                    return tmj.Source;
+                }
+
+                function GetTaskMasterJson_Target() {
+                    var tmj = GetTaskMasterJson();
+                    if (tmj.Target === undefined) {
+                        tmj.Target = {};
+                    }
+                    $('#TaskMasterJson').val(JSON.stringify(tmj));
+                    return tmj.Target;
+                }
+
+
+            </script>
+        }

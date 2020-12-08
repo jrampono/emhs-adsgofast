@@ -1,0 +1,52 @@
+@using Humanizer;
+@model WebApplication.Models.FrameworkTaskRunner
+
+@{
+    ViewData["Title"] = "Create - " + "FrameworkTaskRunner".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+        <div class="alert alert-danger" role="alert">Caution. These records are critical to the application and changes may cause certain features to break.</div>    
+
+<h1>Create</h1>
+
+<h4> @("FrameworkTaskRunner".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TaskRunnerId" class="control-label"></label>
+                <input asp-for="TaskRunnerId" class="form-control" />
+                <span asp-validation-for="TaskRunnerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskRunnerName" class="control-label"></label>
+                <input asp-for="TaskRunnerName" class="form-control" />
+                <span asp-validation-for="TaskRunnerName" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveYn" /> @Html.DisplayNameFor(model => model.ActiveYn)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxConcurrentTasks" class="control-label"></label>
+                <input asp-for="MaxConcurrentTasks" class="form-control" />
+                <span asp-validation-for="MaxConcurrentTasks" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary" ><i class="fa fa-arrow-circle-left"></i> Back</a>            
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

@@ -1,0 +1,154 @@
+﻿@model WebApplication.Models.Wizards.ExternalFileUpload
+@{
+    ViewData["Title"] = "ExternalFileUpload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>ExternalFileUpload</h1>
+<!-- MultiStep Form -->
+<div id="smartwizard">
+    <ul class="nav">
+        <li>
+            <a class="nav-link" href="#step-1">
+                <strong>Step 1</strong>
+                <br /> Select Storage Account for Upload
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-2">
+                <strong>Step 2</strong>
+                <br /> Select Email System
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-3">
+                <strong>Step 3</strong>
+                <br /> Select Lockbox Location
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-4">
+                <strong>Step 4</strong>
+                <br /> Select Schedule
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-5">
+                <strong>Step 5</strong>
+                <br /> Input Third Party Details
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-6">
+                <strong>Step 6</strong>
+                <br /> Input Upload FileName
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-7">
+                <strong>Step 7</strong>
+                <br /> Input Operator Email Address
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" href="#step-8">
+                <strong>Step 8</strong>
+                <br /> Select Task Group 
+            </a>
+        </li>
+    </ul>
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="tab-content">
+            <div id="step-1" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label> Select the Azure storage location into which you would like your external user to upload data. This should be in your "transient-in" zone.</label>
+                    <br />
+                    <select asp-for="UploadSystemId" class="form-control" asp-items="ViewBag.UploadSystemId"></select>
+                    <span asp-validation-for="UploadSystemId" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="step-2" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label> Select the Email System that you would like used for sending email alerts</label>
+                    <br />
+                    <select asp-for="EmailSystemId" class="form-control" asp-items="ViewBag.EmailSystemId"></select>
+                    <span asp-validation-for="EmailSystemId" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="step-3" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label> Select the storage account into which you would like the file copied after it is uploaded</label>
+                    <br />
+                    <select asp-for="TargetSystemId" class="form-control" asp-items="ViewBag.TargetSystemId"></select>
+                    <span asp-validation-for="TargetSystemId" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="step-4" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label> Select the frequency with which you would like the task run</label>
+                    <br />
+                    <select asp-for="ScheduleMasterId" class="form-control" asp-items="ViewBag.ScheduleMasterId"></select>
+                    <span asp-validation-for="ScheduleMasterId" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="step-5" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label> Select the storage account into which you would like the file copied after it is uploaded</label>
+                    <br />
+                    <textarea asp-for="ExternalParties" class="form-control" asp-items="ViewBag.TargetSystemId"></textarea>
+                    <span asp-validation-for="TargetSystemId" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="step-6" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label class="control-label"> Input the name of the file to be uploaded.</label>
+                    <input asp-for="UploadFileName" class="form-control" />
+                    <span asp-validation-for="UploadFileName" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="step-7" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label class="control-label"> Input the email address of the administrator who you would like to be notified once the file is uploaded.</label>
+                    <input asp-for="OperatorEmail" class="form-control" />
+                    <span asp-validation-for="OperatorEmail" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="step-8" class="tab-pane" role="tabpanel">
+                <br />
+                <div class="form-group">
+                    <label> Select the Task Group into which you want your new tasks created</label>
+                    <br />
+                    <select asp-for="TaskGroupId" class="form-control" asp-items="ViewBag.TaskGroupId"></select>
+                    <span asp-validation-for="TaskGroupId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+@section Scripts
+{
+    <link rel="stylesheet" href="~/lib//smartwizard/dist/css/smart_wizard_all.min.css" />
+    <script src="~/lib/smartwizard/dist/js/jquery.smartWizard.min.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            // SmartWizard initialize
+            $('#smartwizard').smartWizard({ theme: 'dots'});
+
+        });
+
+    </script>
+
+}

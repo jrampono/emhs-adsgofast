@@ -1,0 +1,24 @@
+[{  "TaskGroupId":1,
+    "StageName":"Import from Adventureworks",
+    "Priority": 0,
+    "Enabled": true,
+    "Concurrency":10,  
+    "ActiveTasks": 1 
+},
+  {
+    "TaskGroupId": 2,
+    "StageName": "Import from Adventureworks2",
+    "Priority": 1,
+    "Enabled": true,
+    "Concurrency": 10,
+    "ActiveTasks": 1
+  },
+  {
+    "TaskGroupId": 3,
+    "StageName": "DataLake to Stage",
+    "Priority": 0,
+    "Enabled": true,
+    "Concurrency": 10,
+    "ActiveTasks": 1
+  }
+]

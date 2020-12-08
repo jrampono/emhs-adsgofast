@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="alert alert-danger" role="alert">Caution. These records are critical to the application and changes may cause certain features to break.</div>
+<h1><i id="PageIcon" class="fas fa-running"></i> Framework Task Runners </h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script src="~/lib/bswindow/bswindow.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        var ModelName = "FrameworkTaskRunnerDapper";
+
+        function SetFrameworkTaskRunnersBackToIdle(dt)
+        {
+            var selected_indexes = dt.rows({ selected: true }).indexes();
+            var selected_pkeys = [];
+            $.each(selected_indexes, function (index, i) {
+                selected_pkeys.push(dt.data()[i]["TaskRunnerId"]);
+            });
+
+            $.post('@Url.Action("SetFrameworkTaskRunnersBackToIdle", "FrameworkTaskRunner")', { Pkeys: JSON.stringify(selected_pkeys, null, 2) })
+                .done(function (data) {
+                    dt.ajax.reload(null, false);
+                    toastr.success("Successfully Updated Rows");
+                });
+        }
+
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+            setInterval(function () {
+                table.ajax.reload(null, false); // user paging is not reset on reload
+            }, 10000);
+            //This is where custom buttons and things would go.
+            buttons = [
+
+                {
+                    extend: 'selected',
+                    className: 'btn-danger ads-btn-action',
+                    text: '<a><i data-toggle="tooltip" title="Force Runners Back To Idle" class="fas fa-sync-alt" style="width:16px"></i> Force Runners Back To Idle</a>',
+                    action: function (e, dt, node, config) {
+                        SetFrameworkTaskRunnersBackToIdle(dt);
+                    }
+                }
+
+            ];
+
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+        });
+
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

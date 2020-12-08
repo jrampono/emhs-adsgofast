@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ADS Go Fast</title>
+    @*<link rel="stylesheet" href="~/lib/twitter-bootstrap/css/bootstrap.min.css" />*@
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/jquery-jsonview/jquery.jsonview.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables.net/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables.net/buttons.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables.net/select.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr.js/toastr.css" />
+    <link rel="icon" type="image/icon" href="~/favicon.ico"/>
+
+</head>
+<body>
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-md navbar bg header-center">
+            @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 nav">*@
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Dashboard" asp-action="Index">
+                    <img src="~/img/brand.png" style="height:60px" />
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Advanced Settings</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-area="" asp-controller="FrameworkTaskRunner" asp-action="IndexDataTable"><i class="fas fa-running" style="width:16px" title=""></i> Framework Task Runners</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="SourceAndTargetSystems" asp-action="IndexDataTable"><i class="fas fa-bullseye" style="width:16px" title=""></i> Source and Target Systems</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="SourceAndTargetSystemsJsonSchema" asp-action="IndexDataTable"><i class="fab fa-js" style="width:16px" title=""></i> Source and Target System JSON Schema</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="DataFactory" asp-action="IndexDataTable"><i class="fas fa-industry" style="width:16px" title=""></i> Data Factories</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Schedules</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-area="" asp-controller="ScheduleMaster" asp-action="IndexDataTable">
+                                    <i class="fas fa-calendar-week" style="width:16px" title=""></i> Schedule Masters
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="ScheduleInstance" asp-action="IndexDataTable">
+                                    <i class="fas fa-calendar-day" style="width:16px" title=""></i> Schedule Instances
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tasks</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-area="" asp-controller="SubjectArea" asp-action="IndexDataTable">
+                                    <i class="fas fa-layer-group" style="width:16px" title=""></i> Subject Areas
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskGroup" asp-action="IndexDataTable">
+                                    <i class="fas fa-object-group" style="width:16px" title=""></i> Task Groups
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskMaster" asp-action="IndexDataTable">
+                                    <i class="fas fa-list" style="width:16px" title=""></i> Task Masters
+                                </a>
+
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskInstance" asp-action="IndexDataTable">
+                                    <i class="fas fa-list-alt" style="width:16px" title=""></i> Task Instances
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskMasterWaterMark" asp-action="IndexDataTable">
+                                    <i class="fas fa-water" style="width:16px" title=""></i> Task Master Water Mark
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskGroupDependency" asp-action="IndexDataTable">
+                                    <i class="fas fa-indent" style="width:16px" title=""></i> Task Group Dependencies
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskInstanceExecution" asp-action="IndexDataTable">
+                                    <i class="fas fa-bolt" style="width:16px" title=""></i>Task Instance Executions
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Task Types</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskType" asp-action="Index">
+                                    <i class="fab fa-tumblr-square" style="width:16px" title=""></i> Task Types
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="TaskTypeMapping" asp-action="IndexDataTable">
+                                    <i class="fas fa-map-marked-alt" style="width:16px" title=""></i> Task Type Mappings
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Configuration Wizards</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-area="" asp-controller="Wizards" asp-action="ExternalFileUpload">
+                                    <i class="fas fa-magic" style="width:16px" title=""></i> Allow External Parties to Upload Data
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reports</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-area="" asp-controller="ReportsAndStatistics" asp-action="IndexDataTable" asp-route-StatsLevel="TaskGroup">
+                                    <i class="fas fa-object-group" style="width:16px" title=""></i> View Task Group Statistics
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="ReportsAndStatistics" asp-action="IndexDataTable" asp-route-StatsLevel="TaskMaster">
+                                    <i class="fas fa-list" style="width:16px" title=""></i> View Task Master Statistics
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="ReportsAndStatistics" asp-action="IndexDataTable" asp-route-StatsLevel="TaskInstance">
+                                    <i class="fas fa-list-alt" style="width:16px" title=""></i> View Task Instance Statistics
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="ReportsAndStatistics" asp-action="IndexDataTable" asp-route-StatsLevel="TaskInstanceExecution">
+                                    <i class="fas fa-bolt" style="width:16px" title=""></i> View Task Instance Execution Statistics
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="ReportsAndStatistics" asp-action="IndexDataTable" asp-route-StatsLevel="ScheduleInstance">
+                                    <i class="fas fa-calendar-day" style="width:16px" title=""></i> View Schedule Instance Statistics
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Logs</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-area="" asp-controller="AFExecutionSummary" asp-action="IndexDataTable">
+                                    <i class="fas fa-scroll" style="width:16px" title=""></i> View Azure Function Execution Summary
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="AFLogMonitor" asp-action="IndexDataTable">
+                                    <i class="fas fa-scroll" style="width:16px" title=""></i> View Azure Function Log Tail
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+
+
+
+                </div>
+                
+                <a class="navbar-link">
+                    <div>@User.Identity.Name</div>
+                </a>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3 content-container" style="margin-bottom:80px">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer bg text-muted">
+        <div class="container">
+            &copy; 2020 - Microsoft - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/popper.js/umd/popper.min.js" asp-append-version="true"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-jsonview/jquery.jsonview.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net/dataTables.bootstrap4.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net/dataTables.buttons.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net/buttons.bootstrap4.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net/dataTables.select.min.js" asp-append-version="true"></script>
+    <script src="~/lib/moment.js/moment-with-locales.min.js" asp-append-version="true"></script>
+    <script src="~/lib/toastr.js/toastr.min.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+        </html>

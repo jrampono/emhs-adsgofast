@@ -1,0 +1,159 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore;
+using WebApplication.Services;
+
+using WebApplication.Models;
+
+namespace WebApplication.Controllers
+{
+    public partial class FrameworkTaskRunnerController : BaseController
+    {
+        protected readonly AdsGoFastContext _context;
+        
+
+        public FrameworkTaskRunnerController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        {
+            Name = "FrameworkTaskRunner";
+            _context = context;
+        }
+
+        // GET: FrameworkTaskRunner
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.FrameworkTaskRunner.ToListAsync());
+        }
+
+        // GET: FrameworkTaskRunner/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var frameworkTaskRunner = await _context.FrameworkTaskRunner
+                .FirstOrDefaultAsync(m => m.TaskRunnerId == id);
+            if (frameworkTaskRunner == null)
+            {
+                return NotFound();
+            }
+
+            return View(frameworkTaskRunner);
+        }
+
+        // GET: FrameworkTaskRunner/Create
+        public IActionResult Create()
+        {
+     FrameworkTaskRunner frameworkTaskRunner = new FrameworkTaskRunner();
+            frameworkTaskRunner.ActiveYn = true;
+            return View(frameworkTaskRunner);
+        }
+
+        // POST: FrameworkTaskRunner/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("TaskRunnerId,TaskRunnerName,ActiveYn,Status,MaxConcurrentTasks")] FrameworkTaskRunner frameworkTaskRunner)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(frameworkTaskRunner);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(IndexDataTable));
+            }
+            return View(frameworkTaskRunner);
+        }
+
+        // GET: FrameworkTaskRunner/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var frameworkTaskRunner = await _context.FrameworkTaskRunner.FindAsync(id);
+            if (frameworkTaskRunner == null)
+            {
+                return NotFound();
+            }
+            return View(frameworkTaskRunner);
+        }
+
+        // POST: FrameworkTaskRunner/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("TaskRunnerId,TaskRunnerName,ActiveYn,Status,MaxConcurrentTasks")] FrameworkTaskRunner frameworkTaskRunner)
+        {
+            if (id != frameworkTaskRunner.TaskRunnerId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(frameworkTaskRunner);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FrameworkTaskRunnerExists(frameworkTaskRunner.TaskRunnerId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(IndexDataTable));
+            }
+            return View(frameworkTaskRunner);
+        }
+
+        // GET: FrameworkTaskRunner/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var frameworkTaskRunner = await _context.FrameworkTaskRunner
+                .FirstOrDefaultAsync(m => m.TaskRunnerId == id);
+            if (frameworkTaskRunner == null)
+            {
+                return NotFound();
+            }
+
+            return View(frameworkTaskRunner);
+        }
+
+        // POST: FrameworkTaskRunner/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var frameworkTaskRunner = await _context.FrameworkTaskRunner.FindAsync(id);
+            _context.FrameworkTaskRunner.Remove(frameworkTaskRunner);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(IndexDataTable));
+        }
+
+        private bool FrameworkTaskRunnerExists(int id)
+        {
+            return _context.FrameworkTaskRunner.Any(e => e.TaskRunnerId == id);
+        }
+    }
+}

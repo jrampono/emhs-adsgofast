@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>ADSGoFast</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{0b746030-51b3-4202-a870-025681b613bf}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>ADSGoFast</RootNamespace>
+    <AssemblyName>ADSGoFast</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="Security\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Scripts" />
+    <Folder Include="Pbi\" />
+    <Folder Include="Pbi\Views\" />
+    <Folder Include="WebApp\" />
+    <Folder Include="WebApp\Views\" />
+    <Folder Include="WebApp\Functions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Execution.sql" />
+    <Build Include="dbo\Tables\TaskGroup.sql" />
+    <Build Include="dbo\Tables\SourceAndTargetSystems.sql" />
+    <Build Include="dbo\Tables\TaskMaster.sql" />
+    <Build Include="dbo\Tables\ScheduleMaster.sql" />
+    <Build Include="dbo\Tables\TaskInstance.sql" />
+    <Build Include="dbo\Tables\TaskInstanceExecution.sql" />
+    <Build Include="dbo\Tables\ScheduleInstance.sql" />
+    <Build Include="dbo\Tables\TaskType.sql" />
+    <Build Include="dbo\Stored Procedures\GetTaskMaster.sql" />
+    <Build Include="dbo\Tables\TaskTypeMapping.sql" />
+    <Build Include="dbo\Stored Procedures\GetTaskInstanceJSON.sql" />
+    <Build Include="dbo\Stored Procedures\GetTaskGroups.sql" />
+    <Build Include="dbo\Stored Procedures\InsertActivityAudit.sql" />
+    <Build Include="dbo\Tables\TaskMasterDependency_1.sql" />
+    <Build Include="dbo\Tables\TaskGroupDependency_1.sql" />
+    <Build Include="dbo\Tables\DataFactory.sql" />
+    <Build Include="Pbi\Views\TaskInstanceAndScheduleInstance.sql" />
+    <Build Include="Security\Pbi.sql" />
+    <Build Include="dbo\Tables\TaskMasterWaterMark.sql" />
+    <Build Include="dbo\Tables\FrameworkTaskRunner.sql" />
+    <Build Include="dbo\Tables\ADFPipelineRun.sql" />
+    <Build Include="Pbi\Views\ADFCost.sql" />
+    <Build Include="dbo\Functions\GetTasksAssignedToRunners.sql" />
+    <Build Include="dbo\Functions\GetTasksToBeAssignedToRunners.sql" />
+    <Build Include="dbo\Stored Procedures\GetFrameworkTaskRunners.sql" />
+    <Build Include="dbo\Tables\ADFPipelineStats.sql" />
+    <Build Include="dbo\Tables\ADFActivityRun.sql" />
+    <Build Include="Pbi\Views\ADFPipelineRun.sql" />
+    <Build Include="dbo\Tables\AzureStorageListing.sql" />
+    <Build Include="dbo\Stored Procedures\UpdTaskInstanceExecution.sql" />
+    <Build Include="dbo\Tables\SourceAndTargetSystems_JsonSchema.sql" />
+    <Build Include="dbo\Functions\GetAzureStorageListingTriggeredTasksToBeSuppressed.sql" />
+    <None Include="Scripts\Script.PostDeployment2_TaskType.sql" />
+    <None Include="Scripts\Script.PostDeployment4_TaskMaster.sql" />
+    <None Include="Scripts\Script.PostDeployment3_TaskTypeMapping.sql" />
+    <None Include="Scripts\Script.PostDeployment5_TaskMasterWaterMark.sql" />
+    <Build Include="dbo\Tables\ActivityLevelLogs.sql" />
+    <Build Include="Pbi\Views\ADFPipelineStats.sql" />
+    <Build Include="dbo\Tables\ADFActivityErrors.sql" />
+    <Build Include="dbo\Tables\AzureStorageChangeFeedCursor.sql" />
+    <Build Include="dbo\Tables\AzureStorageChangeFeed.sql" />
+    <Build Include="dbo\Stored Procedures\UpdFrameworkTaskRunner.sql" />
+    <Build Include="dbo\Tables\SubjectAreaSystemMapHistory.sql" />
+    <Build Include="dbo\Tables\SubjectAreaSystemMap.sql" />
+    <Build Include="dbo\Tables\SubjectAreaRoleMapHistory.sql" />
+    <Build Include="dbo\Tables\SubjectAreaRoleMap.sql" />
+    <Build Include="dbo\Tables\SubjectAreaHistory.sql" />
+    <Build Include="dbo\Tables\SubjectAreaFormHistory.sql" />
+    <Build Include="dbo\Tables\SubjectAreaForm.sql" />
+    <Build Include="dbo\Tables\SubjectArea.sql" />
+    <Build Include="dbo\Tables\ExecutionEngine.sql" />
+    <Build Include="WebApp\Views\TaskMasterStats.sql" />
+    <Build Include="WebApp\Views\TaskGroupStats.sql" />
+    <Build Include="WebApp\Functions\GetTaskStats.sql" />
+    <Build Include="dbo\Stored Procedures\usp_StagingTable_Load.sql" />
+    <Build Include="Security\WebApp.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="ADSGoFast.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ADSGoFast.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+    <None Include="Scripts\Script.PostDeployment1_SourceAndTargetSystems.sql" />
+  </ItemGroup>
+</Project>

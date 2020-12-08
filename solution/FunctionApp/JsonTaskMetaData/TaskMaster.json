@@ -1,0 +1,59 @@
+[{
+    "TaskMasterId": 1,
+    "TaskGroupId": 1,
+    "ScheduleMasterId": 1,
+    "TaskType": "RelationalDataExtractToDataLake",
+    "Taskname": "AWSample.Customer Extract",
+    "Source": {
+      "SystemId": 1,
+      "SchemaName": "dbo",
+      "TableName": "Customer",  
+      "Watermark": 
+          {
+              "ColumnCollection": null,
+              "Overlap": null
+          },
+      "PrimaryKeyColumns":[],          
+      "SQL_Statement": {
+                          "StatementType": null,
+                          "SQL": null,
+                          "Timeout": 0
+    }},
+  "Target": {
+    "SystemId":  2,
+    "SystemName": "DataLake",
+    "FileName": "Customer",
+    "Container": "Unprocessed",
+    "RelativePath": "{yyyy/MM/dd/hh/",
+    "CompressionType": "Parquet"
+  },
+    "Enabled": true
+},
+{
+    "TaskMasterId": 1,
+    "TaskGroupId": 3,
+    "ScheduleMasterId": 2,
+    "TaskType": "DataLakeToStage",
+    "Taskname": "AWSample.Customer DL to Stage",
+    "Source": {
+                "SystemName": "AWSample2",
+                "SystemType": "Microsoft SQL Server",
+                "Server": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+                "Database": "AWSample",
+                "TableName": "Customer",            
+                "SQL_Statement": {
+                                    "StatementType": null,
+                                    "SQL": null,
+                                    "Timeout": 0
+    }},    
+    "Target": {
+                "SystemName": "DataLake",
+                "FileName": "Customer",
+                "Container":"Unprocessed",
+                "RelativePath":"",
+                "CompressionType": "Parquet"
+    },
+    "Enabled": true
+}
+
+]

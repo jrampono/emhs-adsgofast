@@ -1,0 +1,32 @@
+@using Humanizer; 
+@model WebApplication.Models.TaskGroupDependency
+
+@{
+    ViewData["Title"] = "Edit - " + "TaskGroupDependency".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4> @("TaskGroupDependency".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AncestorTaskGroupId" />
+            <input type="hidden" asp-for="DescendantTaskGroupId" />
+            <div class="form-group">
+                <label asp-for="DependencyType" class="control-label"></label>
+                <input asp-for="DependencyType" class="form-control" />
+                <span asp-validation-for="DependencyType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary" ><i class="fa fa-arrow-circle-left"></i> Back</a>            
+                <input type="submit" value="Save" class="btn btn-danger" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

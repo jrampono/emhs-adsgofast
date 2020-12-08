@@ -1,0 +1,6 @@
+{
+	"name": "SelfHostedIntegrationRuntime-OnPem-Net",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

@@ -1,0 +1,106 @@
+@using Humanizer;
+@model WebApplication.Models.TaskInstance
+
+@{
+    ViewData["Title"] = "Details - " + "TaskInstance".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4> @("TaskInstance".Humanize(LetterCasing.Title))</h4>
+    <hr />
+    <dl class="row">
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.LastExecutionStatus)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.LastExecutionStatus)
+                </dd>               
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.TaskMaster)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.TaskMaster.TaskDatafactoryIr)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.ScheduleInstance)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.ScheduleInstance.ScheduleInstanceId)
+            </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.ExecutionUid)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.ExecutionUid)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.Adfpipeline)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.Adfpipeline)
+                </dd>               
+             <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.TaskInstanceJson)
+            </dt>
+            <dd class = "col-sm-10 jsonpretty">
+                <a class="jsonraw">@Html.DisplayFor(model => model.TaskInstanceJson)</a>
+                <div class="jsonformatted"></div>
+            </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.LastExecutionComment)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.LastExecutionComment)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.NumberOfRetries)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.NumberOfRetries)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.ActiveYn)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.ActiveYn)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.CreatedOn)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.CreatedOn)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.TaskRunnerId)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.TaskRunnerId)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.UpdatedOn)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.UpdatedOn)
+                </dd>               
+    </dl>
+</div>
+<div>
+    <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Back</a>
+    <a asp-action="Edit" asp-route-id="@Model.TaskInstanceId" class="btn btn-warning details" title="Edit"><i class="fa fa-pencil-square-o"></i> Edit</a> 
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+		$(document).ready(function ()
+        {
+            $(".jsonpretty").each(function (index) {
+                $(".jsonformatted", this).JSONView($(".jsonraw", this)[0].innerText);
+                $(".jsonraw", this)[0].innerText = null;
+            });
+
+		});
+    </script>
+}   

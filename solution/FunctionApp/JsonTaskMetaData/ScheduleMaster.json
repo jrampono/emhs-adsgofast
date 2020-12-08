@@ -1,0 +1,25 @@
+[{
+    "ScheduleMasterId":1,
+    "ScheduleName": "Daily",
+    "ScheduleFrequency": 1,
+    "ScheduleInterval": "Day",
+    "ScheduleDateTime": "19000101 00:00:00",
+    "Enabled": true
+},
+{
+    "ScheduleMasterId":2,
+    "ScheduleName": "Always",
+    "ScheduleFrequency": null,
+    "ScheduleInterval": null,
+    "ScheduleDateTime": "19000101 00:00:00",
+    "Enabled": true
+},
+{
+    "ScheduleMasterId":3,
+    "ScheduleName": "Every 30 minutes",
+    "ScheduleFrequency": 30,
+    "ScheduleInterval": "Minute",
+    "ScheduleDateTime": "19000101 00:00:00",
+    "Enabled": true
+
+}]

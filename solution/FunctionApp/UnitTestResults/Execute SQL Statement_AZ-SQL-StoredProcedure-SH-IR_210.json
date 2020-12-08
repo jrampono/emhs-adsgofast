@@ -1,0 +1,52 @@
+{
+  "TaskInstanceId": 7705,
+  "TaskMasterId": 210,
+  "TaskStatus": "InProgress",
+  "TaskType": "Execute SQL Statement",
+  "Enabled": 1,
+  "ExecutionUid": "041b98e5-ddfb-422a-869c-3cc7b59914b7",
+  "NumberOfRetries": 0,
+  "DegreeOfCopyParallelism": 1,
+  "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+  "ScheduleMasterId": "2",
+  "TaskGroupConcurrency": "10",
+  "TaskGroupPriority": 0,
+  "TaskExecutionType": "ADF",
+  "DataFactory": {
+    "Id": 1,
+    "Name": "adsgofastdatakakeacceladf",
+    "ResourceGroup": "AdsGoFastDataLakeAccel",
+    "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
+    "ADFPipeline": "AZ-SQL-StoredProcedure-SH-IR"
+  },
+  "Source": {
+    "Type": "Azure SQL",
+    "Database": {
+      "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+      "Name": "Staging",
+      "AuthenticationType": "MSI"
+    },
+    "Extraction": {
+      "Type": "StoredProcedure",
+      "IncrementalType": "",
+      "IncrementalField": null,
+      "IncrementalColumnType": null,
+      "ChunkField": null,
+      "ChunkSize": null,
+      "TableSchema": "dbo",
+      "TableName": "DIM_Customer",
+      "SQLStatement": ""
+    },
+    "Execute": {
+      "StoredProcedure": "Exec [dbo].[usp_DimCustomer]  \r\n  Select 1"
+    }
+  },
+  "Target": {
+    "Type": "StoredProcedure",
+    "Database": {
+      "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+      "AuthenticationType": "MSI",
+      "Name": "Staging"
+    }
+  }
+}

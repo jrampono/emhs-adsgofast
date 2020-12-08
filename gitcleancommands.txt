@@ -1,0 +1,1 @@
+git clean -i -f -X -d

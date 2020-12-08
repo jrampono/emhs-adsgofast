@@ -1,0 +1,3 @@
+﻿ADFActivityRun 
+        | where TimeGenerated >  datetime({MaxActivityTimeGenerated}) and Status in ("Failed")  
+            and ResourceId  == "/SUBSCRIPTIONS/{SubscriptionId}/RESOURCEGROUPS/{ResourceGroupName}/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/{DataFactoryName}"        

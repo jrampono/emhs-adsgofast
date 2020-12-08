@@ -1,0 +1,178 @@
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm">
+        <h1><i id="PageIcon" class="fas"></i><a id="pagetitle">Task Group - Statistics</a></h1>
+    </div>
+    
+    </div>
+    <table id="adsgofast_tablelist" class="table table-striped">
+        <thead class="thead">
+            <tr>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    @section Scripts
+{
+        <script type="text/javascript">
+            var ModelName = "ReportsAndStatistics";
+            var CurrentTimeFrame = 1;
+        /* Formatting function for row details - modify as you need */
+        function format(d) {
+            // `d` is the original data object for the row
+            return '<table class="table table-striped" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+                '<tr>' +
+                '<th>Rows Copied:</th>' +
+                '<td>' + d.RowsCopied+ '</td>' +
+                '<th>Data Read:</th>' +
+                '<td>' + d.DataRead + '</td>' +
+                '<th>Data Written</th>' +
+                '<td>' + d.DataWritten + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<th>Executions:</th>' +
+                '<td>' + d.Executions + '</td>' +
+                '<th>Schedule Instances:</th>' +
+                '<td>' + d.ScheduleInstances + '</td>' +
+                '<th>Task Masters</th>' +
+                '<td>' + d.TaskMasters + '</td>' +
+                '</tr>'
+
+                '</table>';
+        }
+
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+            params = {}; location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, k, v) { params[k] = v })
+
+            var StatsLevel = params["StatsLevel"];
+            var nextstatslevel = "TaskMaster";
+            var nextstatslevelimage = "fas fa-list";
+            var nextstatslevelfilterkey = "TaskGroupId";
+
+            if (StatsLevel === "TaskGroup" || StatsLevel === "ScheduleInstance") { nextstatslevel = "TaskMaster"; nextstatslevelimage = "fas fa-list"; nextstatslevelfilterkey = "TaskGroupId";}
+            if (StatsLevel === "TaskMaster") { nextstatslevel = "TaskInstance"; nextstatslevelimage = "fas fa-list-alt"; nextstatslevelfilterkey = "TaskMasterId"; }
+            if (StatsLevel === "TaskInstance") { nextstatslevel = "TaskInstanceExecution"; nextstatslevelimage = "fas fa-bolt"; nextstatslevelfilterkey = "TaskInstanceId"; }
+
+
+            //This is where custom buttons and things would go.
+
+            var DrillButton = {
+                extend: 'selectedSingle',
+                className: 'btn-outline-primary ads-btn-nav',
+                text: '<i data-toggle="tooltip" class="' + nextstatslevelimage + ' style=\'width: 16px\' title="View Task Master Statistics"></i>',
+                action: function (e, dt, node, config) {
+                    window.location = '@Url.Action("IndexDataTable", "ReportsAndStatistics")' + "?&StatsLevel=" + nextstatslevel + "&" + nextstatslevelfilterkey + "=" + dt.data()[dt.rows({ selected: true }).indexes()[0]][nextstatslevelfilterkey] + "&TimeFrame=" + CurrentTimeFrame;
+                }
+            };
+
+            var TimeFilterButton = {
+                className: 'btn-outline-primary ads-btn-filter',
+                text: '<a>Time Period:</a>&nbsp<select id="TimeRangeSelector" class="text-primary border-light"><option value=1>Last Hour</option><option value=24>Last 24 Hours</option><option value=78>Last 78 hours</option><option value=168>Last 7 Days</option><option value=672>Last 28 Days</option><option value=2100>Last 3 Months</option></select >',
+                action: null
+
+            };
+
+            buttons = [];
+
+            if (StatsLevel !== "TaskInstanceExecution") { buttons.push(DrillButton);}
+
+            buttons.push(TimeFilterButton);
+
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+
+            var trs = $("#TimeRangeSelector > option");
+            $.each(trs, function (index, value) {
+                if ($(value).val() === CurrentTimeFrame) { $(value).attr('selected', 'selected'); }
+            });
+
+            $('#TimeRangeSelector').change(function () {
+                TimeFrameSelect();
+            });
+
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
+
+
+        $(document).on('draw.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+
+
+            $('#adsgofast_tablelist tbody td.details-control i').addClass("fas");
+            $('#adsgofast_tablelist tbody td.details-control i').addClass("fa-plus-square");
+            $('#adsgofast_tablelist tbody td.details-control i').css("color","green");
+            // Add event listener for opening and closing details
+            $('#adsgofast_tablelist tbody').off('click', 'td.details-control');
+            $('#adsgofast_tablelist tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+                var dtlsctrl = $(".details-control", tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    $("i", dtlsctrl).removeClass('fa-minus-square');
+                    $("i", dtlsctrl).addClass('fa-plus-square');
+                    $("i", dtlsctrl).css("color", "green");
+
+                }
+                else {
+                    // Open this row
+                    row.child(format(row.data())).show();
+
+                    $("i", dtlsctrl).removeClass('fa-plus-square');
+                    $("i", dtlsctrl).addClass('fa-minus-square');
+                    $("i", dtlsctrl).css("color", "red");
+                }
+            });
+        });
+
+        function TimeFrameSelect() {
+            var trs = $("#TimeRangeSelector");
+            CurrentTimeFrame = $(":selected", trs).val();
+            $.fn.dataTable.Api("#adsgofast_tablelist").ajax.reload(null, false);
+        }
+
+        $(document).ready(function () {
+            params = {}; location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, k, v) { params[k] = v });
+
+            if (Object.keys(params).length === 0) {
+                params.StatsLevel = "TaskGroup";
+            }
+
+            $('#pagetitle').text(" " + params.StatsLevel + " Statistics");
+            $('#PageIcon').removeClass();
+
+            if (params.StatsLevel === "TaskGroup") { $('#PageIcon').addClass("fas fa-object-group"); }
+            if (params.StatsLevel === "TaskGroup") { $('#PageIcon').addClass("fas fa-object-group"); }
+            if (params.StatsLevel === "TaskMaster") { $('#PageIcon').addClass("fas fa-list"); }
+            if (params.StatsLevel === "TaskInstance") { $('#PageIcon').addClass("fas fa-list-alt"); }
+            if (params.StatsLevel === "TaskInstanceExecution") { $('#PageIcon').addClass("fas fa-bolt"); }
+            if (typeof params.TimeFrame !== "undefined") { CurrentTimeFrame = params.TimeFrame;  }
+
+            PrepOptions = {};
+            PrepOptions.AjaxDataFunction = function (d) {
+                d.QueryParams = params;
+                d.QueryParams.TimeFrame = CurrentTimeFrame;
+            }
+
+            DataTablesGridPrep(PrepOptions);
+        });
+        </script>
+    }

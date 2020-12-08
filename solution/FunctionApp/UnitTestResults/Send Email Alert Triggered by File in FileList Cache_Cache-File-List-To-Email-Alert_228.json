@@ -1,0 +1,52 @@
+{
+  "TaskInstanceId": 9336,
+  "TaskMasterId": 228,
+  "TaskStatus": "InProgress",
+  "TaskType": "Send Email Alert Triggered by File in FileList Cache",
+  "Enabled": 1,
+  "ExecutionUid": "cb387d19-a10c-4da6-8596-647fede5e618",
+  "NumberOfRetries": 4,
+  "DegreeOfCopyParallelism": 1,
+  "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+  "ScheduleMasterId": "3",
+  "TaskGroupConcurrency": "10",
+  "TaskGroupPriority": 0,
+  "TaskExecutionType": "AF",
+  "DataFactory": {
+    "Id": 1,
+    "Name": "adsgofastdatakakeacceladf",
+    "ResourceGroup": "AdsGoFastDataLakeAccel",
+    "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
+    "ADFPipeline": "Cache-File-List-To-Email-Alert"
+  },
+  "Source": {
+    "Type": "*",
+    "SystemId": 3,
+    "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+    "StorageAccountAccessMethod": "MSI",
+    "StorageAccountContainer": "datalakeraw",
+    "RelativePath": "JohnRampono/PipQi/2020/9/10/8/54/",
+    "DataFileName": "TestPIPQIFile.csv",
+    "Recursively": "False",
+    "TriggerUsingAzureStorageCache": true,
+    "DeleteAfterCompletion": "False"
+  },
+  "Target": {
+    "Type": "*",
+    "Alerts": [
+      {
+        "AlertCategory": "Generic Task Executed Alert",
+        "EmailTemplateFileName": "PipQI_FileDropped",
+        "EmailRecepient": "jrampono@gmail.com",
+        "EmailRecepientName": "jrampono@gmail.com"
+      },
+      {
+        "AlertCategory": "Generic Task Executed Alert",
+        "EmailTemplateFileName": "PipQI_FileDropped",
+        "EmailRecepient": "jrampono@gmail.com",
+        "EmailRecepientName": "jrampono@gmail.com"
+      }
+    ],
+    "RelativePath": "JohnRampono/PipQi/2020/9/10/8/54/"
+  }
+}

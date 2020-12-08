@@ -1,0 +1,65 @@
+@using Humanizer;
+@model WebApplication.Models.TaskMasterWaterMark
+
+@{
+    ViewData["Title"] = "Create - " + "TaskMasterWaterMark".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4> @("TaskMasterWaterMark".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TaskMasterId" class="control-label"></label>
+                <select asp-for="TaskMasterId" class ="form-control" asp-items="ViewBag.TaskMasterId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskMasterWaterMarkColumn" class="control-label"></label>
+                <input asp-for="TaskMasterWaterMarkColumn" class="form-control" />
+                <span asp-validation-for="TaskMasterWaterMarkColumn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskMasterWaterMarkColumnType" class="control-label"></label>
+                <input asp-for="TaskMasterWaterMarkColumnType" class="form-control" />
+                <span asp-validation-for="TaskMasterWaterMarkColumnType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskMasterWaterMarkDateTime" class="control-label"></label>
+                <input asp-for="TaskMasterWaterMarkDateTime" class="form-control" />
+                <span asp-validation-for="TaskMasterWaterMarkDateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskMasterWaterMarkBigInt" class="control-label"></label>
+                <input asp-for="TaskMasterWaterMarkBigInt" class="form-control" />
+                <span asp-validation-for="TaskMasterWaterMarkBigInt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskWaterMarkJson" class="control-label"></label>
+                <input asp-for="TaskWaterMarkJson" class="form-control" />
+                <span asp-validation-for="TaskWaterMarkJson" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveYn" /> @Html.DisplayNameFor(model => model.ActiveYn)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="UpdatedOn" class="control-label"></label>
+                <input asp-for="UpdatedOn" class="form-control" />
+                <span asp-validation-for="UpdatedOn" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary" ><i class="fa fa-arrow-circle-left"></i> Back</a>            
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
