@@ -10,11 +10,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
-
+using System.Configuration;
 
 namespace AdsGoFast
 {
@@ -580,15 +581,23 @@ namespace AdsGoFast
                 private static object GetConfig(string ConfigName)
                 {
                     object Ret;
-                    try
-                    {
-                        Ret = System.Environment.GetEnvironmentVariable(ConfigName, EnvironmentVariableTarget.Process);
-                    }
-                    catch (Exception e)
-                    {
-                        //Logging.LogErrors(new Exception ("Could not find global config " + ConfigName));
-                        throw (e);
-                    }
+                try
+                {
+
+                    //Todo refactor config helper to use dependency injection
+                    var config = new ConfigurationBuilder()
+                      .SetBasePath(Environment.CurrentDirectory)
+                      .AddEnvironmentVariables()
+                      .AddUserSecrets(System.Reflection.Assembly.GetExecutingAssembly(), true)
+                      .Build();
+
+                    Ret = config[ConfigName];
+                }
+                catch (Exception e)
+                {
+                    //Logging.LogErrors(new Exception ("Could not find global config " + ConfigName));
+                    throw (e);
+                }
 
                     return Ret;
                 }
