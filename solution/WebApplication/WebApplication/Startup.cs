@@ -52,7 +52,13 @@ namespace WebApplication
             services.AddSingleton<AdsGoFastDapperContext>(new AdsGoFastDapperContext(azureSDK, Configuration["AdsGoFastTaskMetaDataDatabaseServer"], Configuration["AdsGoFastTaskMetaDataDatabaseName"]));
             services.AddSingleton<SecurityAccessProvider>();
             services.AddSingleton<IAuthorizationHandler, PermissionAssignedHandler>();
-            services.AddControllersWithViews().AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
+
+            services.AddControllersWithViews(opt =>
+                    {
+                        opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
+                    })
+                    .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
+
             services.AddRazorPages();
 
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration);

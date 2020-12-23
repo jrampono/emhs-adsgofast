@@ -23,12 +23,18 @@
 
   <ItemGroup>
     <Compile Remove="EasyAuth.cs" />
+		<Content Include="HelpFiles\*.md" />
+		<Content Update="HelpFiles\*.md">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="dapper" Version="2.0.35" />
     <PackageReference Include="DataTables-Editor-Server" Version="1.9.5" />
     <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="Markdig" Version="0.22.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,6 +48,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Identity.Web" Version="1.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.2" />
   </ItemGroup>
 
