@@ -55,13 +55,18 @@ namespace WebApplication
             services.AddSingleton<AdsGoFastDapperContext>(new AdsGoFastDapperContext(azureSDK, Configuration["AdsGoFastTaskMetaDataDatabaseServer"], Configuration["AdsGoFastTaskMetaDataDatabaseName"]));
             services.AddSingleton<SecurityAccessProvider>();
 
-            services.AddSingleton<IAuthorizationHandler, PermissionAssignedHandler>();
+            //todo: remove the concrete reference from the scaffolding upstream and register the singleton witht he interface.
+            services.AddTransient<ISecurityAccessProvider>(services => services.GetService<SecurityAccessProvider>());
             services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
+            services.AddSingleton<IAuthorizationHandler, PermissionAssignedViaRoleHandler>();
+
             services.AddControllersWithViews(opt =>
-                    {
-                        opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
-                    })
+            {
+                opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
+            })
                     .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
+
+
 
 
             services.AddRazorPages();
