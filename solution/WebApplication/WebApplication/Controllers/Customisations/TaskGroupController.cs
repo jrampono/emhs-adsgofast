@@ -9,12 +9,14 @@ using Microsoft.Data.SqlClient.DataClassification;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
 {
     public partial class TaskGroupController : BaseController
     {
+        [ChecksUserAccess]
         public async Task<IActionResult> IndexDataTable()
         {
             var adsGoFastContext = _context.TaskGroup.Take(1);
@@ -54,11 +56,13 @@ namespace WebApplication.Controllers
 
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridOptions()
         {
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridData()
         {
             try
@@ -79,6 +83,24 @@ namespace WebApplication.Controllers
                 // Getting all Customer data    
                 var modelDataAll = (from temptable in _context.TaskGroup
                                     select temptable);
+
+                //filter the list by permitted roles
+                if (!CanPerformCurrentActionGlobally())
+                {
+                    var permittedRoles = GetPermittedGroupsForCurrentAction();
+                    var identity = User.Identity.Name;
+
+                    modelDataAll =
+                        (from md in modelDataAll
+                         join rm in _context.SubjectAreaRoleMap
+                            on md.SubjectAreaId equals rm.SubjectAreaId
+                         where
+                             GetUserAdGroupUids().Contains(rm.AadGroupUid)
+                             && permittedRoles.Contains(rm.ApplicationRoleName)
+                             && rm.ExpiryDate > DateTimeOffset.Now
+                             && rm.ActiveYn
+                         select md).Distinct();
+                }
 
                 //Sorting    
                 if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))

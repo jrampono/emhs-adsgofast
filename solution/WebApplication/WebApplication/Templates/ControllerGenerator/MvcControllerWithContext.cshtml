@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 @{
     foreach (var namespaceName in Model.RequiredNamespaces)
     {
@@ -60,7 +60,7 @@ namespace @Model.ControllerNamespace
 
     bool hasIsActive = false;
 
-    foreach (var property in Model.ModelMetadata.Properties)
+        foreach (var property in Model.ModelMetadata.Properties)
     {
         if(property.PropertyName == "ActiveYn")
         {
@@ -84,7 +84,7 @@ namespace @Model.ControllerNamespace
         protected readonly @Model.ContextTypeName _context;
         
 
-        public @(Model.ControllerName)(@Model.ContextTypeName context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public @(Model.ControllerName)(@Model.ContextTypeName context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "@Model.ControllerRootName";
             _context = context;
@@ -110,6 +110,7 @@ namespace @Model.ControllerNamespace
 }        }
 
         // GET: @routePrefix/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(@primaryKeyNullableTypeName id)
         {
             if (id == null)
@@ -120,9 +121,10 @@ namespace @Model.ControllerNamespace
             var @Model.ModelVariable = await _context.@(entitySetName)@inlineIncludes
                 .FirstOrDefaultAsync(m => m.@primaryKeyName == id);
             if (@Model.ModelVariable == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(@Model.ModelVariable))
+                return new ForbidResult();
+
 
             return View(@Model.ModelVariable);
         }
@@ -151,6 +153,7 @@ namespace @Model.ControllerNamespace
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("@bindString")] @Model.ModelTypeName @Model.ModelVariable)
         {
             if (ModelState.IsValid)
@@ -161,6 +164,12 @@ namespace @Model.ControllerNamespace
                 @:@(Model.ModelVariable).@primaryKeyName = Guid.NewGuid();
     }
                 @:_context.Add(@Model.ModelVariable);
+
+                @:if (!await CanPerformCurrentActionOnRecord(@Model.ModelVariable))
+                @:{
+                @:    return new ForbidResult();
+                @:}
+
                 @:await _context.SaveChangesAsync();
 }                return RedirectToAction(nameof(IndexDataTable));
             }
@@ -175,6 +184,7 @@ namespace @Model.ControllerNamespace
         }
 
         // GET: @routePrefix/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(@primaryKeyNullableTypeName id)
         {
             if (id == null)
@@ -184,9 +194,10 @@ namespace @Model.ControllerNamespace
 
             var @Model.ModelVariable = await _context.@(entitySetName).FindAsync(id);
             if (@Model.ModelVariable == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(@Model.ModelVariable))
+                return new ForbidResult();
 @{
     foreach (var property in relatedProperties.Values)
     {
@@ -202,6 +213,7 @@ namespace @Model.ControllerNamespace
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(@primaryKeyShortTypeName id, [Bind("@bindString")] @Model.ModelTypeName @Model.ModelVariable)
         {
             if (id != @Model.ModelVariable.@primaryKeyName)
@@ -214,6 +226,10 @@ namespace @Model.ControllerNamespace
                 try
                 {
                     _context.Update(@Model.ModelVariable);
+
+                    if (!await CanPerformCurrentActionOnRecord(@Model.ModelVariable))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -240,6 +256,7 @@ namespace @Model.ControllerNamespace
         }
 
         // GET: @routePrefix/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(@primaryKeyNullableTypeName id)
         {
             if (id == null)
@@ -250,19 +267,25 @@ namespace @Model.ControllerNamespace
             var @Model.ModelVariable = await _context.@(entitySetName)@inlineIncludes
                 .FirstOrDefaultAsync(m => m.@primaryKeyName == id);
             if (@Model.ModelVariable == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(@Model.ModelVariable))
+                return new ForbidResult();
 
             return View(@Model.ModelVariable);
         }
 
         // POST: @routePrefix/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(@primaryKeyShortTypeName id)
         {
             var @Model.ModelVariable = await _context.@(entitySetName).FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(@Model.ModelVariable))
+                return new ForbidResult();
+		
             _context.@(entitySetName).Remove(@Model.ModelVariable);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));

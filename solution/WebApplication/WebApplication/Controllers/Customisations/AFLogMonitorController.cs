@@ -13,7 +13,7 @@ namespace WebApplication.Controllers
     public class AFLogMonitorController : BaseController
     {
         private readonly AppInsightsContext _context;
-        public AFLogMonitorController(AppInsightsContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public AFLogMonitorController(AppInsightsContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleprovider) : base(securityAccessProvider, roleprovider)
         {
             _context = context;
         }

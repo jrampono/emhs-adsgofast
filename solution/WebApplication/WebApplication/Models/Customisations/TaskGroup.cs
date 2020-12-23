@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace WebApplication.Models
 {
     public partial class TaskGroup
-    {   
+    {
         public TaskGroup()
         {
             TaskGroupConcurrency = 10;

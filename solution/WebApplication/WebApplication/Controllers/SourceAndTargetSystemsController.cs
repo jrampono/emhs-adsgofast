@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public SourceAndTargetSystemsController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public SourceAndTargetSystemsController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "SourceAndTargetSystems";
             _context = context;
@@ -30,6 +30,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: SourceAndTargetSystems/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -40,9 +41,10 @@ namespace WebApplication.Controllers
             var sourceAndTargetSystems = await _context.SourceAndTargetSystems
                 .FirstOrDefaultAsync(m => m.SystemId == id);
             if (sourceAndTargetSystems == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(sourceAndTargetSystems))
+                return new ForbidResult();
+
 
             return View(sourceAndTargetSystems);
         }
@@ -60,11 +62,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("SystemId,SystemName,SystemType,SystemDescription,SystemServer,SystemAuthType,SystemUserName,SystemSecretName,SystemKeyVaultBaseUrl,SystemJson,ActiveYn")] SourceAndTargetSystems sourceAndTargetSystems)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(sourceAndTargetSystems);
+                if (!await CanPerformCurrentActionOnRecord(sourceAndTargetSystems))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -72,6 +79,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: SourceAndTargetSystems/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -81,9 +89,10 @@ namespace WebApplication.Controllers
 
             var sourceAndTargetSystems = await _context.SourceAndTargetSystems.FindAsync(id);
             if (sourceAndTargetSystems == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(sourceAndTargetSystems))
+                return new ForbidResult();
             return View(sourceAndTargetSystems);
         }
 
@@ -92,6 +101,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(long id, [Bind("SystemId,SystemName,SystemType,SystemDescription,SystemServer,SystemAuthType,SystemUserName,SystemSecretName,SystemKeyVaultBaseUrl,SystemJson,ActiveYn")] SourceAndTargetSystems sourceAndTargetSystems)
         {
             if (id != sourceAndTargetSystems.SystemId)
@@ -104,6 +114,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(sourceAndTargetSystems);
+
+                    if (!await CanPerformCurrentActionOnRecord(sourceAndTargetSystems))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -123,6 +137,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: SourceAndTargetSystems/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -133,19 +148,25 @@ namespace WebApplication.Controllers
             var sourceAndTargetSystems = await _context.SourceAndTargetSystems
                 .FirstOrDefaultAsync(m => m.SystemId == id);
             if (sourceAndTargetSystems == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(sourceAndTargetSystems))
+                return new ForbidResult();
 
             return View(sourceAndTargetSystems);
         }
 
         // POST: SourceAndTargetSystems/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var sourceAndTargetSystems = await _context.SourceAndTargetSystems.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(sourceAndTargetSystems))
+                return new ForbidResult();
+		
             _context.SourceAndTargetSystems.Remove(sourceAndTargetSystems);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));

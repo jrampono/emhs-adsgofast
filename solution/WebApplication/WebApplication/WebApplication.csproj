@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -6,29 +6,24 @@
     <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Helpers\NewFolder\**" />
-    <Compile Remove="Models2\**" />
-    <Compile Remove="Templates\**" />
-    <Content Remove="Helpers\NewFolder\**" />
-    <Content Remove="Models2\**" />
-    <Content Remove="Templates\**" />
-    <EmbeddedResource Remove="Helpers\NewFolder\**" />
-    <EmbeddedResource Remove="Models2\**" />
-    <EmbeddedResource Remove="Templates\**" />
-    <None Remove="Helpers\NewFolder\**" />
-    <None Remove="Models2\**" />
-    <None Remove="Templates\**" />
-  </ItemGroup>
 
-  <ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Templates\**" />
+		<Content Remove="Templates\**" />
+		<EmbeddedResource Remove="Templates\**" />
+		<None Remove="Templates\**" />
+	</ItemGroup>
+
+	<ItemGroup>
     <Compile Remove="EasyAuth.cs" />
   </ItemGroup>
 
-  <ItemGroup>
+
+	<ItemGroup>
     <PackageReference Include="dapper" Version="2.0.35" />
     <PackageReference Include="DataTables-Editor-Server" Version="1.9.5" />
     <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

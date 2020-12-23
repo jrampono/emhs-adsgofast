@@ -4,12 +4,15 @@
 <div class="row">
     <div class="col-md-12">
         <table class="table table-responsive table-striped">
+            <thead>
+                <tr><td>My Roles</td></tr>
+            </thead>
             @if (HttpContext.User.Identity.IsAuthenticated)
             {
-                foreach (WebApplication.Models.Options.SecurityRole c in Model.Roles)
+                foreach (var c in Model.Roles)
                 {
                     <tr>
-                        <td>Role: @c.Name</td>                        
+                        <td>Role: @c</td>
                     </tr>
                 }
             }

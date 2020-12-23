@@ -44,7 +44,7 @@ namespace WebApplication.Controllers
     {
         private readonly AdsGoFastDapperContext _context;
 
-        public FrameworkTaskRunnerDapperController(AdsGoFastDapperContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public FrameworkTaskRunnerDapperController(AdsGoFastDapperContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleprovider) : base(securityAccessProvider, roleprovider)
         {
             _context = context;
         }

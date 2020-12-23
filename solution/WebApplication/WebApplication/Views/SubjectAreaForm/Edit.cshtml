@@ -1,0 +1,57 @@
+@using Humanizer; 
+@model WebApplication.Models.SubjectAreaForm
+
+@{
+    ViewData["Title"] = "Edit - " + "SubjectAreaForm".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4> @("SubjectAreaForm".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SubjectAreaFormId" />
+            <div class="form-group">
+                <label asp-for="FormJson" class="control-label"></label>
+                <input asp-for="FormJson" class="form-control" />
+                <span asp-validation-for="FormJson" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FormStatus" class="control-label"></label>
+                <input asp-for="FormStatus" class="form-control" />
+                <span asp-validation-for="FormStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UpdatedBy" class="control-label"></label>
+                <input asp-for="UpdatedBy" class="form-control" />
+                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ValidFrom" class="control-label"></label>
+                <input asp-for="ValidFrom" class="form-control" />
+                <span asp-validation-for="ValidFrom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ValidTo" class="control-label"></label>
+                <input asp-for="ValidTo" class="form-control" />
+                <span asp-validation-for="ValidTo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Revision" class="control-label"></label>
+                <input asp-for="Revision" class="form-control" />
+                <span asp-validation-for="Revision" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Back</a>
+                <a href="@Url.Action("EditInWizard", new { id = Model.SubjectAreaFormId })" title="Edit in Wizard" class="btn btn-warning">Edit in Wizard</a>
+                <input type="submit" value="Save" class="btn btn-danger" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

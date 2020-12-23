@@ -4,28 +4,66 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using WebApplication.Framework;
+using WebApplication.Models;
 using WebApplication.Services;
 
 namespace WebApplication.Controllers
 {
     public class BaseController : Controller
     {
-        private readonly SecurityAccessProvider _securityAccessProvider;
+        protected readonly ISecurityAccessProvider _securityAccessProvider;
+        private readonly IEntityRoleProvider _roleProvider;
 
         protected string Name = "Base";
 
-        public BaseController(SecurityAccessProvider securityAccessProvider)
+        public BaseController(ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider)
         {
             Name = GetType().Name.Replace("Controller", string.Empty);
             _securityAccessProvider = securityAccessProvider;
+            _roleProvider = roleProvider;
         }
 
-        public IEnumerable<Models.Options.SecurityRole> GetUserAppRoles(ClaimsIdentity identity)
+        protected string[] GetUserAdGroups()
         {
-           return _securityAccessProvider.GetUserRoles(identity);
+            return _securityAccessProvider.GetUserGroups(User.Identity as ClaimsIdentity);
+        }
+
+        protected Guid[] GetUserAdGroupUids()
+        {
+            return _securityAccessProvider.GetUserAdGroupIds(User.Identity as ClaimsIdentity);
+        }
+
+        protected string[] GetPermittedGroupsForCurrentAction([CallerMemberName] string actionName = null)
+        {
+            if (actionName is null)
+                throw new ArgumentNullException(nameof(actionName));
+
+            return _securityAccessProvider.GetRolesForAction(Name, actionName);
+        }
+
+        protected bool CanPerformCurrentActionGlobally([CallerMemberName] string actionName = null)
+        {
+            if (actionName is null)
+                throw new ArgumentNullException(nameof(actionName));
+
+            return _securityAccessProvider.CanPerformOperation(Name, actionName, User.Identity as ClaimsIdentity);
+        }
+
+        protected async Task<bool> CanPerformCurrentActionOnRecord(object record, [CallerMemberName] string actionName = null)
+        {
+            if (actionName is null)
+                throw new ArgumentNullException(nameof(actionName));
+
+            if (CanPerformCurrentActionGlobally(actionName))
+                return true;
+
+            var entityRoles = await _roleProvider.GetUserRoles(record, GetUserAdGroupUids());
+            return _securityAccessProvider.CanPerformOperation(Name, actionName, entityRoles);
         }
 
         protected JArray GetSecurityFilteredActions(string actions)
@@ -54,5 +92,6 @@ namespace WebApplication.Controllers
                 }
             }
         }
+
     }
 }

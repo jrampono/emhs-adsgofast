@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public TaskGroupController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public TaskGroupController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "TaskGroup";
             _context = context;
@@ -31,6 +31,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskGroup/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -42,9 +43,10 @@ namespace WebApplication.Controllers
                 .Include(t => t.SubjectArea)
                 .FirstOrDefaultAsync(m => m.TaskGroupId == id);
             if (taskGroup == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(taskGroup))
+                return new ForbidResult();
+
 
             return View(taskGroup);
         }
@@ -63,11 +65,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("TaskGroupId,TaskGroupName,TaskGroupPriority,TaskGroupConcurrency,TaskGroupJson,SubjectAreaId,ActiveYn")] TaskGroup taskGroup)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(taskGroup);
+                if (!await CanPerformCurrentActionOnRecord(taskGroup))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -76,6 +83,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskGroup/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -85,9 +93,10 @@ namespace WebApplication.Controllers
 
             var taskGroup = await _context.TaskGroup.FindAsync(id);
             if (taskGroup == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(taskGroup))
+                return new ForbidResult();
         ViewData["SubjectAreaId"] = new SelectList(_context.SubjectArea.OrderBy(x=>x.SubjectAreaId), "SubjectAreaId", "SubjectAreaId", taskGroup.SubjectAreaId);
             return View(taskGroup);
         }
@@ -97,6 +106,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(long id, [Bind("TaskGroupId,TaskGroupName,TaskGroupPriority,TaskGroupConcurrency,TaskGroupJson,SubjectAreaId,ActiveYn")] TaskGroup taskGroup)
         {
             if (id != taskGroup.TaskGroupId)
@@ -109,6 +119,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(taskGroup);
+
+                    if (!await CanPerformCurrentActionOnRecord(taskGroup))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -129,6 +143,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskGroup/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -140,19 +155,25 @@ namespace WebApplication.Controllers
                 .Include(t => t.SubjectArea)
                 .FirstOrDefaultAsync(m => m.TaskGroupId == id);
             if (taskGroup == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(taskGroup))
+                return new ForbidResult();
 
             return View(taskGroup);
         }
 
         // POST: TaskGroup/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var taskGroup = await _context.TaskGroup.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(taskGroup))
+                return new ForbidResult();
+		
             _context.TaskGroup.Remove(taskGroup);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));

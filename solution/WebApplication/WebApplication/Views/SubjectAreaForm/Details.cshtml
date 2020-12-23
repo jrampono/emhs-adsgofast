@@ -1,0 +1,70 @@
+@using Humanizer;
+@model WebApplication.Models.SubjectAreaForm
+
+@{
+    ViewData["Title"] = "Details - " + "SubjectAreaForm".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4> @("SubjectAreaForm".Humanize(LetterCasing.Title))</h4>
+    <hr />
+    <dl class="row">
+             <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.FormJson)
+            </dt>
+            <dd class = "col-sm-10 jsonpretty">
+                <a class="jsonraw">@Html.DisplayFor(model => model.FormJson)</a>
+                <div class="jsonformatted"></div>
+            </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.FormStatus)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.FormStatus)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.UpdatedBy)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.UpdatedBy)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.ValidFrom)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.ValidFrom)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.ValidTo)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.ValidTo)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.Revision)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.Revision)
+                </dd>               
+    </dl>
+</div>
+<div>
+    <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Back</a>
+    <a asp-action="Edit" asp-route-id="@Model.SubjectAreaFormId" class="btn btn-warning details" title="Edit"><i class="fa fa-pencil-square-o"></i> Edit</a> 
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+		$(document).ready(function ()
+        {
+            $(".jsonpretty").each(function (index) {
+                $(".jsonformatted", this).JSONView($(".jsonraw", this)[0].innerText);
+                $(".jsonraw", this)[0].innerText = null;
+            });
+
+		});
+    </script>
+}   

@@ -93,7 +93,6 @@ namespace WebApplication.Controllers
                     //modelDataAll = modelDataAll.Where(m => m.TaskMasterName.Contains(searchValue));
                 }
 
-
                 //Filter based on querystring params
                 if (!(string.IsNullOrEmpty(Request.Form["QueryParams[TaskTypeId]"])))
                 {

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebApplication.Models;
+using WebApplication.Services;
 
 namespace WebApplication.Controllers
 {
@@ -60,7 +61,6 @@ namespace WebApplication.Controllers
         {
             try
             {
-
                 string draw = Request.Form["draw"];
                 string start = Request.Form["start"];
                 string length = Request.Form["length"];
@@ -77,12 +77,12 @@ namespace WebApplication.Controllers
                 var modelDataAll = (from temptable in _context.ScheduleMaster
                                     select temptable);
 
+
                 //Sorting    
                 if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
                 {
                     modelDataAll = modelDataAll.OrderBy(sortColumn + " " + sortColumnDir);
                 }
-
 
                 //total number of rows count     
                 recordsTotal = modelDataAll.Count();

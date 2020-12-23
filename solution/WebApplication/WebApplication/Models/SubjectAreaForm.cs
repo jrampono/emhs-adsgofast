@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication.Models
 {
@@ -7,8 +9,12 @@ namespace WebApplication.Models
     {
         public int SubjectAreaFormId { get; set; }
         public string FormJson { get; set; }
-        public byte FormStatus { get; set; }
+        public byte? FormStatus { get; set; }
         public string UpdatedBy { get; set; }
-
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime ValidFrom { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime ValidTo { get; set; }
+        public byte Revision { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public TaskMasterController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public TaskMasterController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "TaskMaster";
             _context = context;
@@ -31,6 +31,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskMaster/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -46,9 +47,10 @@ namespace WebApplication.Controllers
                 .Include(t => t.TaskType)
                 .FirstOrDefaultAsync(m => m.TaskMasterId == id);
             if (taskMaster == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                return new ForbidResult();
+
 
             return View(taskMaster);
         }
@@ -71,11 +73,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("TaskMasterId,TaskMasterName,TaskTypeId,TaskGroupId,ScheduleMasterId,SourceSystemId,TargetSystemId,DegreeOfCopyParallelism,AllowMultipleActiveInstances,TaskDatafactoryIr,TaskMasterJson,ActiveYn,DependencyChainTag,DataFactoryId")] TaskMaster taskMaster)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(taskMaster);
+                if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -88,6 +95,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskMaster/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -97,9 +105,10 @@ namespace WebApplication.Controllers
 
             var taskMaster = await _context.TaskMaster.FindAsync(id);
             if (taskMaster == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                return new ForbidResult();
         ViewData["ScheduleMasterId"] = new SelectList(_context.ScheduleMaster.OrderBy(x=>x.ScheduleDesciption), "ScheduleMasterId", "ScheduleDesciption", taskMaster.ScheduleMasterId);
         ViewData["SourceSystemId"] = new SelectList(_context.SourceAndTargetSystems.OrderBy(x=>x.SystemName), "SystemId", "SystemName", taskMaster.SourceSystemId);
         ViewData["TargetSystemId"] = new SelectList(_context.SourceAndTargetSystems.OrderBy(x=>x.SystemName), "SystemId", "SystemName", taskMaster.TargetSystemId);
@@ -113,6 +122,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(long id, [Bind("TaskMasterId,TaskMasterName,TaskTypeId,TaskGroupId,ScheduleMasterId,SourceSystemId,TargetSystemId,DegreeOfCopyParallelism,AllowMultipleActiveInstances,TaskDatafactoryIr,TaskMasterJson,ActiveYn,DependencyChainTag,DataFactoryId")] TaskMaster taskMaster)
         {
             if (id != taskMaster.TaskMasterId)
@@ -125,6 +135,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(taskMaster);
+
+                    if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -149,6 +163,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskMaster/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -164,19 +179,25 @@ namespace WebApplication.Controllers
                 .Include(t => t.TaskType)
                 .FirstOrDefaultAsync(m => m.TaskMasterId == id);
             if (taskMaster == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                return new ForbidResult();
 
             return View(taskMaster);
         }
 
         // POST: TaskMaster/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var taskMaster = await _context.TaskMaster.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                return new ForbidResult();
+		
             _context.TaskMaster.Remove(taskMaster);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));
