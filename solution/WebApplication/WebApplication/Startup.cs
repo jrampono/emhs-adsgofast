@@ -14,6 +14,7 @@ using WebApplication.Models;
 using WebApplication.Models.Options;
 using WebApplication.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using WebApplication.Framework;
 
 namespace WebApplication
 {
@@ -30,6 +31,8 @@ namespace WebApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
+
             Helpers.AzureSDK azureSDK = new Helpers.AzureSDK(System.Convert.ToBoolean(Configuration["UseMSI"]), Configuration["AZURE_CLIENT_ID"], Configuration["AZURE_CLIENT_SECRET"], Configuration["AZURE_TENANT_ID"]);
 
             SqlConnectionStringBuilder _scsb = new SqlConnectionStringBuilder
@@ -37,6 +40,7 @@ namespace WebApplication
                 DataSource = Configuration["AdsGoFastTaskMetaDataDatabaseServer"],
                 InitialCatalog = Configuration["AdsGoFastTaskMetaDataDatabaseName"]
             };
+
             services.AddDbContext<AdsGoFastContext>(options =>
             {
                 SqlConnection _con = new SqlConnection(_scsb.ConnectionString);
@@ -44,26 +48,26 @@ namespace WebApplication
                 _con.AccessToken = _token;
                 options.UseSqlServer(_con);
             });
-                
 
             services.Configure<SecurityModelOptions>(Configuration.GetSection("SecurityModelOptions"));
 
             services.AddSingleton<AppInsightsContext>(new AppInsightsContext(azureSDK, Configuration["AppInsightsWorkspaceId"]));
             services.AddSingleton<AdsGoFastDapperContext>(new AdsGoFastDapperContext(azureSDK, Configuration["AdsGoFastTaskMetaDataDatabaseServer"], Configuration["AdsGoFastTaskMetaDataDatabaseName"]));
             services.AddSingleton<SecurityAccessProvider>();
-            services.AddSingleton<IAuthorizationHandler, PermissionAssignedHandler>();
 
+            services.AddSingleton<IAuthorizationHandler, PermissionAssignedHandler>();
+            services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
             services.AddControllersWithViews(opt =>
                     {
                         opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
                     })
                     .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
 
+
             services.AddRazorPages();
 
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
-            services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme,
-            options => options.AccessDeniedPath = "/Dashboard");
+            services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options => options.AccessDeniedPath = "/Home/AccessDenied");
 
             services.AddAuthorization(options =>
             {
@@ -76,6 +80,7 @@ namespace WebApplication
                             .RequireAuthenticatedUser()
                             .Build();
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

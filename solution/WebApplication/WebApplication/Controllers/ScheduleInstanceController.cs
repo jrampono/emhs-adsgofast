@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public ScheduleInstanceController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public ScheduleInstanceController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "ScheduleInstance";
             _context = context;
@@ -31,6 +31,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: ScheduleInstance/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -42,9 +43,10 @@ namespace WebApplication.Controllers
                 .Include(s => s.ScheduleMaster)
                 .FirstOrDefaultAsync(m => m.ScheduleInstanceId == id);
             if (scheduleInstance == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(scheduleInstance))
+                return new ForbidResult();
+
 
             return View(scheduleInstance);
         }
@@ -63,11 +65,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("ScheduleInstanceId,ScheduleMasterId,ScheduledDateUtc,ScheduledDateTimeOffset,ActiveYn")] ScheduleInstance scheduleInstance)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(scheduleInstance);
+                if (!await CanPerformCurrentActionOnRecord(scheduleInstance))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -76,6 +83,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: ScheduleInstance/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -85,9 +93,10 @@ namespace WebApplication.Controllers
 
             var scheduleInstance = await _context.ScheduleInstance.FindAsync(id);
             if (scheduleInstance == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(scheduleInstance))
+                return new ForbidResult();
         ViewData["ScheduleMasterId"] = new SelectList(_context.ScheduleMaster.OrderBy(x=>x.ScheduleDesciption), "ScheduleMasterId", "ScheduleDesciption", scheduleInstance.ScheduleMasterId);
             return View(scheduleInstance);
         }
@@ -97,6 +106,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(long id, [Bind("ScheduleInstanceId,ScheduleMasterId,ScheduledDateUtc,ScheduledDateTimeOffset,ActiveYn")] ScheduleInstance scheduleInstance)
         {
             if (id != scheduleInstance.ScheduleInstanceId)
@@ -109,6 +119,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(scheduleInstance);
+
+                    if (!await CanPerformCurrentActionOnRecord(scheduleInstance))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -129,6 +143,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: ScheduleInstance/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -140,19 +155,25 @@ namespace WebApplication.Controllers
                 .Include(s => s.ScheduleMaster)
                 .FirstOrDefaultAsync(m => m.ScheduleInstanceId == id);
             if (scheduleInstance == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(scheduleInstance))
+                return new ForbidResult();
 
             return View(scheduleInstance);
         }
 
         // POST: ScheduleInstance/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var scheduleInstance = await _context.ScheduleInstance.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(scheduleInstance))
+                return new ForbidResult();
+		
             _context.ScheduleInstance.Remove(scheduleInstance);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));

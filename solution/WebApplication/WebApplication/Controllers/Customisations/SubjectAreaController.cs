@@ -2,19 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient.DataClassification;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using WebApplication.Framework;
 using WebApplication.Models;
+using WebApplication.Services;
 
 namespace WebApplication.Controllers
 {
     public partial class SubjectAreaController : BaseController
     {
+        [ChecksUserAccess]
         public async Task<IActionResult> IndexDataTable()
         {
             return View();
@@ -47,23 +52,25 @@ namespace WebApplication.Controllers
             GridOptions["ModelName"] = "SubjectArea";
             GridOptions["PrimaryKeyColumns"] = pkeycols;
             GridOptions["Navigations"] = Navigations;
-            GridOptions["CrudButtons"] = GetSecurityFilteredActions("Create,Edit,Details,Delete");
+            //GridOptions["CrudButtons"] = GetSecurityFilteredActions("Create,Edit,Details,Delete");
+            GridOptions["CrudButtons"] = new JArray("Create", "Edit", "Details", "Delete");
 
             return GridOptions;
 
 
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridOptions()
         {
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridData()
         {
             try
             {
-
                 string draw = Request.Form["draw"];
                 string start = Request.Form["start"];
                 string length = Request.Form["length"];
@@ -79,6 +86,24 @@ namespace WebApplication.Controllers
                 // Getting all Customer data    
                 var modelDataAll = (from temptable in _context.SubjectArea
                                     select temptable);
+
+                //filter the list by permitted roles
+                if (!CanPerformCurrentActionGlobally())
+                {
+                    var permittedRoles = GetPermittedGroupsForCurrentAction();
+                    var identity = User.Identity.Name;
+
+                    modelDataAll =
+                        (from md in modelDataAll
+                         join rm in _context.SubjectAreaRoleMap
+                             on md.SubjectAreaId equals rm.SubjectAreaId
+                         where
+                            GetUserAdGroupUids().Contains(rm.AadGroupUid)
+                            && permittedRoles.Contains(rm.ApplicationRoleName)
+                            && rm.ExpiryDate > DateTimeOffset.Now
+                            && rm.ActiveYn
+                         select md).Distinct();
+                }
 
                 //Sorting    
                 if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
@@ -105,7 +130,6 @@ namespace WebApplication.Controllers
             }
 
         }
-
     }
 }
 

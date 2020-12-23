@@ -2,22 +2,23 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApplication.Services;
 
-namespace WebApplication.Services
+namespace WebApplication.Framework
 {
-    public class PermissionAssignedHandler : AuthorizationHandler<PermissionAssignedViaRole>
+    public class PermissionAssignedViaRoleHandler : AuthorizationHandler<PermissionAssignedViaRole>
     {
         private readonly SecurityAccessProvider _provider;
-        
-        public PermissionAssignedHandler(SecurityAccessProvider provider)
+
+        public PermissionAssignedViaRoleHandler(SecurityAccessProvider provider)
         {
             _provider = provider;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-                                               PermissionAssignedViaRole requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionAssignedViaRole requirement)
         {
             if (context.Resource is Endpoint endpoint)
             {
@@ -27,9 +28,16 @@ namespace WebApplication.Services
                 {
                     context.Succeed(requirement);
                 }
+
+                //method declares that it checks security itself
+                if (actionDescriptor.MethodInfo.GetCustomAttribute<ChecksUserAccessAttribute>(inherit: true) != null)
+                {
+                    context.Succeed(requirement);
+                }
             }
 
             return Task.CompletedTask;
         }
+
     }
 }

@@ -16,8 +16,6 @@ namespace WebApplication.Controllers
 {
     public partial class SourceAndTargetSystemsJsonSchemaController : BaseController
     {
-
-
         public async Task<IActionResult> IndexDataTable()
         {
             return View();
