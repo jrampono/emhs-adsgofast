@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="~/lib/datatables.net/buttons.bootstrap4.min.css" />
     <link rel="stylesheet" href="~/lib/datatables.net/select.bootstrap4.min.css" />
     <link rel="stylesheet" href="~/lib/toastr.js/toastr.css" />
-    <link rel="icon" type="image/icon" href="~/favicon.ico"/>
+    <link rel="icon" type="image/icon" href="~/favicon.ico" />
 
 </head>
 <body>
@@ -133,6 +133,13 @@
 
 
                 </div>
+
+                <div class="helpIcon">
+                    <div>
+                        <i onclick="toggleHelpVisibility()"
+                           style="font-size: 40px;" class="far fa-question-circle"></i>
+                    </div>
+                </div>
                 
                 <a class="navbar-link">
                     <div>@User.Identity.Name</div>
@@ -140,11 +147,21 @@
             </div>
         </nav>
     </header>
-    <div class="container-fluid">
-        <main role="main" class="pb-3 content-container" style="margin-bottom:80px">
-            @RenderBody()
-        </main>
+    <div class="row">
+        <div id="mainBody" class="col-12">
+            <div class="container-fluid">
+                <main role="main" class="pb-3 content-container" style="margin-bottom:80px">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+        
+            <div id="helpSection" class="col-3 help-container dismiss">
+                @Html.Partial("_Help")
+            </div>        
+        
     </div>
+
 
     <footer class="border-top footer bg text-muted">
         <div class="container">
@@ -165,6 +182,7 @@
     <script src="~/lib/datatables.net/dataTables.select.min.js" asp-append-version="true"></script>
     <script src="~/lib/moment.js/moment-with-locales.min.js" asp-append-version="true"></script>
     <script src="~/lib/toastr.js/toastr.min.js" asp-append-version="true"></script>
+    <script src="~/js/helpSection.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
-        </html>
+</html>

@@ -18,7 +18,7 @@ namespace WebApplication.Controllers
     {
         private readonly AdsGoFastDapperContext _context;
 
-        public ReportsAndStatisticsController(AdsGoFastDapperContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public ReportsAndStatisticsController(AdsGoFastDapperContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleprovider) : base(securityAccessProvider, roleprovider)
         {
             _context = context;
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication.Models
-{ 
+{
 
     public partial class TaskMaster
     {
@@ -19,17 +19,5 @@ namespace WebApplication.Models
         public virtual SourceAndTargetSystems TargetSystem { get; set; }
 
 
-    }
-
-    public static partial class ModelEnums
-    {
-        public enum TaskStatus
-        {
-            Succeeded,
-            FailedRetry,
-            FailedNoRetry,
-            Untried,
-            InProgress
-        } 
     }
 }

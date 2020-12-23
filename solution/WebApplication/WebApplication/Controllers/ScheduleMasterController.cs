@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public ScheduleMasterController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public ScheduleMasterController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "ScheduleMaster";
             _context = context;
@@ -30,6 +30,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: ScheduleMaster/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -40,9 +41,10 @@ namespace WebApplication.Controllers
             var scheduleMaster = await _context.ScheduleMaster
                 .FirstOrDefaultAsync(m => m.ScheduleMasterId == id);
             if (scheduleMaster == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(scheduleMaster))
+                return new ForbidResult();
+
 
             return View(scheduleMaster);
         }
@@ -60,11 +62,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("ScheduleMasterId,ScheduleDesciption,ScheduleCronExpression,ActiveYn")] ScheduleMaster scheduleMaster)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(scheduleMaster);
+                if (!await CanPerformCurrentActionOnRecord(scheduleMaster))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -72,6 +79,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: ScheduleMaster/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -81,9 +89,10 @@ namespace WebApplication.Controllers
 
             var scheduleMaster = await _context.ScheduleMaster.FindAsync(id);
             if (scheduleMaster == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(scheduleMaster))
+                return new ForbidResult();
             return View(scheduleMaster);
         }
 
@@ -92,6 +101,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(long id, [Bind("ScheduleMasterId,ScheduleDesciption,ScheduleCronExpression,ActiveYn")] ScheduleMaster scheduleMaster)
         {
             if (id != scheduleMaster.ScheduleMasterId)
@@ -104,6 +114,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(scheduleMaster);
+
+                    if (!await CanPerformCurrentActionOnRecord(scheduleMaster))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -123,6 +137,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: ScheduleMaster/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -133,19 +148,25 @@ namespace WebApplication.Controllers
             var scheduleMaster = await _context.ScheduleMaster
                 .FirstOrDefaultAsync(m => m.ScheduleMasterId == id);
             if (scheduleMaster == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(scheduleMaster))
+                return new ForbidResult();
 
             return View(scheduleMaster);
         }
 
         // POST: ScheduleMaster/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var scheduleMaster = await _context.ScheduleMaster.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(scheduleMaster))
+                return new ForbidResult();
+		
             _context.ScheduleMaster.Remove(scheduleMaster);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));

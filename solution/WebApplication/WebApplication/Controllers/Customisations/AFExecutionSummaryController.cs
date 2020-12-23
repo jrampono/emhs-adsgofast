@@ -16,7 +16,7 @@ namespace WebApplication.Controllers
     public class AFExecutionSummaryController : BaseController
     {
         private readonly AppInsightsContext _context;
-        public AFExecutionSummaryController(AppInsightsContext context, SecurityAccessProvider securityAccess) :  base(securityAccess)
+        public AFExecutionSummaryController(AppInsightsContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleprovider) : base(securityAccessProvider, roleprovider)
         {
             _context = context;
         }

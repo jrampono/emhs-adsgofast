@@ -6,7 +6,7 @@ namespace WebApplication
     {
         public PermissionAssignedViaRole()
         {
-            
+
         }
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebApplication.Controllers.Customisations;
+using WebApplication.Framework;
 using WebApplication.Models;
 using WebApplication.Services;
 
@@ -19,6 +20,7 @@ namespace WebApplication.Controllers
 {
     public partial class TaskMasterController : BaseController
     {
+        [ChecksUserAccess]
         public async Task<IActionResult> IndexDataTable()
         {
             var adsGoFastContext = _context.TaskMaster.Take(1);
@@ -59,11 +61,13 @@ namespace WebApplication.Controllers
         }
 
 
+        [ChecksUserAccess]
         public ActionResult GetGridOptions()
         {
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridData()
         {
             try
@@ -85,6 +89,28 @@ namespace WebApplication.Controllers
                 // Getting all Customer data    
                 var modelDataAll = (from temptable in _context.TaskMaster
                                     select temptable);
+
+                //filter the list by permitted roles
+                if (!CanPerformCurrentActionGlobally())
+                {
+                    var permittedRoles = GetPermittedGroupsForCurrentAction();
+                    var identity = User.Identity.Name;
+
+                    modelDataAll =
+                        (from md in modelDataAll
+                         join tg in _context.TaskGroup
+                            on md.TaskGroupId equals tg.TaskGroupId
+                         join rm in _context.SubjectAreaRoleMap
+                            on tg.SubjectAreaId equals rm.SubjectAreaId
+                         where
+                             GetUserAdGroupUids().Contains(rm.AadGroupUid)
+                             && permittedRoles.Contains(rm.ApplicationRoleName)
+                             && rm.ExpiryDate > DateTimeOffset.Now
+                             && rm.ActiveYn
+                         select md).Distinct();
+                }
+
+
 
                 //Sorting    
                 if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
@@ -152,39 +178,48 @@ namespace WebApplication.Controllers
         }
 
 
-        public ActionResult CopyTaskMaster()
+        [ChecksUserAccess]
+        public async Task<IActionResult> CopyTaskMaster()
         {
             List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
-            var entitys = _context.TaskMaster.Where(ti => Pkeys.Contains(ti.TaskMasterId)).AsNoTracking();
+            var entitys = await _context.TaskMaster.Where(ti => Pkeys.Contains(ti.TaskMasterId)).AsNoTracking().ToArrayAsync();
 
-            entitys.ForEachAsync(tm =>
+            foreach (var tm in entitys)
             {
+                if (!await CanPerformCurrentActionOnRecord(tm))
+                    return Forbid();
+
                 tm.TaskMasterId = 0;
                 tm.TaskMasterName = tm.TaskMasterName + " Copy";
                 _context.Add(tm);
-            }).Wait();
+            }
             _context.SaveChanges();
 
             //TODO: Add Error Handling
             return new OkObjectResult(new { });
         }
 
-        public ActionResult UpdateTaskMasterActiveYN()
+        [ChecksUserAccess]
+        public async Task<IActionResult> UpdateTaskMasterActiveYN()
         {
             List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
             bool Status = JsonConvert.DeserializeObject<bool>(Request.Form["Status"]);
-            var entitys = _context.TaskMaster.Where(ti => Pkeys.Contains(ti.TaskMasterId));
+            var entitys = await _context.TaskMaster.Where(ti => Pkeys.Contains(ti.TaskMasterId)).ToArrayAsync();
 
-            entitys.ForEachAsync(ti =>
+            foreach (var ti in entitys)
             {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+
                 ti.ActiveYn = Status;
-            }).Wait();
+            }
             _context.SaveChanges();
 
             //TODO: Add Error Handling
             return new OkObjectResult(new { });
         }
 
+        [ChecksUserAccess]
         public async Task<IActionResult> EditPlus(long? id)
         {
             if (id == null)
@@ -193,10 +228,13 @@ namespace WebApplication.Controllers
             }
 
             var taskMaster = await _context.TaskMaster.FindAsync(id);
+
             if (taskMaster == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                return Forbid();
+
             ViewData["TaskGroupId"] = new SelectList(_context.TaskGroup.OrderBy(x=>x.TaskGroupName), "TaskGroupId", "TaskGroupName", taskMaster.TaskGroupId);
             ViewData["TaskTypeId"] = new SelectList(_context.TaskType, "TaskTypeId", "TaskTypeName", taskMaster.TaskTypeId);
             ViewData["SourceSystemId"] = new SelectList(_context.SourceAndTargetSystems.OrderBy(t => t.SystemName), "SystemId", "SystemName", taskMaster.SourceSystemId);
@@ -207,12 +245,14 @@ namespace WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> EditPlus(long id, [Bind("TaskMasterId,TaskMasterName,TaskTypeId,TaskGroupId,ScheduleMasterId,SourceSystemId,TargetSystemId,DegreeOfCopyParallelism,AllowMultipleActiveInstances,TaskDatafactoryIr,TaskMasterJson,ActiveYn,DependencyChainTag,DataFactoryId")] TaskMaster taskMaster)
         {
             if (id != taskMaster.TaskMasterId)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                return Forbid();
 
             if (ModelState.IsValid)
             {

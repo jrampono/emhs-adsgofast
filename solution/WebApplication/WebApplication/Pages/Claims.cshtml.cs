@@ -7,25 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using WebApplication.Models.Options;
+using WebApplication.Services;
 
 namespace WebApplication.Pages
 {
     public class ClaimsModel : PageModel
     {
-        public IEnumerable<SecurityRole> Roles { get; set; }
+        public IList<string> Roles { get; set; }
+        protected ISecurityAccessProvider SecProvider { get; }
+
+        public ClaimsModel(ISecurityAccessProvider secProvider)
+        {
+            SecProvider = secProvider;
+        }
+
         public void OnGet()
         {
-            var configBuilder = new ConfigurationBuilder();
-            configBuilder.AddJsonFile("appSettings.json");
-            var config = configBuilder.Build();
-            var optionsModel = ConfigurationBinder.Get<SecurityModelOptions>(config.GetSection("SecurityModelOptions"));
-            var options = Options.Create(optionsModel);
-            var UserClaims = HttpContext.User.Claims;            
-            var groups = UserClaims.Where(x => x.Type == "groups").Select(v => v.Value);
-            Roles = options.Value.SecurityRoles.Where(x => groups.Any(a => a == x.SecurityGroupId));
-
-        
+            Roles = SecProvider.GetUserGlobalRoles(HttpContext.User.Identity as ClaimsIdentity);
         }
     }
 }

@@ -738,12 +738,15 @@ namespace WebApplication.Models
                 
             });
 
-
             OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
         public DbSet<WebApplication.Models.SubjectArea> SubjectArea { get; set; }
+
+        public DbSet<WebApplication.Models.SubjectAreaForm> SubjectAreaForm { get; set; }
+        public DbSet<WebApplication.Models.SubjectAreaRoleMap> SubjectAreaRoleMap { get; set; }
+
     }
 }

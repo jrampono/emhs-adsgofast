@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public TaskTypeMappingController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public TaskTypeMappingController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "TaskTypeMapping";
             _context = context;
@@ -31,6 +31,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskTypeMapping/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,9 +43,10 @@ namespace WebApplication.Controllers
                 .Include(t => t.TaskType)
                 .FirstOrDefaultAsync(m => m.TaskTypeMappingId == id);
             if (taskTypeMapping == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(taskTypeMapping))
+                return new ForbidResult();
+
 
             return View(taskTypeMapping);
         }
@@ -63,11 +65,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("TaskTypeMappingId,TaskTypeId,MappingType,MappingName,SourceSystemType,SourceType,TargetSystemType,TargetType,TaskDatafactoryIr,TaskTypeJson,ActiveYn,TaskMasterJsonSchema,TaskInstanceJsonSchema")] TaskTypeMapping taskTypeMapping)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(taskTypeMapping);
+                if (!await CanPerformCurrentActionOnRecord(taskTypeMapping))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -76,6 +83,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskTypeMapping/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,9 +93,10 @@ namespace WebApplication.Controllers
 
             var taskTypeMapping = await _context.TaskTypeMapping.FindAsync(id);
             if (taskTypeMapping == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(taskTypeMapping))
+                return new ForbidResult();
         ViewData["TaskTypeId"] = new SelectList(_context.TaskType.OrderBy(x=>x.TaskTypeName), "TaskTypeId", "TaskTypeName", taskTypeMapping.TaskTypeId);
             return View(taskTypeMapping);
         }
@@ -97,6 +106,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(int id, [Bind("TaskTypeMappingId,TaskTypeId,MappingType,MappingName,SourceSystemType,SourceType,TargetSystemType,TargetType,TaskDatafactoryIr,TaskTypeJson,ActiveYn,TaskMasterJsonSchema,TaskInstanceJsonSchema")] TaskTypeMapping taskTypeMapping)
         {
             if (id != taskTypeMapping.TaskTypeMappingId)
@@ -109,6 +119,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(taskTypeMapping);
+
+                    if (!await CanPerformCurrentActionOnRecord(taskTypeMapping))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -129,6 +143,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskTypeMapping/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -140,19 +155,25 @@ namespace WebApplication.Controllers
                 .Include(t => t.TaskType)
                 .FirstOrDefaultAsync(m => m.TaskTypeMappingId == id);
             if (taskTypeMapping == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(taskTypeMapping))
+                return new ForbidResult();
 
             return View(taskTypeMapping);
         }
 
         // POST: TaskTypeMapping/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var taskTypeMapping = await _context.TaskTypeMapping.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(taskTypeMapping))
+                return new ForbidResult();
+		
             _context.TaskTypeMapping.Remove(taskTypeMapping);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));

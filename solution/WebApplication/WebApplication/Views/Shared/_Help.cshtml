@@ -1,0 +1,28 @@
+﻿@using Markdig
+
+
+@if (!string.IsNullOrEmpty(ViewBag.Helplink))
+{
+    <div class="card bg-light mb-3" id="sidebar-wrapper">
+        <div class="card-header"> Help </div>
+        <div class="card-body">
+            
+            @{
+                string markdownText;
+
+                if (System.IO.File.Exists(ViewBag.Helplink))
+                {
+                    markdownText = System.IO.File.ReadAllText(ViewBag.Helplink);
+                }
+                else
+                {
+                    markdownText = "No help file found";
+                }
+
+            }
+
+            @Html.Raw(Markdown.ToHtml(markdownText))
+
+        </div>
+    </div>
+}

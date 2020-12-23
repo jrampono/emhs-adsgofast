@@ -82,6 +82,7 @@ namespace WebApplication.Models
             modelBuilder.Entity<SubjectArea>(entity =>
             {
                 entity.HasOne<SubjectAreaForm>(tg => tg.SubjectAreaForm).WithMany(sa => sa.SubjectAreas).HasForeignKey(tg => tg.SubjectAreaFormId);
+                entity.HasMany<SubjectAreaRoleMap>(sa => sa.SubjectAreaRoleMaps).WithOne(rm => rm.SubjectArea).HasForeignKey(tg => tg.SubjectAreaId);
             });
 
 
@@ -118,6 +119,7 @@ namespace WebApplication.Models
                 entity.HasAnnotation("DisplayColumn", "Description");
                 entity.HasOne<TaskMaster>(ti => ti.TaskMaster).WithOne();
             });
+
         }
     }
 }

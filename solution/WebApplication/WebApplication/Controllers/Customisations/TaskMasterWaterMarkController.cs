@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -50,11 +51,13 @@ namespace WebApplication.Controllers
             return GridOptions;
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridOptions()
         {
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridData()
         {
             try
@@ -76,6 +79,28 @@ namespace WebApplication.Controllers
                 // Getting all Customer data    
                 var modelDataAll = (from temptable in _context.TaskMasterWaterMark
                                     select temptable);
+
+                //filter the list by permitted roles
+                if (!CanPerformCurrentActionGlobally())
+                {
+                    var permittedRoles = GetPermittedGroupsForCurrentAction();
+                    var identity = User.Identity.Name;
+
+                    modelDataAll =
+                        (from md in modelDataAll
+                         join tm in _context.TaskMaster
+                            on md.TaskMasterId equals tm.TaskMasterId
+                         join tg in _context.TaskGroup
+                            on tm.TaskGroupId equals tg.TaskGroupId
+                         join rm in _context.SubjectAreaRoleMap
+                            on tg.SubjectAreaId equals rm.SubjectAreaId
+                         where
+                             GetUserAdGroupUids().Contains(rm.AadGroupUid)
+                             && permittedRoles.Contains(rm.ApplicationRoleName)
+                             && rm.ExpiryDate > DateTimeOffset.Now
+                             && rm.ActiveYn
+                         select md).Distinct();
+                }
 
                 //Sorting    
                 if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
@@ -130,35 +155,39 @@ namespace WebApplication.Controllers
         }
 
 
-        public ActionResult UpdateTaskMasterActiveYN()
+        [ChecksUserAccess]
+        public async Task<IActionResult> UpdateTaskMasterActiveYN()
         {
             List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
             bool Status = JsonConvert.DeserializeObject<bool>(Request.Form["Status"]);
-            var entitys = _context.TaskMasterWaterMark.Where(ti => Pkeys.Contains(ti.TaskMasterId));
+            var entitys = await  _context.TaskMasterWaterMark.Where(ti => Pkeys.Contains(ti.TaskMasterId)).ToArrayAsync();
 
-            entitys.ForEachAsync(ti =>
+            foreach(var ti in entitys)
             {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+
                 ti.ActiveYn = Status;
-            }).Wait();
+            }
             _context.SaveChanges();
 
             //TODO: Add Error Handling
             return new OkObjectResult(new { });
         }
 
+        [ChecksUserAccess]
         public async Task<IActionResult> EditPlus(long? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var taskMaster = await _context.TaskMaster.FindAsync(id);
             if (taskMaster == null)
-            {
                 return NotFound();
-            }
-            
+
+            if (!await CanPerformCurrentActionOnRecord(taskMaster))
+                return Forbid();
+
             return View(taskMaster);
         }
     }

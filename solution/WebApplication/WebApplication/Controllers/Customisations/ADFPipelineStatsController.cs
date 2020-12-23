@@ -14,7 +14,7 @@ namespace WebApplication.Controllers
     public class ADFPipelineStatsController : BaseController
     {
         private readonly AdsGoFastContext _context;
-        public ADFPipelineStatsController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public ADFPipelineStatsController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleprovider) : base(securityAccessProvider, roleprovider)
         {
             _context = context;
         }

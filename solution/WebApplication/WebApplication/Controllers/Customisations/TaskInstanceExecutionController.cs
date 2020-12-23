@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SQLitePCL;
+using WebApplication.Framework;
 using WebApplication.Models;
 using WebApplication.Services;
 
@@ -18,11 +19,12 @@ namespace WebApplication.Controllers
     {
         private readonly AdsGoFastContext _context;
 
-        public TaskInstanceExecutionController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
-        {
+        public TaskInstanceExecutionController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleprovider) : base(securityAccessProvider, roleprovider)
+        { 
             _context = context;
         }
 
+        [ChecksUserAccess]
         public async Task<IActionResult> IndexDataTable()
         {
             var adsGoFastContext = _context.TaskInstanceExecution.Take(1);           
@@ -59,11 +61,13 @@ namespace WebApplication.Controllers
             return GridOptions;
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridOptions()
         {                 
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
+        [ChecksUserAccess]
         public ActionResult GetGridData()
         {
             try
@@ -85,6 +89,31 @@ namespace WebApplication.Controllers
                 // Getting all Customer data    
                 var modelDataAll = (from temptable in _context.TaskInstanceExecution
                                     select temptable);
+
+                //filter the list by permitted roles
+                if (!CanPerformCurrentActionGlobally())
+                {
+                    var permittedRoles = GetPermittedGroupsForCurrentAction();
+                    var identity = User.Identity.Name;
+
+                    modelDataAll =
+                        (from md in modelDataAll
+                         join ti in _context.TaskInstance
+                            on md.TaskInstanceId equals ti.TaskInstanceId
+                         join tm in _context.TaskMaster
+                            on ti.TaskMasterId equals tm.TaskMasterId
+                         join tg in _context.TaskGroup
+                            on tm.TaskGroupId equals tg.TaskGroupId
+                         join rm in _context.SubjectAreaRoleMap
+                            on tg.SubjectAreaId equals rm.SubjectAreaId
+                         where
+                             GetUserAdGroupUids().Contains(rm.AadGroupUid)
+                             && permittedRoles.Contains(rm.ApplicationRoleName)
+                             && rm.ExpiryDate > DateTimeOffset.Now
+                             && rm.ActiveYn
+                         select md).Distinct();
+                }
+
 
                 //Sorting    
                 if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
