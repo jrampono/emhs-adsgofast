@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public FrameworkTaskRunnerController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public FrameworkTaskRunnerController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "FrameworkTaskRunner";
             _context = context;
@@ -30,6 +30,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: FrameworkTaskRunner/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -40,9 +41,10 @@ namespace WebApplication.Controllers
             var frameworkTaskRunner = await _context.FrameworkTaskRunner
                 .FirstOrDefaultAsync(m => m.TaskRunnerId == id);
             if (frameworkTaskRunner == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(frameworkTaskRunner))
+                return new ForbidResult();
+
 
             return View(frameworkTaskRunner);
         }
@@ -60,11 +62,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("TaskRunnerId,TaskRunnerName,ActiveYn,Status,MaxConcurrentTasks")] FrameworkTaskRunner frameworkTaskRunner)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(frameworkTaskRunner);
+                if (!await CanPerformCurrentActionOnRecord(frameworkTaskRunner))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -72,6 +79,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: FrameworkTaskRunner/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,9 +89,10 @@ namespace WebApplication.Controllers
 
             var frameworkTaskRunner = await _context.FrameworkTaskRunner.FindAsync(id);
             if (frameworkTaskRunner == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(frameworkTaskRunner))
+                return new ForbidResult();
             return View(frameworkTaskRunner);
         }
 
@@ -92,6 +101,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(int id, [Bind("TaskRunnerId,TaskRunnerName,ActiveYn,Status,MaxConcurrentTasks")] FrameworkTaskRunner frameworkTaskRunner)
         {
             if (id != frameworkTaskRunner.TaskRunnerId)
@@ -104,6 +114,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(frameworkTaskRunner);
+
+                    if (!await CanPerformCurrentActionOnRecord(frameworkTaskRunner))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -123,6 +137,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: FrameworkTaskRunner/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,19 +148,25 @@ namespace WebApplication.Controllers
             var frameworkTaskRunner = await _context.FrameworkTaskRunner
                 .FirstOrDefaultAsync(m => m.TaskRunnerId == id);
             if (frameworkTaskRunner == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(frameworkTaskRunner))
+                return new ForbidResult();
 
             return View(frameworkTaskRunner);
         }
 
         // POST: FrameworkTaskRunner/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var frameworkTaskRunner = await _context.FrameworkTaskRunner.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(frameworkTaskRunner))
+                return new ForbidResult();
+		
             _context.FrameworkTaskRunner.Remove(frameworkTaskRunner);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -74,10 +75,31 @@ namespace WebApplication.Controllers
                 int skip = start != null ? Convert.ToInt32(start) : 0;
                 int recordsTotal = 0;
 
-                // Getting all Customer data    
+                // Getting all data    
                 var modelDataAll = (from temptable in _context.TaskInstance
                                     select temptable);
 
+                //filter the list by permitted roles
+                if (!CanPerformCurrentActionGlobally())
+                {
+                    var permittedRoles = GetPermittedGroupsForCurrentAction();
+                    var identity = User.Identity.Name;
+
+                    modelDataAll =
+                        (from md in modelDataAll
+                         join tm in _context.TaskMaster
+                            on md.TaskMasterId equals tm.TaskMasterId
+                         join tg in _context.TaskGroup
+                            on tm.TaskGroupId equals tg.TaskGroupId
+                         join rm in _context.SubjectAreaRoleMap
+                            on tg.SubjectAreaId equals rm.SubjectAreaId
+                         where
+                             GetUserAdGroupUids().Contains(rm.AadGroupUid)
+                             && permittedRoles.Contains(rm.ApplicationRoleName)
+                             && rm.ExpiryDate > DateTimeOffset.Now
+                             && rm.ActiveYn
+                         select md).Distinct();
+                }
 
 
                 //Sorting    
@@ -85,7 +107,7 @@ namespace WebApplication.Controllers
                 {
                     modelDataAll = modelDataAll.OrderBy(sortColumn + " " + sortColumnDir);
                 }
-                
+
 
 
                 //Search    
@@ -163,18 +185,22 @@ namespace WebApplication.Controllers
             }
         }
 
-        public ActionResult UpdateTaskInstanceStatus()
+        [ChecksUserAccess]
+        public async Task<ActionResult> UpdateTaskInstanceStatus()
         {
             List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
             string Status = Request.Form["Status"];
-            var entitys = _context.TaskInstance.Where(ti => Pkeys.Contains(ti.TaskInstanceId));            
-            entitys.ForEachAsync(ti => 
-                {
-                    ti.LastExecutionStatus = (TaskExecutionStatus)System.Enum.Parse(typeof(TaskExecutionStatus), Status);
-                    ti.LastExecutionComment = "Manually Updated Status to " + Status + " using WebApp";
-                    ti.NumberOfRetries = 0;
-                    if (Status != "InProgress") { ti.TaskRunnerId = null; }
-                }).Wait();
+            var entitys = await _context.TaskInstance.Where(ti => Pkeys.Contains(ti.TaskInstanceId)).ToListAsync();
+
+            foreach (var ti in entitys)
+            {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+                ti.LastExecutionStatus = (TaskExecutionStatus)System.Enum.Parse(typeof(TaskExecutionStatus), Status);
+                ti.LastExecutionComment = "Manually Updated Status to " + Status + " using WebApp";
+                ti.NumberOfRetries = 0;
+                if (Status != "InProgress") { ti.TaskRunnerId = null; }
+            }
             _context.SaveChanges();
 
             //TODO: Add Error Handling

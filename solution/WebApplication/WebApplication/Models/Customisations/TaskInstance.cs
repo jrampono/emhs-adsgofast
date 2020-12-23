@@ -12,13 +12,5 @@ namespace WebApplication.Models
 
         public string Description { get => $"{TaskMaster?.TaskMasterName} - {ScheduleInstance?.ScheduleInstanceId}"; }
     }
-    public enum TaskExecutionStatus
-    {
-        FailedNoRetry,
-        FailedRetry,
-        Complete,
-        InProgress,
-        Untried
-    }  
     
 }

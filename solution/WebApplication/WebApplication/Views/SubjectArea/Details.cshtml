@@ -12,6 +12,12 @@
     <h4> @("SubjectArea".Humanize(LetterCasing.Title))</h4>
     <hr />
     <dl class="row">
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.SubjectAreaForm)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.SubjectAreaForm.SubjectAreaFormId)
+            </dd>
                 <dt class = "col-sm-2">
                     @Html.DisplayNameFor(model => model.SubjectAreaName)
                 </dt>
@@ -23,12 +29,6 @@
                 </dt>
                 <dd class = "col-sm-10">
                     @Html.DisplayFor(model => model.ActiveYn)
-                </dd>               
-                <dt class = "col-sm-2">
-                    @Html.DisplayNameFor(model => model.SubjectAreaFormId)
-                </dt>
-                <dd class = "col-sm-10">
-                    @Html.DisplayFor(model => model.SubjectAreaFormId)
                 </dd>               
                 <dt class = "col-sm-2">
                     @Html.DisplayNameFor(model => model.DefaultTargetSchema)

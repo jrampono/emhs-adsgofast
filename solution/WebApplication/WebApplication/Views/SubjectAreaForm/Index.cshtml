@@ -1,0 +1,68 @@
+﻿@using Humanizer;
+@model IEnumerable<WebApplication.Models.SubjectAreaForm>
+
+@{
+    ViewData["Title"] = "Index - " + "WebApplication.Models.SubjectAreaForm".Pluralize().Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1> @("WebApplication.Models.SubjectAreaForm".Pluralize().Humanize(LetterCasing.Title))</h1>
+
+<p>
+    <a class="btn-sm btn-dark details" asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubjectAreaFormId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FormStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValidFrom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValidTo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Revision)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SubjectAreaFormId" class="btn-sm btn-warning details" title="Edit"><i class="fa fa-pencil-square-o"></i></a> |
+                    <a asp-action="Details" asp-route-id="@item.SubjectAreaFormId" class="btn-sm btn-info details" title="Details"><i class="fa fa-list-alt" aria-hidden="true"></i></a> |
+                    <a asp-action="Delete" asp-route-id="@item.SubjectAreaFormId" class="btn-sm btn-danger details" title="Delete"><i class="fa fa-trash"></i></a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubjectAreaFormId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FormStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValidFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValidTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Revision)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

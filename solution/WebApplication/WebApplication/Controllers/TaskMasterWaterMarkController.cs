@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
-
+using WebApplication.Framework;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -17,7 +17,7 @@ namespace WebApplication.Controllers
         protected readonly AdsGoFastContext _context;
         
 
-        public TaskMasterWaterMarkController(AdsGoFastContext context, SecurityAccessProvider securityAccessProvider) : base(securityAccessProvider)
+        public TaskMasterWaterMarkController(AdsGoFastContext context, ISecurityAccessProvider securityAccessProvider, IEntityRoleProvider roleProvider) : base(securityAccessProvider, roleProvider)
         {
             Name = "TaskMasterWaterMark";
             _context = context;
@@ -31,6 +31,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskMasterWaterMark/Details/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -42,9 +43,10 @@ namespace WebApplication.Controllers
                 .Include(t => t.TaskMaster)
                 .FirstOrDefaultAsync(m => m.TaskMasterId == id);
             if (taskMasterWaterMark == null)
-            {
                 return NotFound();
-            }
+            if (!await CanPerformCurrentActionOnRecord(taskMasterWaterMark))
+                return new ForbidResult();
+
 
             return View(taskMasterWaterMark);
         }
@@ -63,11 +65,16 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Create([Bind("TaskMasterId,TaskMasterWaterMarkColumn,TaskMasterWaterMarkColumnType,TaskMasterWaterMarkDateTime,TaskMasterWaterMarkBigInt,TaskWaterMarkJson,ActiveYn,UpdatedOn")] TaskMasterWaterMark taskMasterWaterMark)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(taskMasterWaterMark);
+                if (!await CanPerformCurrentActionOnRecord(taskMasterWaterMark))
+                {
+                    return new ForbidResult();
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexDataTable));
             }
@@ -76,6 +83,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskMasterWaterMark/Edit/5
+        [ChecksUserAccess()]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -85,9 +93,10 @@ namespace WebApplication.Controllers
 
             var taskMasterWaterMark = await _context.TaskMasterWaterMark.FindAsync(id);
             if (taskMasterWaterMark == null)
-            {
                 return NotFound();
-            }
+
+            if (!await CanPerformCurrentActionOnRecord(taskMasterWaterMark))
+                return new ForbidResult();
         ViewData["TaskMasterId"] = new SelectList(_context.TaskMaster.OrderBy(x=>x.TaskMasterName), "TaskMasterId", "TaskMasterName", taskMasterWaterMark.TaskMasterId);
             return View(taskMasterWaterMark);
         }
@@ -97,6 +106,7 @@ namespace WebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ChecksUserAccess]
         public async Task<IActionResult> Edit(long id, [Bind("TaskMasterId,TaskMasterWaterMarkColumn,TaskMasterWaterMarkColumnType,TaskMasterWaterMarkDateTime,TaskMasterWaterMarkBigInt,TaskWaterMarkJson,ActiveYn,UpdatedOn")] TaskMasterWaterMark taskMasterWaterMark)
         {
             if (id != taskMasterWaterMark.TaskMasterId)
@@ -109,6 +119,10 @@ namespace WebApplication.Controllers
                 try
                 {
                     _context.Update(taskMasterWaterMark);
+
+                    if (!await CanPerformCurrentActionOnRecord(taskMasterWaterMark))
+                        return new ForbidResult();
+			
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -129,6 +143,7 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskMasterWaterMark/Delete/5
+        [ChecksUserAccess]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -140,19 +155,25 @@ namespace WebApplication.Controllers
                 .Include(t => t.TaskMaster)
                 .FirstOrDefaultAsync(m => m.TaskMasterId == id);
             if (taskMasterWaterMark == null)
-            {
                 return NotFound();
-            }
+		
+            if (!await CanPerformCurrentActionOnRecord(taskMasterWaterMark))
+                return new ForbidResult();
 
             return View(taskMasterWaterMark);
         }
 
         // POST: TaskMasterWaterMark/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ChecksUserAccess()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var taskMasterWaterMark = await _context.TaskMasterWaterMark.FindAsync(id);
+
+            if (!await CanPerformCurrentActionOnRecord(taskMasterWaterMark))
+                return new ForbidResult();
+		
             _context.TaskMasterWaterMark.Remove(taskMasterWaterMark);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(IndexDataTable));
