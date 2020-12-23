@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using WebApplication.Extensions;
-using WebApplication.Models.Options;
 using WebApplication.Services;
 
 namespace WebApplication.Pages
@@ -25,7 +23,6 @@ namespace WebApplication.Pages
 
         public void OnGet()
         {
-            var userClaims = HttpContext.User.Claims;            
             Roles = SecProvider.GetUserGlobalRoles(HttpContext.User.Identity as ClaimsIdentity);
         }
     }

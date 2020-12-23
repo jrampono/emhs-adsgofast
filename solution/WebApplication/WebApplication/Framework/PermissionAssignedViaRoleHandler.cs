@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApplication.Services;
@@ -24,6 +25,12 @@ namespace WebApplication.Framework
                 var actionDescriptor = endpoint.Metadata.GetMetadata<ControllerActionDescriptor>();
 
                 if (_provider.CanPerformOperation(actionDescriptor.ControllerName, actionDescriptor.ActionName, ((ClaimsIdentity)context.User.Identity)))
+                {
+                    context.Succeed(requirement);
+                }
+
+                //method declares that it checks security itself
+                if (actionDescriptor.MethodInfo.GetCustomAttribute<ChecksUserAccessAttribute>(inherit: true) != null)
                 {
                     context.Succeed(requirement);
                 }

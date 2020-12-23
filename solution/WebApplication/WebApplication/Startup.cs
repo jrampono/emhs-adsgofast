@@ -58,13 +58,9 @@ namespace WebApplication
             services.AddTransient<ISecurityAccessProvider>(services => services.GetService<SecurityAccessProvider>());
             services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
             services.AddSingleton<IAuthorizationHandler, PermissionAssignedViaRoleHandler>();
-            services.AddScoped<IAuthorizationHandler, PermissionAssignedViaControllerActionHandler>();
 
-            services.AddControllersWithViews(opt =>
-                {
-                    opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
-                })
-                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
+            services.AddControllersWithViews()
+                    .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
             
             services.AddRazorPages();
 
