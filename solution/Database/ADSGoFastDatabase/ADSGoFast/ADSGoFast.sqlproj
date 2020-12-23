@@ -128,7 +128,6 @@
     <Build Include="WebApp\Views\TaskMasterStats.sql" />
     <Build Include="WebApp\Views\TaskGroupStats.sql" />
     <Build Include="WebApp\Functions\GetTaskStats.sql" />
-    <Build Include="dbo\Stored Procedures\usp_StagingTable_Load.sql" />
     <Build Include="Security\WebApp.sql" />
   </ItemGroup>
   <ItemGroup>
