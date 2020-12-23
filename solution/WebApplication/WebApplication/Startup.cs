@@ -54,14 +54,16 @@ namespace WebApplication
             services.AddSingleton<AppInsightsContext>(new AppInsightsContext(azureSDK, Configuration["AppInsightsWorkspaceId"]));
             services.AddSingleton<AdsGoFastDapperContext>(new AdsGoFastDapperContext(azureSDK, Configuration["AdsGoFastTaskMetaDataDatabaseServer"], Configuration["AdsGoFastTaskMetaDataDatabaseName"]));
             services.AddSingleton<SecurityAccessProvider>();
-            //todo: remove the concrete reference from the scaffolding upstream and register the singleton witht he interface.
-            services.AddTransient<ISecurityAccessProvider>(services => services.GetService<SecurityAccessProvider>());
-            services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
-            services.AddSingleton<IAuthorizationHandler, PermissionAssignedViaRoleHandler>();
 
-            services.AddControllersWithViews()
+            services.AddSingleton<IAuthorizationHandler, PermissionAssignedHandler>();
+            services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
+            services.AddControllersWithViews(opt =>
+                    {
+                        opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
+                    })
                     .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
-            
+
+
             services.AddRazorPages();
 
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
