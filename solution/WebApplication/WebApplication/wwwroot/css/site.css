@@ -6,10 +6,10 @@ for details on configuring this project to bundle and minify static web assets. 
 ----------------------------------------------------- */
 
 #sidebar {
-    width: 250px;
+    width: 350px;
     position: fixed;
     top: 0;
-    left: -250px;
+    left: -350px;
     height: 100vh;
     z-index: 999;        
     transition: all 0.3s;
@@ -84,13 +84,15 @@ for details on configuring this project to bundle and minify static web assets. 
 #sidebar ul li.active > a,
 a[aria-expanded="true"] {
     color: #fff;
-    background: #6d7fcc;
+    background: rgba(0, 0, 0, 0.2);
 }
 
+#sidebar ul li.active > a,
 a[data-toggle="collapse"] {
     position: relative;
 }
 
+#sidebar ul li.active > a,
 .dropdown-toggle::after {
     display: block;
     position: absolute;
@@ -99,16 +101,19 @@ a[data-toggle="collapse"] {
     transform: translateY(-50%);
 }
 
+#sidebar ul li.active > a,
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
     background: #6d7fcc;
 }
 
+#sidebar ul li.active > a,
 ul.CTAs {
     padding: 20px;
 }
 
+    #sidebar ul li.active > a,
     ul.CTAs a {
         text-align: center;
         font-size: 0.9em !important;
