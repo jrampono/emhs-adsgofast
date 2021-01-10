@@ -1,7 +1,4 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using WebApplication.Models;
 
 namespace WebApplication.Models
 {

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
 using WebApplication.Framework;
@@ -174,6 +170,11 @@ namespace WebApplication.Controllers
         private bool SubjectAreaFormExists(int id)
         {
             return _context.SubjectAreaForm.Any(e => e.SubjectAreaFormId == id);
+        }
+        public async Task<IActionResult> IndexDataTable()
+        {
+            //note - this is just here so that we don't ahve to re-scaffold
+            return RedirectToAction(nameof(Index));
         }
     }
 }

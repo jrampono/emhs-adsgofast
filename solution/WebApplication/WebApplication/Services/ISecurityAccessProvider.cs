@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using WebApplication.Models.Options;
 
 namespace WebApplication.Services
 {

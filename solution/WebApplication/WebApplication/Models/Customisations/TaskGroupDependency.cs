@@ -1,6 +1,4 @@
-﻿using static WebApplication.Models.ModelEnums;
-
-namespace WebApplication.Models
+﻿namespace WebApplication.Models
 {
 
     public partial class TaskGroupDependency

@@ -1,10 +1,5 @@
 ﻿using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApplication.Helpers
 {
