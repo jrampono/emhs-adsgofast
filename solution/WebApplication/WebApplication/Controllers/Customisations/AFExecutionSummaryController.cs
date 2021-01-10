@@ -61,7 +61,7 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -76,7 +76,7 @@ namespace WebApplication.Controllers
                 int recordsTotal = 0;
 
                 // Getting all Customer data                    
-                JArray modelDataAll = _context.ExecuteQuery(@"
+                JArray modelDataAll = await _context.ExecuteQuery(@"
                 traces
                 | extend    Comment = tostring(customDimensions.prop__Comment),
                             ExecutionUid = toguid(customDimensions.prop__ExecutionUid),

@@ -11,9 +11,9 @@ namespace WebApplication.Framework
 {
     public class PermissionAssignedViaRoleHandler : AuthorizationHandler<PermissionAssignedViaRole>
     {
-        private readonly SecurityAccessProvider _provider;
+        private readonly ISecurityAccessProvider _provider;
 
-        public PermissionAssignedViaRoleHandler(SecurityAccessProvider provider)
+        public PermissionAssignedViaRoleHandler(ISecurityAccessProvider provider)
         {
             _provider = provider;
         }

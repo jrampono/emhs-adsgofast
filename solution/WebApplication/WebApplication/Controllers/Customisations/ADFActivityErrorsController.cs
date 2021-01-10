@@ -12,6 +12,7 @@ using WebApplication.Models;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Controllers.Customisations;
+using WebApplication.Services;
 
 namespace WebApplication.Controllers
 {
@@ -24,16 +25,15 @@ namespace WebApplication.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {
             return View();
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
-
                 string draw = Request.Form["draw"];
                 string start = Request.Form["start"];
                 string length = Request.Form["length"];
@@ -57,7 +57,7 @@ namespace WebApplication.Controllers
                     SqlParams.Add("@ExecutionUid", Guid.Parse(Request.Form["QueryParams[ExecutionUid]"].ToString().ToUpper()));
                 }
 
-                using var _con = _context.GetConnection();
+                using var _con = await _context.GetConnection();
                 var modelDataAll = (from row in _con.Query(@"
                     select 
 	                    a.ExecutionUid, 

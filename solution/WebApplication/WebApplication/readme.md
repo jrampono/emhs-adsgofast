@@ -2,21 +2,33 @@ AppSettings Required
 
 ```json
 {
-    "Logging": {
-      "LogLevel": {
-        "Default": "Information",
-        "Microsoft": "Warning",
-        "Microsoft.Hosting.Lifetime": "Information"
+  "AppInsightsWorkspaceId": "##APPLICATION_INSIGHTS_GUID_HERE##",
+  "AdsGoFastTaskMetaDataDatabaseName": "databasename",
+  "AdsGoFastTaskMetaDataDatabaseServer": "databaseserver.database.windows.net",
+  "SecurityModelOptions": {
+    "SecurityRoles": {
+      "Users": {
+        "SecurityGroupId": "##AZURE_AD_SECURITY_GROUP_GUID_HERE##"
+      },
+      "Administrators": {
+        "SecurityGroupId": "##AZURE_AD_SECURITY_GROUP_GUID_HERE##"
+      },
+      "DataAdministrators": {
+        "SecurityGroupId": "##AZURE_AD_SECURITY_GROUP_GUID_HERE##"
       }
-    },
-    "AZURE_TENANT_ID": "####################",
-    "AZURE_CLIENT_ID": "####################",
-    "AZURE_CLIENT_SECRET": "####################",
-    "UseMSI": false, 
-    "AdsGoFastTaskMetaDataDatabaseServer": "####################.database.windows.net",
-    "AdsGoFastTaskMetaDataDatabaseName": "AdsGoFast",
-    "AppInsightsWorkspaceId": "####################",
-    "AllowedHosts": "*"
+    }
+  },
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "contoso.com",
+    "TenantId": "##GUID_HERE##",
+    "ClientId": "##GUID_HERE##",
+    "ClientSecret" : "DO_NOT_SET_THIS_USE_DOTNET_SECRET"
+    "CallbackPath": "/signin-oidc",
+    "SignedOutCallbackPath ": "/signout-callback-oidc"
+  },
+  "ApplicationInsights": {
+    "ConnectionString": "##APPLICATION_INSIGHTS_CONNECTIONSTRING_HERE##"
   }
   
 ```

@@ -1,15 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using WebApplication.Models;
+using WebApplication.Services;
 
 namespace WebApplication.Controllers
 {
@@ -85,7 +80,9 @@ namespace WebApplication.Controllers
 							(ti.LastExecutionStatus = 'Untried' OR tei.StartDateTime >= dateadd(hour, {id}, getutcdate()))
 						)b 
             ";
-            var modelDataAll = (from row in _context.GetConnection().Query(query) select (IDictionary<string, object>)row).AsList();
+			var con = await _context.GetConnection();
+
+			var modelDataAll = (from row in con.Query(query) select (IDictionary<string, object>)row).AsList();
             return View(modelDataAll);
         }
     }

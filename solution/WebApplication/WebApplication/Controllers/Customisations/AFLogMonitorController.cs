@@ -66,7 +66,7 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -130,7 +130,7 @@ namespace WebApplication.Controllers
                     message";
 
                 // Getting all Customer data                    
-                JArray modelDataAll = _context.ExecuteQuery(Query);                
+                JArray modelDataAll = await _context.ExecuteQuery(Query);                
 
                 //total number of rows count     
                 recordsTotal = ((JArray)modelDataAll[0]["rows"]).Count();
