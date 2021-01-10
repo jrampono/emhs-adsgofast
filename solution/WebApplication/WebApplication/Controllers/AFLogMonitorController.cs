@@ -131,12 +131,17 @@ namespace WebApplication.Controllers
 
                 // Getting all Customer data                    
                 JArray modelDataAll = await _context.ExecuteQuery(Query);                
-
-                //total number of rows count     
-                recordsTotal = ((JArray)modelDataAll[0]["rows"]).Count();
                 
-                //Returning Json Data    
-                return new OkObjectResult(JsonConvert.SerializeObject(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = ((JArray)modelDataAll[0]["rows"]) }, new Newtonsoft.Json.Converters.StringEnumConverter()));
+                //total number of rows count     
+                if (((JArray)modelDataAll).HasValues)
+                {
+                    recordsTotal = ((JArray)modelDataAll[0]["rows"]).Count();
+                    return new OkObjectResult(JsonConvert.SerializeObject(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = ((JArray)modelDataAll[0]["rows"]) }, new Newtonsoft.Json.Converters.StringEnumConverter()));
+                }
+                else
+                {
+                    return new OkObjectResult(JsonConvert.SerializeObject(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal }, new Newtonsoft.Json.Converters.StringEnumConverter()));
+                }
 
             }
             catch (Exception)

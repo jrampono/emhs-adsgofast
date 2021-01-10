@@ -298,7 +298,7 @@ namespace WebApplication.Controllers
                 //total number of rows count     
                 recordsTotal = await modelDataAll.CountAsync();
                 //Paging     
-                var data = modelDataAll.Skip(skip).Take(pageSize).ToListAsync();
+                var data = await modelDataAll.Skip(skip).Take(pageSize).ToListAsync();
                 //Returning Json Data    
                 var jserl = new JsonSerializerSettings
                 {
