@@ -58,7 +58,7 @@ namespace WebApplication.Controllers
                 }
 
                 using var _con = await _context.GetConnection();
-                var modelDataAll = (from row in _con.Query(@"
+                var modelDataAll = (from row in await _con.QueryAsync(@"
                     select 
 	                    a.ExecutionUid, 
 	                    a.TaskInstanceId, 

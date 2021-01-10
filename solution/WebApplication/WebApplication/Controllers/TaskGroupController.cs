@@ -233,7 +233,7 @@ namespace WebApplication.Controllers
         }
 
         [ChecksUserAccess]
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -296,9 +296,9 @@ namespace WebApplication.Controllers
                     .AsNoTracking();
 
                 //total number of rows count     
-                recordsTotal = modelDataAll.Count();
+                recordsTotal = await modelDataAll.CountAsync();
                 //Paging     
-                var data = modelDataAll.Skip(skip).Take(pageSize).ToList();
+                var data = modelDataAll.Skip(skip).Take(pageSize).ToListAsync();
                 //Returning Json Data    
                 var jserl = new JsonSerializerSettings
                 {

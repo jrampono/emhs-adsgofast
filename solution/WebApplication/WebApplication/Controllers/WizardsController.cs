@@ -15,7 +15,7 @@ namespace WebApplication.Controllers.Customisations
             _context = context;
         }
 
-        public async Task<IActionResult> ExternalFileUpload()
+        public IActionResult ExternalFileUpload()
         {
             
             ViewData["UploadSystemId"] = new SelectList(_context.SourceAndTargetSystems.Where(t=> t.SystemType.ToLower() == "azure blob").OrderBy(t => t.SystemName), "SystemId", "SystemName");

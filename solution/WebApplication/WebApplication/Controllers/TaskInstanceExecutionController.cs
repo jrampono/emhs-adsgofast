@@ -66,7 +66,7 @@ namespace WebApplication.Controllers
         }
 
         [ChecksUserAccess]
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -133,7 +133,7 @@ namespace WebApplication.Controllers
 
 
                 //total number of rows count     
-                recordsTotal = modelDataAll.Count();
+                recordsTotal = await modelDataAll.CountAsync();
 
                 //Custom Includes
                 modelDataAll = modelDataAll
@@ -141,10 +141,7 @@ namespace WebApplication.Controllers
                     .AsNoTracking();
 
                 //Paging               
-                var data = modelDataAll.Skip(skip).Take(pageSize).ToList();
-
-                
-
+                var data = await modelDataAll.Skip(skip).Take(pageSize).ToListAsync();
 
                 //Returning Json Data    
                 var jserl = new JsonSerializerSettings

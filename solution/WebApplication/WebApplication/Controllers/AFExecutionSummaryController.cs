@@ -18,7 +18,7 @@ namespace WebApplication.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {            
             return View();
         }

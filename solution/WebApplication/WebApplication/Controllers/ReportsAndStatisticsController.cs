@@ -21,12 +21,12 @@ namespace WebApplication.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {            
             return View();
         }
 
-        public async Task<IActionResult> TaskMasterStats()
+        public IActionResult TaskMasterStats()
         {
             return View();
         }
@@ -217,7 +217,7 @@ namespace WebApplication.Controllers
                 Query = Query + Order + Paging;
 
                 var con = await _context.GetConnection();
-                recordsTotal = con.ExecuteScalar<int>(RowCountQuery);
+                recordsTotal = await con.ExecuteScalarAsync<int>(RowCountQuery);
                 // Getting all Customer data    
                 var modelDataAll = (from row in con.Query(Query) select(IDictionary<string, object>)row).AsList();
 

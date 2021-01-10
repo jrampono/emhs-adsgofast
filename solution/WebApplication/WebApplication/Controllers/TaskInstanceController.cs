@@ -192,7 +192,7 @@ namespace WebApplication.Controllers
             return _context.TaskInstance.Any(e => e.TaskInstanceId == id);
         }
 
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {
             return View();
         }
@@ -234,7 +234,7 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -343,9 +343,9 @@ namespace WebApplication.Controllers
 
 
                 //total number of rows count     
-                recordsTotal = modelDataAll.Count();
+                recordsTotal = await modelDataAll.CountAsync();
                 //Paging               
-                var data = modelDataAll.Skip(skip).Take(pageSize).ToList();
+                var data = await modelDataAll.Skip(skip).Take(pageSize).ToListAsync();
                 //Returning Json Data    
                 var jserl = new JsonSerializerSettings
                 {
