@@ -2,14 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using WebApplication.Framework;
-using WebApplication.Models;
 using WebApplication.Services;
 
 namespace WebApplication.Controllers

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication.Services;
+using WebApplication.Models;
 
 namespace WebApplication.Controllers
 {
