@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;

@@ -8,9 +8,13 @@
 
 
 	<ItemGroup>
+		<Compile Remove="Controllers\Enums\**" />
 		<Compile Remove="Templates\**" />
+		<Content Remove="Controllers\Enums\**" />
 		<Content Remove="Templates\**" />
+		<EmbeddedResource Remove="Controllers\Enums\**" />
 		<EmbeddedResource Remove="Templates\**" />
+		<None Remove="Controllers\Enums\**" />
 		<None Remove="Templates\**" />
 	</ItemGroup>
 
@@ -48,7 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Enums\" />
     <Folder Include="wwwroot\lib\bswindow\" />
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
