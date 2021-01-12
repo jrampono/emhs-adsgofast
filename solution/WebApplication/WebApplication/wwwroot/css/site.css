@@ -11,7 +11,7 @@ for details on configuring this project to bundle and minify static web assets. 
     top: 0;
     left: -350px;
     height: 100vh;
-    z-index: 999;        
+    z-index: 1999;        
     transition: all 0.3s;
     overflow-y: scroll;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
@@ -46,7 +46,7 @@ for details on configuring this project to bundle and minify static web assets. 
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 998;
+    z-index: 1998;
     opacity: 0;
     transition: all 0.5s ease-in-out;
 }
@@ -245,6 +245,7 @@ button.accept-policy {
     box-sizing: border-box;
 }
 
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -258,7 +259,7 @@ body {
 }
 
 .header-center {
-    width: 82%;
+    width: 80%;
     box-sizing: border-box;
     position: relative;
     margin: 0 auto;
