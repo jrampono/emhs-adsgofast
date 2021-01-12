@@ -90,6 +90,11 @@
     {
       "library": "datatables.net-buttons@1.6.5",
       "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "provider": "filesystem",
+      "library": "wwwroot/js/bswindow/",
+      "destination": "wwwroot/lib/bswindow/"
     }
   ]
 }
