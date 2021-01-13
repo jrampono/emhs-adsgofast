@@ -9,15 +9,5 @@ namespace WebApplication.Models
        public virtual List<TaskTypeMapping> TaskTypeMappings { get; set; }
 
     }
-
-    public enum TaskExecutionTypeEnum
-    {
-        ADF,
-        AF,
-        ADB,
-        AML,
-        AKS,
-        ADW
-    }
     
 }

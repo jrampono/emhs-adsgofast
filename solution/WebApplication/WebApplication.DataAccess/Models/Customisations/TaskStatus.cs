@@ -2,11 +2,6 @@
 {
     public static partial class ModelEnums
     {
-        public enum DependencyType
-        {
-            TasksMatchedByTagAndSchedule,
-            EntireGroup
-        }
         public enum TaskStatus
         {
             Succeeded,

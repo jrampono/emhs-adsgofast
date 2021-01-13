@@ -52,8 +52,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\Stats\" />
     <Folder Include="wwwroot\lib\bswindow\" />
     <Folder Include="wwwroot\fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebApplication.DataAccess\WebApplication.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
