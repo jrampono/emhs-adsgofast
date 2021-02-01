@@ -228,7 +228,7 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -274,10 +274,10 @@ namespace WebApplication.Controllers
                     .Include(t => t.TaskType).AsNoTracking();
 
                 //total number of rows count     
-                recordsTotal = modelDataAll.Count();
+                recordsTotal = await modelDataAll.CountAsync();
 
                 //Paging               
-                var data = modelDataAll.Skip(skip).Take(pageSize).ToList();
+                var data = await modelDataAll.Skip(skip).Take(pageSize).ToListAsync();
 
                 //Returning Json Data    
                 var jserl = new JsonSerializerSettings
@@ -329,21 +329,21 @@ namespace WebApplication.Controllers
                         TaskMasterJsonTargetType = JObject.Parse(TaskMasterJsonTarget)["Type"].ToString();
                     }
 
-                    taskTypeMappings = _context.TaskTypeMapping
+                    taskTypeMappings = await _context.TaskTypeMapping
                         .Where(m => m.TaskTypeId == TaskTypeId
                             && m.SourceSystemType == SourceSystem.SystemType
                             && m.TargetSystemType == TargetSystem.SystemType
                             && m.SourceType == TaskMasterJsonSourceType
                             && m.TargetType == TaskMasterJsonTargetType
-                            ).ToList();
+                            ).ToListAsync();
                     goto RetVal;
                 }
                 else //We Only Have Source System And Dont Have Target
                 {
-                    taskTypeMappings = _context.TaskTypeMapping
+                    taskTypeMappings = await _context.TaskTypeMapping
                     .Where(m => m.TaskTypeId == TaskTypeId
                         && m.SourceSystemType == SourceSystem.SystemType
-                        ).ToList();
+                        ).ToListAsync();
                     goto RetVal;
                 }
             }
@@ -353,17 +353,17 @@ namespace WebApplication.Controllers
                 {
                     Int64 TargetSystemId = System.Convert.ToInt64(Request.Form["TargetSystemId"]);
                     SourceAndTargetSystems TargetSystem = _context.SourceAndTargetSystems.FirstOrDefault(m => m.SystemId == TargetSystemId);
-                    taskTypeMappings = _context.TaskTypeMapping
+                    taskTypeMappings = await _context.TaskTypeMapping
                     .Where(m => m.TaskTypeId == TaskTypeId
                         && m.TargetSystemType == TargetSystem.SystemType
-                        ).ToList();
+                        ).ToListAsync();
                     goto RetVal;
                 }
                 else
                 {
-                    taskTypeMappings = _context.TaskTypeMapping
+                    taskTypeMappings = await _context.TaskTypeMapping
                     .Where(m => m.TaskTypeId == TaskTypeId
-                        ).ToList();
+                        ).ToListAsync();
                     goto RetVal;
 
                 }
@@ -384,7 +384,7 @@ namespace WebApplication.Controllers
 
             return new OkObjectResult(JsonConvert.SerializeObject(new { ValidSourceSystems = ValidSourceSystems, ValidTargetSystems = ValidTargetSystems, TaskTypeMappings = taskTypeMappings }));
         }
-        public ActionResult BulkUpdateTaskTypeMappingTaskMasterJsonSchema()
+        public async Task<ActionResult> BulkUpdateTaskTypeMappingTaskMasterJsonSchema()
         {
             List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
             string Json = Request.Form["Json"];
@@ -394,9 +394,9 @@ namespace WebApplication.Controllers
             {
                 ti.TaskMasterJsonSchema = Json;
             }).Wait();
-            _context.SaveChanges();
 
-            //TODO: Add Error Handling
+            await _context.SaveChangesAsync();
+
             return new OkObjectResult(new { });
         }
     }

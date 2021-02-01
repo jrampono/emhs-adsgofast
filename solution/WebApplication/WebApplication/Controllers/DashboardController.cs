@@ -4,6 +4,7 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using WebApplication.Services;
 using WebApplication.Models;
 
 namespace WebApplication.Controllers
@@ -80,7 +81,9 @@ namespace WebApplication.Controllers
 							(ti.LastExecutionStatus = 'Untried' OR tei.StartDateTime >= dateadd(hour, {id}, getutcdate()))
 						)b 
             ";
-            var modelDataAll = (from row in _context.GetConnection().Query(query) select (IDictionary<string, object>)row).AsList();
+			var con = await _context.GetConnection();
+
+			var modelDataAll = (from row in con.Query(query) select (IDictionary<string, object>)row).AsList();
             return View(modelDataAll);
         }
     }

@@ -18,7 +18,7 @@ namespace WebApplication.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {            
             return View();
         }
@@ -66,7 +66,7 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -130,13 +130,18 @@ namespace WebApplication.Controllers
                     message";
 
                 // Getting all Customer data                    
-                JArray modelDataAll = _context.ExecuteQuery(Query);                
-
-                //total number of rows count     
-                recordsTotal = ((JArray)modelDataAll[0]["rows"]).Count();
+                JArray modelDataAll = await _context.ExecuteQuery(Query);                
                 
-                //Returning Json Data    
-                return new OkObjectResult(JsonConvert.SerializeObject(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = ((JArray)modelDataAll[0]["rows"]) }, new Newtonsoft.Json.Converters.StringEnumConverter()));
+                //total number of rows count     
+                if (((JArray)modelDataAll).HasValues)
+                {
+                    recordsTotal = ((JArray)modelDataAll[0]["rows"]).Count();
+                    return new OkObjectResult(JsonConvert.SerializeObject(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = ((JArray)modelDataAll[0]["rows"]) }, new Newtonsoft.Json.Converters.StringEnumConverter()));
+                }
+                else
+                {
+                    return new OkObjectResult(JsonConvert.SerializeObject(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal }, new Newtonsoft.Json.Converters.StringEnumConverter()));
+                }
 
             }
             catch (Exception)

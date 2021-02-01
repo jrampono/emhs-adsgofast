@@ -177,7 +177,7 @@ namespace WebApplication.Controllers
             return _context.DataFactory.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {
             return View();
         }
@@ -215,7 +215,7 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -257,11 +257,11 @@ namespace WebApplication.Controllers
 
 
                 //total number of rows count     
-                recordsTotal = modelDataAll.Count();
+                recordsTotal = await modelDataAll.CountAsync();
 
 
                 //Paging               
-                var data = modelDataAll.Skip(skip).Take(pageSize).ToList();
+                var data = await modelDataAll.Skip(skip).Take(pageSize).ToListAsync();
 
 
 
@@ -283,7 +283,7 @@ namespace WebApplication.Controllers
         }
 
 
-        public ActionResult UpdateTaskMasterActiveYN()
+        public async Task<ActionResult> UpdateTaskMasterActiveYN()
         {
             List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
             bool Status = JsonConvert.DeserializeObject<bool>(Request.Form["Status"]);
@@ -293,7 +293,7 @@ namespace WebApplication.Controllers
             {
                 ti.ActiveYn = Status;
             }).Wait();
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             //TODO: Add Error Handling
             return new OkObjectResult(new { });

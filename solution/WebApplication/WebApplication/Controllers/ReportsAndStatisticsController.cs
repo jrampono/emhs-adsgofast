@@ -21,12 +21,12 @@ namespace WebApplication.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {            
             return View();
         }
 
-        public async Task<IActionResult> TaskMasterStats()
+        public IActionResult TaskMasterStats()
         {
             return View();
         }
@@ -132,7 +132,7 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols(StatsLevel)));
         }
 
-        public ActionResult GetGridData()
+        public async Task<ActionResult> GetGridData()
         {
             try
             {
@@ -216,9 +216,10 @@ namespace WebApplication.Controllers
                 string RowCountQuery = "Select count(*) from (" + Query + ") ct";
                 Query = Query + Order + Paging;
 
-                recordsTotal = _context.GetConnection().ExecuteScalar<int>(RowCountQuery);
+                var con = await _context.GetConnection();
+                recordsTotal = await con.ExecuteScalarAsync<int>(RowCountQuery);
                 // Getting all Customer data    
-                var modelDataAll = (from row in _context.GetConnection().Query(Query) select(IDictionary<string, object>)row).AsList();
+                var modelDataAll = (from row in con.Query(Query) select(IDictionary<string, object>)row).AsList();
 
 
 

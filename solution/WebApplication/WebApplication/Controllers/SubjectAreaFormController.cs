@@ -171,7 +171,7 @@ namespace WebApplication.Controllers
         {
             return _context.SubjectAreaForm.Any(e => e.SubjectAreaFormId == id);
         }
-        public async Task<IActionResult> IndexDataTable()
+        public IActionResult IndexDataTable()
         {
             //note - this is just here so that we don't ahve to re-scaffold
             return RedirectToAction(nameof(Index));
