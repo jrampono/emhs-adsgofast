@@ -1,7 +1,35 @@
 {
-	"name": "AZ-SQL-Full-Load-Chunk-SH-IR",
+	"name": "SH-SQL-Watermark-Chunk-SH-IR",
 	"properties": {
 		"activities": [
+			{
+				"name": "AF Set New Watermark",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ForEach Chunk",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ-Function-Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TaskMasterId\":\"', string(pipeline().parameters.TaskObject.TaskMasterId),'\",\"TaskMasterWaterMarkColumnType\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.IncrementalColumnType),'\",\"WaterMarkValue\":\"', string(pipeline().parameters.NewWatermark), '\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "WaterMark",
+						"Method": "Post"
+					}
+				}
+			},
 			{
 				"name": "ForEach Chunk",
 				"type": "ForEach",
@@ -15,13 +43,13 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Execute AZ-SQL-Full-Load",
+							"name": "Execute SH-SQL-Watermark",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "AZ-SQL-Full-Load-SH-IR",
+									"referenceName": "SH-SQL-Watermark-SH-IR",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -34,12 +62,16 @@
 										"value": "@pipeline().parameters.Mapping",
 										"type": "Expression"
 									},
-									"BatchCount": {
-										"value": "@pipeline().parameters.BatchCount",
+									"NewWaterMark": {
+										"value": "@pipeline().parameters.NewWatermark",
 										"type": "Expression"
 									},
 									"Item": {
 										"value": "@item()",
+										"type": "Expression"
+									},
+									"BatchCount": {
+										"value": "@pipeline().parameters.BatchCount",
 										"type": "Expression"
 									}
 								}
@@ -105,15 +137,17 @@
 			"Mapping": {
 				"type": "object"
 			},
+			"NewWatermark": {
+				"type": "string"
+			},
 			"BatchCount": {
 				"type": "int"
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/Azure SH IR/Components"
+			"name": "ADS Go Fast/Data Movement/SH-IR/Components"
 		},
-		"annotations": [],
-		"lastPublishTime": "2020-07-29T02:39:55Z"
+		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

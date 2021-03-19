@@ -401,7 +401,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Data Movement/Azure SH IR"
 		},
-		"annotations": []
+		"annotations": [],
+		"lastPublishTime": "2020-07-29T05:19:06Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

@@ -1,5 +1,6 @@
 {
 	"name": "GenericAzureDataLakeStorage_OnPrem_Net",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"type": "AzureBlobFS",
 		"parameters": {

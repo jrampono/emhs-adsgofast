@@ -1,29 +1,28 @@
 {
-	"name": "GenericFileServer_SH_IR",
+	"name": "GenericMsSqlServer_SH_IR",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
-		"type": "FileServer",
 		"parameters": {
-			"Host": {
-				"type": "String",
-				"defaultValue": ""
-			},
-			"UserId": {
-				"type": "String",
-				"defaultValue": ""
-			},
-			"Secret": {
-				"type": "String",
-				"defaultValue": ""
-			},
 			"KeyVaultBaseUrl": {
-				"type": "String",
-				"defaultValue": ""
+				"type": "string"
+			},
+			"PasswordSecret": {
+				"type": "string"
+			},
+			"Server": {
+				"type": "string"
+			},
+			"Database": {
+				"type": "string"
+			},
+			"UserName": {
+				"type": "string"
 			}
 		},
+		"annotations": [],
+		"type": "SqlServer",
 		"typeProperties": {
-			"host": "@{linkedService().Host}",
-			"userId": "@{linkedService().UserId}",
+			"connectionString": "Integrated Security=False;Data Source=@{linkedService().Server};Initial Catalog=@{linkedService().Database};User ID=@{linkedService().UserName}",
 			"password": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
@@ -37,12 +36,11 @@
 					}
 				},
 				"secretName": {
-					"value": "@linkedService().Secret",
+					"value": "@linkedService().PasswordSecret",
 					"type": "Expression"
 				}
 			}
 		},
-		"annotations": [],
 		"connectVia": {
 			"referenceName": "SelfHostedIntegrationRuntime-Azure-VNET",
 			"type": "IntegrationRuntimeReference"

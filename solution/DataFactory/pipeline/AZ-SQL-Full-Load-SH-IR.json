@@ -49,7 +49,8 @@
 												"value": "@variables('SQLStatement1')",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00"
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
 										"sink": {
 											"type": "ParquetSink",
@@ -307,7 +308,8 @@
 												"value": "@variables('SQLStatement1')",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00"
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
 										"sink": {
 											"type": "ParquetSink",
@@ -624,7 +626,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Data Movement/Azure SH IR/Components"
 		},
-		"annotations": []
+		"annotations": [],
+		"lastPublishTime": "2020-07-29T02:39:55Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

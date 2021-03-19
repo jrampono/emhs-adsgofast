@@ -105,7 +105,8 @@
 							"value": "@activity('AF Get All Tables From Database SQL').output.InformationSchemaSQL",
 							"type": "Expression"
 						},
-						"queryTimeout": "02:00:00"
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "SqlServerTable_OnPrem_SH_IR",
@@ -249,6 +250,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Create Task Master/OnPrem SH IR"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-08-04T13:09:29Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

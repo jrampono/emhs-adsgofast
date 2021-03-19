@@ -1,9 +1,22 @@
 {
-	"name": "AZ-SQL-Watermark-SH-IR",
+	"name": "SH-SQL-Full-Load-SH-IR",
 	"properties": {
 		"activities": [
 			{
-				"name": "Switch Storage Type",
+				"name": "Set SQLStatement",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SQLStatement",
+					"value": {
+						"value": "@replace(replace(pipeline().parameters.TaskObject.Source.Extraction.SQLStatement,'<batchcount>',string(pipeline().parameters.BatchCount)),'<item>',string(pipeline().parameters.Item))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Switch Azure Storage",
 				"type": "Switch",
 				"dependsOn": [
 					{
@@ -24,11 +37,11 @@
 							"value": "ADLS",
 							"activities": [
 								{
-									"name": "Copy Azure SQL to ADLS",
+									"name": "Copy SQL to ADLS",
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "Pipeline AF Log - Azure SQL to ADLS Start",
+											"activity": "Pipeline AF Log - SQL to ADLS Start",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -44,13 +57,12 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "AzureSqlSource",
+											"type": "SqlServerSource",
 											"sqlReaderQuery": {
 												"value": "@variables('SQLStatement')",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
+											"queryTimeout": "02:00:00"
 										},
 										"sink": {
 											"type": "ParquetSink",
@@ -70,15 +82,23 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "AzureSqlTable_SH_IR",
+											"referenceName": "SqlServerTable_SH_IR",
 											"type": "DatasetReference",
 											"parameters": {
-												"Schema": {
+												"TableSchema": {
 													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
 													"type": "Expression"
 												},
-												"Table": {
+												"TableName": {
 													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+													"type": "Expression"
+												},
+												"KeyVaultBaseUrl": {
+													"value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl",
+													"type": "Expression"
+												},
+												"PasswordSecret": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.PasswordKeyVaultSecretName",
 													"type": "Expression"
 												},
 												"Server": {
@@ -87,6 +107,10 @@
 												},
 												"Database": {
 													"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+													"type": "Expression"
+												},
+												"UserName": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.Username",
 													"type": "Expression"
 												}
 											}
@@ -118,16 +142,9 @@
 									]
 								},
 								{
-									"name": "Pipeline AF Log - Azure SQL to ADLS Failed",
+									"name": "Pipeline AF Log - SQL to ADLS Start",
 									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "Copy Azure SQL to ADLS",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
+									"dependsOn": [],
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -137,7 +154,7 @@
 										"waitOnCompletion": false,
 										"parameters": {
 											"Body": {
-												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy Azure SQL to ADLS').error.message), '\",\"Status\":\"Failed\"}'))",
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL Server to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
 												"type": "Expression"
 											},
 											"FunctionName": "Log",
@@ -182,7 +199,7 @@
 									"type": "GetMetadata",
 									"dependsOn": [
 										{
-											"activity": "Copy Azure SQL to ADLS",
+											"activity": "Copy SQL to ADLS",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -229,32 +246,11 @@
 									}
 								},
 								{
-									"name": "Pipeline AF Log - Azure SQL to ADLS Start",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "AZ-Function-Generic",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": false,
-										"parameters": {
-											"Body": {
-												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
-												"type": "Expression"
-											},
-											"FunctionName": "Log",
-											"Method": "Post"
-										}
-									}
-								},
-								{
-									"name": "Pipeline AF Log - Azure SQL ADLS to Succeed",
+									"name": "Pipeline AF Log - Azure SQL to ADLS Succeed",
 									"type": "ExecutePipeline",
 									"dependsOn": [
 										{
-											"activity": "Copy Azure SQL to ADLS",
+											"activity": "AF Persist Parquet Metadata - ADLS",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -269,7 +265,35 @@
 										"waitOnCompletion": false,
 										"parameters": {
 											"Body": {
-												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy Azure SQL to ADLS').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy SQL to ADLS').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - Azure SQL to ADLS Failed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy SQL to ADLS",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ-Function-Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL Server to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy SQL to ADLS').error.message), '\",\"Status\":\"Failed\"}'))",
 												"type": "Expression"
 											},
 											"FunctionName": "Log",
@@ -283,11 +307,11 @@
 							"value": "Azure Blob",
 							"activities": [
 								{
-									"name": "Copy Azure SQL to Blob",
+									"name": "Copy SQL to Blob",
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "Pipeline AF Log - Azure SQL to Blob Start",
+											"activity": "Pipeline AF Log - SQL to Blob Start",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -303,13 +327,12 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "AzureSqlSource",
+											"type": "SqlServerSource",
 											"sqlReaderQuery": {
 												"value": "@variables('SQLStatement')",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
+											"queryTimeout": "02:00:00"
 										},
 										"sink": {
 											"type": "ParquetSink",
@@ -329,15 +352,23 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "AzureSqlTable_SH_IR",
+											"referenceName": "SqlServerTable_SH_IR",
 											"type": "DatasetReference",
 											"parameters": {
-												"Schema": {
+												"TableSchema": {
 													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
 													"type": "Expression"
 												},
-												"Table": {
+												"TableName": {
 													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+													"type": "Expression"
+												},
+												"KeyVaultBaseUrl": {
+													"value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl",
+													"type": "Expression"
+												},
+												"PasswordSecret": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.PasswordKeyVaultSecretName",
 													"type": "Expression"
 												},
 												"Server": {
@@ -346,6 +377,10 @@
 												},
 												"Database": {
 													"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+													"type": "Expression"
+												},
+												"UserName": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.Username",
 													"type": "Expression"
 												}
 											}
@@ -377,16 +412,9 @@
 									]
 								},
 								{
-									"name": "Pipeline AF Log - Azure SQL to Blob Failed",
+									"name": "Pipeline AF Log - SQL to Blob Start",
 									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "Copy Azure SQL to Blob",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
+									"dependsOn": [],
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -396,7 +424,7 @@
 										"waitOnCompletion": false,
 										"parameters": {
 											"Body": {
-												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy Azure SQL to Blob').error.message), '\",\"Status\":\"Failed\"}'))",
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL Server to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
 												"type": "Expression"
 											},
 											"FunctionName": "Log",
@@ -441,7 +469,7 @@
 									"type": "GetMetadata",
 									"dependsOn": [
 										{
-											"activity": "Copy Azure SQL to Blob",
+											"activity": "Copy SQL to Blob",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -488,9 +516,16 @@
 									}
 								},
 								{
-									"name": "Pipeline AF Log - Azure SQL to Blob Start",
+									"name": "Pipeline AF Log - Azure SQL to Blob Failed",
 									"type": "ExecutePipeline",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "Copy SQL to Blob",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -500,7 +535,7 @@
 										"waitOnCompletion": false,
 										"parameters": {
 											"Body": {
-												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL Server to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy SQL to Blob').error.message), '\",\"Status\":\"Failed\"}'))",
 												"type": "Expression"
 											},
 											"FunctionName": "Log",
@@ -509,11 +544,11 @@
 									}
 								},
 								{
-									"name": "Pipeline AF Log - Azure SQL Blob to Succeed",
+									"name": "Pipeline AF Log - Azure SQL to Blob Succeed",
 									"type": "ExecutePipeline",
 									"dependsOn": [
 										{
-											"activity": "Copy Azure SQL to Blob",
+											"activity": "AF Persist Parquet Metadata - Blob",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -528,7 +563,7 @@
 										"waitOnCompletion": false,
 										"parameters": {
 											"Body": {
-												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy Azure SQL to Blob').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy SQL to Blob').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
 												"type": "Expression"
 											},
 											"FunctionName": "Log",
@@ -539,19 +574,6 @@
 							]
 						}
 					]
-				}
-			},
-			{
-				"name": "Set SQLStatement",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "SQLStatement",
-					"value": {
-						"value": "@replace(replace(replace(pipeline().parameters.TaskObject.Source.Extraction.SQLStatement,'<batchcount>',string(pipeline().parameters.BatchCount)),'<item>',string(pipeline().parameters.Item)),'<newWatermark>',pipeline().parameters.NewWaterMark)",
-						"type": "Expression"
-					}
 				}
 			}
 		],
@@ -611,13 +633,10 @@
 			"Mapping": {
 				"type": "object"
 			},
-			"NewWaterMark": {
-				"type": "string"
-			},
-			"Item": {
+			"BatchCount": {
 				"type": "int"
 			},
-			"BatchCount": {
+			"Item": {
 				"type": "int"
 			}
 		},
@@ -627,10 +646,9 @@
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/Azure SH IR/Components"
+			"name": "ADS Go Fast/Data Movement/SH-IR/Components"
 		},
-		"annotations": [],
-		"lastPublishTime": "2020-07-29T02:39:55Z"
+		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

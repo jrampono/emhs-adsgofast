@@ -1,5 +1,5 @@
 {
-	"name": "AZ-SQL-Full-Load-Chunk-SH-IR",
+	"name": "SH-SQL-Full-Load-Chunk-SH-IR",
 	"properties": {
 		"activities": [
 			{
@@ -15,13 +15,13 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Execute AZ-SQL-Full-Load",
+							"name": "Execute SH-SQL-Full-Load",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "AZ-SQL-Full-Load-SH-IR",
+									"referenceName": "SH-SQL-Full-Load-SH-IR",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -98,7 +98,7 @@
 						"Name": "adsgofastdatakakeacceladf",
 						"ResourceGroup": "AdsGoFastDataLakeAccel",
 						"SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
-						"ADFPipeline": "AZ-SQL-AZ-Storage-Parquet-SH-IR"
+						"ADFPipeline": "SH-AZ-Storage-Parquet-SH-IR"
 					}
 				}
 			},
@@ -110,10 +110,9 @@
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/Azure SH IR/Components"
+			"name": "ADS Go Fast/Data Movement/SH-IR/Components"
 		},
-		"annotations": [],
-		"lastPublishTime": "2020-07-29T02:39:55Z"
+		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

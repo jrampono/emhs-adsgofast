@@ -45,7 +45,8 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
-											"queryTimeout": "02:00:00"
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
 										"sink": {
 											"type": "ParquetSink",
@@ -299,7 +300,8 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
-											"queryTimeout": "02:00:00"
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
 										"sink": {
 											"type": "ParquetSink",
@@ -634,7 +636,8 @@
 							"value": "@activity('AF Get Information Schema SQL').output.InformationSchemaSQL",
 							"type": "Expression"
 						},
-						"queryTimeout": "02:00:00"
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "AzureSqlTable_AZ_IR",
@@ -735,7 +738,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Data Movement/Auto Resolve IR"
 		},
-		"annotations": []
+		"annotations": [],
+		"lastPublishTime": "2020-07-24T02:37:15Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

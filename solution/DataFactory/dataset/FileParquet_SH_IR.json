@@ -63,5 +63,6 @@
 			"compressionCodec": "gzip"
 		},
 		"schema": []
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }
