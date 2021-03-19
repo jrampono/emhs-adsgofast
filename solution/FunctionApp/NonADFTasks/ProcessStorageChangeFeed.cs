@@ -1,4 +1,10 @@
-﻿using Azure;
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.ChangeFeed;
 using Azure.Core;

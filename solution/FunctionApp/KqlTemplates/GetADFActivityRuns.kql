@@ -1,4 +1,11 @@
-﻿let SelfHostedOrchestrationCostRate = toreal({SelfHostedOrchestrationCostRate});
+﻿//-----------------------------------------------------------------------
+//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+//
+//-----------------------------------------------------------------------*/
+
+let SelfHostedOrchestrationCostRate = toreal({SelfHostedOrchestrationCostRate});
 let NilAmount = toreal(0.0000000000);
 let SelfHostedDataMovementCostRate = toreal({SelfHostedDataMovementCostRate});
 let CloudOrchestrationFeeRate = {CloudOrchestrationFeeRate};

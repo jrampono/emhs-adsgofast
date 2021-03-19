@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;

@@ -1,4 +1,11 @@
-﻿traces
+﻿//-----------------------------------------------------------------------
+//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+//
+//-----------------------------------------------------------------------*/
+
+traces
 | extend    Comment = tostring(customDimensions.prop__Comment),
             ExecutionUid = toguid(customDimensions.prop__ExecutionUid),
             TaskInstanceId = toint(customDimensions.prop__TaskInstanceId),

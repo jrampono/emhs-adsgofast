@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
 using AdsGoFast.SqlServer;
 using Microsoft.WindowsAzure.Storage.Auth;
 using System.Collections.Generic;
