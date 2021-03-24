@@ -2,8 +2,6 @@ using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +13,12 @@ using WebApplication.Models.Options;
 using WebApplication.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using WebApplication.Framework;
+using System;
+using Polly.Extensions.Http;
+using Polly;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Microsoft.Extensions.Options;
 
 namespace WebApplication
 {
@@ -31,43 +35,47 @@ namespace WebApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
+            services.AddApplicationInsightsTelemetry();
 
-            Helpers.AzureSDK azureSDK = new Helpers.AzureSDK(System.Convert.ToBoolean(Configuration["UseMSI"]), Configuration["AZURE_CLIENT_ID"], Configuration["AZURE_CLIENT_SECRET"], Configuration["AZURE_TENANT_ID"]);
-
-            SqlConnectionStringBuilder _scsb = new SqlConnectionStringBuilder
+            services.Configure<ApplicationOptions>(Configuration.GetSection("ApplicationOptions"));
+            services.Configure<SecurityModelOptions>(Configuration.GetSection("SecurityModelOptions"));
+            
+            //Configure Entity Framework with Token Auth via Interceptor
+            services.AddSingleton<AadAuthenticationDbConnectionInterceptor>();
+            services.AddDbContext<AdsGoFastContext>((provider, options) =>
             {
-                DataSource = Configuration["AdsGoFastTaskMetaDataDatabaseServer"],
-                InitialCatalog = Configuration["AdsGoFastTaskMetaDataDatabaseName"]
-            };
-
-            services.AddDbContext<AdsGoFastContext>(options =>
-            {
-                SqlConnection _con = new SqlConnection(_scsb.ConnectionString);
-                string _token = azureSDK.GetAzureRestApiToken("https://database.windows.net/");
-                _con.AccessToken = _token;
-                options.UseSqlServer(_con);
+                var appOptions = provider.GetService<IOptions<ApplicationOptions>>();
+                SqlConnectionStringBuilder scsb = new SqlConnectionStringBuilder
+                {
+                    DataSource = appOptions.Value.AdsGoFastTaskMetaDataDatabaseServer,
+                    InitialCatalog = appOptions.Value.AdsGoFastTaskMetaDataDatabaseName
+                };
+                options.UseSqlServer(scsb.ConnectionString);
+                options.AddInterceptors(provider.GetRequiredService<AadAuthenticationDbConnectionInterceptor>());
             });
 
-            services.Configure<SecurityModelOptions>(Configuration.GetSection("SecurityModelOptions"));
+            //Configure HttpClients for a centralised management using HttpClientFactory
+            services.AddHttpClient<AppInsightsContext>(async (s,c) =>
+            {
+                var authProvider = s.GetService<AzureAuthenticationCredentialProvider>();
+                var token = await authProvider.GetAzureRestApiToken(new Azure.Core.TokenRequestContext(new string[] { "https://api.applicationinsights.io" }), new System.Threading.CancellationToken());
+                c.DefaultRequestHeaders.Accept.Clear();
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }).SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
 
-            services.AddSingleton<AppInsightsContext>(new AppInsightsContext(azureSDK, Configuration["AppInsightsWorkspaceId"]));
-            services.AddSingleton<AdsGoFastDapperContext>(new AdsGoFastDapperContext(azureSDK, Configuration["AdsGoFastTaskMetaDataDatabaseServer"], Configuration["AdsGoFastTaskMetaDataDatabaseName"]));
-            services.AddSingleton<SecurityAccessProvider>();
-
-            //todo: remove the concrete reference from the scaffolding upstream and register the singleton witht he interface.
-            services.AddTransient<ISecurityAccessProvider>(services => services.GetService<SecurityAccessProvider>());
+            services.AddSingleton<AzureAuthenticationCredentialProvider>();
+            services.AddSingleton<AppInsightsContext>();
+            services.AddSingleton<AdsGoFastDapperContext>();
+            services.AddSingleton<ISecurityAccessProvider, SecurityAccessProvider>();
             services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
             services.AddSingleton<IAuthorizationHandler, PermissionAssignedViaRoleHandler>();
 
             services.AddControllersWithViews(opt =>
             {
                 opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
-            })
-                    .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
-
-
-
+            }).AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
 
             services.AddRazorPages();
 
@@ -85,7 +93,7 @@ namespace WebApplication
                             .RequireAuthenticatedUser()
                             .Build();
             });
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -116,6 +124,14 @@ namespace WebApplication
                     pattern: "{controller=Dashboard}/{action=Index}/{id?}").RequireAuthorization();
                 endpoints.MapRazorPages();
             });
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
     }
 }

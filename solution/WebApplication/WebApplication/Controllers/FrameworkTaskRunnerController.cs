@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using WebApplication.Services;
 using WebApplication.Framework;
 using WebApplication.Models;
+using Dapper;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WebApplication.Controllers
 {
@@ -176,5 +177,24 @@ namespace WebApplication.Controllers
         {
             return _context.FrameworkTaskRunner.Any(e => e.TaskRunnerId == id);
         }
+
+        public IActionResult IndexDataTable()
+        {
+            return View();
+        }
+
+        public async Task<ActionResult> SetFrameworkTaskRunnersBackToIdle()
+        {
+            List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
+            var entitys = _context.FrameworkTaskRunner.Where(ti => Pkeys.Contains(ti.TaskRunnerId));
+            entitys.ForEachAsync(ti =>
+            {
+                ti.Status = "Idle";
+            }).Wait();
+            await _context.SaveChangesAsync();
+
+            return new OkObjectResult(new { });
+        }
     }
+
 }

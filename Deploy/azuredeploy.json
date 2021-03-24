@@ -163,16 +163,30 @@
                 "description": "The name of the Log Store account to create."
             }
         },
-        "storage-datalake-account-name": {
+        "storage-datalake-blob-account-name": {
             "type": "string",
-            "defaultValue": "[concat('datalakestg', uniqueString(resourceGroup().id))]",
+            "defaultValue": "[concat('blobstg', uniqueString(resourceGroup().id))]",
+            "metadata": {
+                "description": "The name of the Blob Store account to create."
+            }
+        },
+        "storage-datalake-adls-account-name": {
+            "type": "string",
+            "defaultValue": "[concat('adlsstg', uniqueString(resourceGroup().id))]",
             "metadata": {
                 "description": "The name of the Data Lake Store account to create."
             }
         },
-        "storage-datalake-conatiner-name": {
+        "storage-datalake-landing-conatiner-name": {
             "type": "string",
             "defaultValue": "datalakelanding",
+            "metadata": {
+                "description": "The name of the Data Lake Store container to create."
+            }
+        },
+        "storage-datalake-raw-conatiner-name": {
+            "type": "string",
+            "defaultValue": "datalakeraw",
             "metadata": {
                 "description": "The name of the Data Lake Store container to create."
             }
@@ -285,7 +299,7 @@
             }
         },
         "workspaces_adsgofastloganalytics_name": {
-            "defaultValue": "adsgofastloganalytics",
+            "defaultValue": "adsloganalytics",
             "type": "String"
         },
         "log-analytics-sku": {
@@ -312,9 +326,25 @@
         },
         "log-analytics-resourcePermissions": {
             "type": "bool",
+            "defaultValue": false,
             "metadata": {
                 "description": "true to use resource or workspace permissions. false to require workspace permissions."
             }
+        },
+        "sample-db-name": {
+            "defaultValue": "AdventureWorksLT",
+            "type": "String"
+        },
+        "ads-go-fast-db-name": {
+            "defaultValue": "adsgofast",
+            "type": "String"
+        },
+        "staging-db-name": {
+            "defaultValue": "staging",
+            "type": "String"
+        },
+        "adf-ir-onp-vm-name": {
+            "type": "String"
         }
     },
     "variables": {
@@ -322,13 +352,13 @@
         "data-subnet-name": "Data",
         "bastion-subnet-name": "AzureBastionSubnet",
         "adf-ir-vm-name": "[take(concat('IR-Az-', uniqueString(resourceGroup().id),'-VM'),15)]",
-        "adf-ir-onp-vm-name": "[take(concat('IR-OnP-', uniqueString(resourceGroup().id),'-VM'),15)]",
         "adf-ir-az-network-interface-name": "[concat(variables('adf-ir-vm-name'),'NetInt')]",
-        "adf-ir-onp-network-interface-name": "[concat(variables('adf-ir-onp-vm-name'),'NetInt')]",
-        "sample-database-name": "[concat(parameters('sql-server-name'),'/AdventureWorksLT')]",
-        "ads-go-fast-database-name": "[concat(parameters('sql-server-name'),'/adsgofast')]",
-        "staging-database-name": "[concat(parameters('sql-server-name'),'/staging')]",
-        "hosting-plan-name": "[concat('hpn-', resourceGroup().name)]",
+        "adf-ir-onp-network-interface-name": "[concat(parameters('adf-ir-onp-vm-name'),'NetInt')]",
+        "sample-database-name": "[concat(parameters('sql-server-name'),'/',parameters('sample-db-name'))]",
+        "ads-go-fast-database-name": "[concat(parameters('sql-server-name'),'/',parameters('ads-go-fast-db-name'))]",
+        "staging-database-name": "[concat(parameters('sql-server-name'),'/',parameters('staging-db-name'))]",
+        "hosting-plan-web-name": "[concat('hpnw-', resourceGroup().name)]",
+        "hosting-plan-func-name": "[concat('hpnf-', resourceGroup().name)]",
         "storage-account-id": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storage-log-account-name'))]",
         "vnet-data-subnet-resource-id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet-name'), variables('data-subnet-name'))]",
         "sites_AdsGoFastWebApp_name": "[take(concat('AdsGoFastWebApp-', uniqueString(resourceGroup().id),'-VM'),20)]",
@@ -540,20 +570,20 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-07-01",
-            "name": "[variables('adf-ir-onp-vm-name')]",
+            "name": "[parameters('adf-ir-onp-vm-name')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('adf-ir-onp-network-interface-name'))]"
             ],
             "tags": {
-                "displayName": "[variables('adf-ir-onp-vm-name')]"
+                "displayName": "[parameters('adf-ir-onp-vm-name')]"
             },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('adf-ir-vm-size')]"
                 },
                 "osProfile": {
-                    "computerName": "[variables('adf-ir-onp-vm-name')]",
+                    "computerName": "[parameters('adf-ir-onp-vm-name')]",
                     "adminUsername": "[parameters('adf-ir-vm-admin-username')]",
                     "adminPassword": "[parameters('adf-ir-vm-admin-password')]",
                     "windowsConfiguration": {
@@ -569,7 +599,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(variables('adf-ir-onp-vm-name'),'OsDisk')]",
+                        "name": "[concat(parameters('adf-ir-onp-vm-name'),'OsDisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
@@ -757,12 +787,12 @@
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2018-11-01",
+            "apiVersion": "2020-06-01",
             "name": "[parameters('azure-function-site-name')]",
             "kind": "functionapp",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-name'))]",
+                "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-func-name'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storage-log-account-name'))]"
             ],
             "properties": {
@@ -787,14 +817,38 @@
                         }
                     ]
                 },
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-name'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-func-name'))]",
                 "clientAffinityEnabled": false
             }
         },
         {
             "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('hosting-plan-func-name')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            },
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            }
+        },        
+        {
+            "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
-            "name": "[variables('hosting-plan-name')]",
+            "name": "[variables('hosting-plan-web-name')]",
             "location": "[parameters('location')]",
             "properties": {
                 "perSiteScaling": false,
@@ -820,7 +874,7 @@
             "name": "[variables('sites_AdsGoFastWebApp_name')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-name'))]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-web-name'))]"
             ],
             "kind": "app",
             "properties": {
@@ -837,7 +891,7 @@
                         "hostType": "Repository"
                     }
                 ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-name'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hosting-plan-web-name'))]",
                 "reserved": false,
                 "isXenon": false,
                 "hyperV": false,
@@ -954,7 +1008,7 @@
             "kind": "web",
             "location": "[resourceGroup().location]",
             "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('hosting-plan-name'))]": "Resource"
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('hosting-plan-web-name'))]": "Resource"
             },
             "properties": {
                 "Application_Type": "web",
@@ -965,7 +1019,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
             "location": "[resourceGroup().location]",
-            "name": "[parameters('storage-datalake-account-name')]",
+            "name": "[parameters('storage-datalake-adls-account-name')]",
             "kind": "StorageV2",
             "sku": {
                 "name": "[parameters('storage-datalake-sku')]"
@@ -990,9 +1044,61 @@
                 {
                     "type": "blobServices/containers",
                     "apiVersion": "2019-06-01",
-                    "name": "[concat('default/', parameters('storage-datalake-conatiner-name'))]",
+                    "name": "[concat('default/', parameters('storage-datalake-landing-conatiner-name'))]",
                     "dependsOn": [
-                        "[parameters('storage-datalake-account-name')]"
+                        "[parameters('storage-datalake-adls-account-name')]"
+                    ]
+                },
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2019-06-01",
+                    "name": "[concat('default/', parameters('storage-datalake-raw-conatiner-name'))]",
+                    "dependsOn": [
+                        "[parameters('storage-datalake-adls-account-name')]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('storage-datalake-blob-account-name')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "[parameters('storage-datalake-sku')]"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": {
+                            "enabled": true
+                        }
+                    }
+                },
+                "isHnsEnabled": false,
+                "supportsHttpsTrafficOnly": true,
+                "accessTier": "Hot"
+            },
+            "resources": [
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2019-06-01",
+                    "name": "[concat('default/', parameters('storage-datalake-landing-conatiner-name'))]",
+                    "dependsOn": [
+                        "[parameters('storage-datalake-blob-account-name')]"
+                    ]
+                },
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2019-06-01",
+                    "name": "[concat('default/', parameters('storage-datalake-raw-conatiner-name'))]",
+                    "dependsOn": [
+                        "[parameters('storage-datalake-blob-account-name')]"
                     ]
                 }
             ]
@@ -1000,13 +1106,13 @@
         {
             "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
             "apiVersion": "2017-03-01-preview",
-            "name": "[variables('adf-ir-onp-vm-name')]",
+            "name": "[parameters('adf-ir-onp-vm-name')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('adf-ir-onp-vm-name'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('adf-ir-onp-vm-name'))]"
             ],
             "properties": {
-                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', variables('adf-ir-onp-vm-name'))]",
+                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('adf-ir-onp-vm-name'))]",
                 "sqlManagement": "Full",
                 "SqlServerLicenseType": "PAYG",
                 "StorageConfigurationSettings": {
@@ -1043,5 +1149,63 @@
                 }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "stringDataFactoryName": {
+            "type": "string",
+            "value": "[parameters('adf-name')]"
+        },
+        "stringSubcriptionId": {
+            "type": "string",
+            "value": "[subscription().id]"
+        },
+        "stringLogStorageAccount": {
+            "type": "string",
+            "value": "[parameters('storage-log-account-name')]"
+        },
+        "stringLogAnalytics": {
+            "type": "string",
+            "value": "[variables('workspaces_adsgofastloganalytics_name')]"
+        },
+        "stringAppInsights": {
+            "type": "string",
+            "value": "[parameters('app-insights-name')]"
+        },
+        "stringADLSStorageAccount": {
+            "type": "string",
+            "value": "[parameters('storage-datalake-adls-account-name')]"
+        },
+        "stringSQLServer": {
+            "type": "string",
+            "value": "[parameters('sql-server-name')]"
+        },
+        "stringadsGoFastDB": {
+            "type": "string",
+            "value": "[parameters('ads-go-fast-db-name')]"
+        },
+        "stringstagingDB": {
+            "type": "string",
+            "value": "[parameters('staging-db-name')]"
+        },
+        "stringsampleDB": {
+            "type": "string",
+            "value": "[parameters('sample-db-name')]"
+        },
+        "stringAzureFunction": {
+            "type": "string",
+            "value": "[parameters('azure-function-site-name')]"
+        },
+        "stringKeyVaultName": {
+            "type": "string",
+            "value": "[parameters('keyvault-name')]"
+        },
+        "stringVMAzIR": {
+            "type": "string",
+            "value": "[variables('adf-ir-vm-name')]"
+        },
+        "stringWebApp": {
+            "type": "string",
+            "value": "[variables('sites_AdsGoFastWebApp_name')]"
+        }
+    }
 }

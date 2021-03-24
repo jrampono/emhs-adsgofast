@@ -273,4 +273,8 @@ var bsWindow = {
       ]
     });
   } // prompt();
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> main
