@@ -56,17 +56,26 @@ namespace WebApplication.Controllers
         }
 
         // GET: TaskMaster/Create
-        public IActionResult Create()
+        public IActionResult Create(int? TaskGroupId)
         {
             ViewData["ScheduleMasterId"] = new SelectList(_context.ScheduleMaster.OrderBy(x=>x.ScheduleDesciption), "ScheduleMasterId", "ScheduleDesciption");
             ViewData["SourceSystemId"] = new SelectList(_context.SourceAndTargetSystems.OrderBy(x=>x.SystemName), "SystemId", "SystemName");
             ViewData["TargetSystemId"] = new SelectList(_context.SourceAndTargetSystems.OrderBy(x=>x.SystemName), "SystemId", "SystemName");
-            ViewData["TaskGroupId"] = new SelectList(_context.TaskGroup.OrderBy(x=>x.TaskGroupName), "TaskGroupId", "TaskGroupName");
+
+            if (TaskGroupId != null)
+            {
+                ViewData["TaskGroupId"] = new SelectList(_context.TaskGroup.Where(x => x.TaskGroupId == TaskGroupId), "TaskGroupId", "TaskGroupName");
+            }
+            else
+            {
+                ViewData["TaskGroupId"] = new SelectList(_context.TaskGroup.OrderBy(x => x.TaskGroupName), "TaskGroupId", "TaskGroupName");
+            }
             ViewData["TaskTypeId"] = new SelectList(_context.TaskType.OrderBy(x=>x.TaskTypeName), "TaskTypeId", "TaskTypeName");
      TaskMaster taskMaster = new TaskMaster();
             taskMaster.ActiveYn = true;
             return View(taskMaster);
         }
+
 
         // POST: TaskMaster/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 

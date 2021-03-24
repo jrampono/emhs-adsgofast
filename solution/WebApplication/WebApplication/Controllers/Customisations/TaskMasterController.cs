@@ -275,8 +275,8 @@ namespace WebApplication.Controllers
                 return RedirectToAction(nameof(IndexDataTable));
             }
             ViewData["ScheduleMasterId"] = new SelectList(_context.ScheduleMaster, "ScheduleMasterId", "ScheduleCronExpression", taskMaster.ScheduleMasterId);
-            ViewData["SourceSystemId"] = new SelectList(_context.SourceAndTargetSystems, "SystemId", "SystemAuthType", taskMaster.SourceSystemId);
-            ViewData["TargetSystemId"] = new SelectList(_context.SourceAndTargetSystems, "SystemId", "SystemAuthType", taskMaster.TargetSystemId);
+            ViewData["SourceSystemId"] = new SelectList(_context.SourceAndTargetSystems, "SystemId", "SystemName", taskMaster.SourceSystemId);
+            ViewData["TargetSystemId"] = new SelectList(_context.SourceAndTargetSystems, "SystemId", "SystemName", taskMaster.TargetSystemId);
             ViewData["TaskGroupId"] = new SelectList(_context.TaskGroup, "TaskGroupId", "TaskGroupName", taskMaster.TaskGroupId);
             ViewData["TaskTypeId"] = new SelectList(_context.TaskType, "TaskTypeId", "TaskTypeName", taskMaster.TaskTypeId);
             return View(taskMaster);

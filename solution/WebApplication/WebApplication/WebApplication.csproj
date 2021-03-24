@@ -49,7 +49,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Enums\" />
-    <Folder Include="wwwroot\lib\bswindow\" />
+    <Folder Include="wwwroot\js\bswindow\" />
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
 

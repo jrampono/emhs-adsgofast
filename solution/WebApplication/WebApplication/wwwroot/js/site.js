@@ -129,7 +129,7 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
 
             if (value === "Create" || value === "CreatePlus") {
                 CrudButton.action = function (e, dt, node, config) {
-                    window.location = "/" + CrudController + "/" + value;
+                    window.location = "/" + CrudController + "/" + value + window.location.search;
                 }
             }
             else {

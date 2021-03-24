@@ -285,7 +285,7 @@
                     $.each(taskTypeMappings.ValidSourceSystems, function (key, value) {
                         var opt = $('<option value="' + value.SystemId + '">' + value.SystemName + ' (' + value.SystemType + ') ' + '</option>')
                         if (opt.val() == currentSourceSystemSelectedOption.val()) {
-                            opt.selected = true;
+                            opt.attr('selected', 'selected');
                         }
                         $('#SourceSystemId').append(opt);
                     })
@@ -316,7 +316,7 @@
                     $.each(taskTypeMappings.ValidTargetSystems, function (key, value) {
                         var opt = $('<option value="' + value.SystemId + '">' + value.SystemName + ' (' + value.SystemType + ') ' + '</option>')
                         if (opt.val() == currentTargetSystemSelectedOption.val()) {
-                            opt.selected = true;
+                            opt.attr('selected', 'selected');
                         }
                         if (validTargetSystemTypes.includes(value.SystemType)) {
                             $('#TargetSystemId').append(opt);

@@ -95,6 +95,10 @@
       "provider": "jsdelivr",
       "library": "malihu-custom-scrollbar-plugin@3.1.5",
       "destination": "wwwroot/lib/malihu-custom-scrollbar-plugin/"
+    },
+    {
+      "library": "json-editor@2.5.3",
+      "destination": "wwwroot/lib/json-editor/"
     }
   ]
 }
