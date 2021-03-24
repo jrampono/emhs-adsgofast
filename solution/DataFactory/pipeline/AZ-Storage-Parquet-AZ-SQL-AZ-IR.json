@@ -369,7 +369,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Data Movement/Auto Resolve IR"
 		},
-		"annotations": []
+		"annotations": [],
+		"lastPublishTime": "2020-07-23T08:15:14Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

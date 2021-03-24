@@ -56,8 +56,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Enums\" />
+    <Folder Include="wwwroot\js\bswindow\" />
     <Folder Include="Models\Stats\" />
-    <Folder Include="wwwroot\lib\bswindow\" />
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
 

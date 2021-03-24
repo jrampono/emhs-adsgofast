@@ -32,7 +32,8 @@
 										"value": "@pipeline().parameters.TaskObject.Target.PostCopySQL",
 										"type": "Expression"
 									},
-									"queryTimeout": "02:00:00"
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"dataset": {
 									"referenceName": "AzureSqlTable_SH_IR",
@@ -126,7 +127,8 @@
 										"value": "@pipeline().parameters.TaskObject.Target.MergeSQL",
 										"type": "Expression"
 									},
-									"queryTimeout": "02:00:00"
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"dataset": {
 									"referenceName": "AzureSqlTable_SH_IR",
@@ -227,7 +229,8 @@
 										"value": "@activity('AF Get Merge Statement').output.MergeStatement",
 										"type": "Expression"
 									},
-									"queryTimeout": "02:00:00"
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"dataset": {
 									"referenceName": "AzureSqlTable_SH_IR",
@@ -343,7 +346,8 @@
 										"value": "@activity('AF Get Information Schema SQL Stage').output.InformationSchemaSQL",
 										"type": "Expression"
 									},
-									"queryTimeout": "02:00:00"
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"dataset": {
 									"referenceName": "AzureSqlTable_SH_IR",
@@ -396,7 +400,8 @@
 										"value": "@activity('AF Get Information Schema SQL Target').output.InformationSchemaSQL",
 										"type": "Expression"
 									},
-									"queryTimeout": "02:00:00"
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"dataset": {
 									"referenceName": "AzureSqlTable_SH_IR",
@@ -544,6 +549,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Data Movement/Azure SH IR/Common"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-08-04T13:09:30Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

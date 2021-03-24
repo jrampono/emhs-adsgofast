@@ -1,4 +1,10 @@
-﻿ 
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+ 
 Begin TRY
 
     INSERT INTO dbo.ActivityAudit ([logdatetimeoffset],[logdateutc],[startdatetimeoffset],[enddatetimeoffset],[logtypeid],[executionuid],[logsource],[taskmasterid],[taskinstanceid],[adfrunuid],[activitytype],[comment],[status])

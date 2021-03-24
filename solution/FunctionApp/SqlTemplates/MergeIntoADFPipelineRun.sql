@@ -1,4 +1,10 @@
-﻿
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+
 Begin TRY
 
 --Update Tasks that have 

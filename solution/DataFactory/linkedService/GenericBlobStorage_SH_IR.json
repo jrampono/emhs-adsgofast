@@ -1,5 +1,6 @@
 {
 	"name": "GenericBlobStorage_SH_IR",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"type": "AzureBlobStorage",
 		"parameters": {
