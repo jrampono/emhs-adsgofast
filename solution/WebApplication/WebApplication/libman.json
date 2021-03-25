@@ -92,6 +92,11 @@
       "destination": "wwwroot/lib/datatables.net/"
     },
     {
+      "provider": "jsdelivr",
+      "library": "malihu-custom-scrollbar-plugin@3.1.5",
+      "destination": "wwwroot/lib/malihu-custom-scrollbar-plugin/"
+    },
+    {
       "provider": "filesystem",
       "library": "wwwroot/js/bswindow/",
       "destination": "wwwroot/lib/bswindow/"
