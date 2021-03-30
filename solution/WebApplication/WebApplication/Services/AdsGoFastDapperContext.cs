@@ -32,7 +32,7 @@ namespace WebApplication.Services
         public async Task<SqlConnection> GetConnection()
         {
             SqlConnection _con = new SqlConnection(_connectionstring);
-            string _token = await _authProvider.GetAzureRestApiToken(new Azure.Core.TokenRequestContext(new string[] { "https://database.windows.net//.default" }), new System.Threading.CancellationToken());
+            string _token = await _authProvider.GetMsalRestApiToken(new Azure.Core.TokenRequestContext(new string[] { "https://database.windows.net//.default" }), new System.Threading.CancellationToken());
             _con.AccessToken = _token;
             return _con;
         }

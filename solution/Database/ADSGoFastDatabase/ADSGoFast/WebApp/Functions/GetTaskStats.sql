@@ -1,4 +1,10 @@
-﻿--select * from [WebApp].[GetTaskStats](2, null, 2, null)
+﻿/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+--select * from [WebApp].[GetTaskStats](2, null, 2, null)
 CREATE function [WebApp].[GetTaskStats](@GroupByLevel tinyint, @TaskGroupId BigInt = null, @TaskMasterId BigInt = null, @TaskInstanceId BigInt = null) returns table as
 return
 (

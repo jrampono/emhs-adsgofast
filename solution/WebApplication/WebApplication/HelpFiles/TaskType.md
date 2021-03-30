@@ -1,5 +1,4 @@
 ## TaskType
 
 
-1. Create, read, update and delete task types
-2. Has selectable task type execution
+This table defines the different types of task, such as "Azure Storage to SQL Database".

@@ -64,7 +64,8 @@
 										"value": "@activity('AF Get SQL Create Statement Staging').output.CreateStatement",
 										"type": "Expression"
 									},
-									"queryTimeout": "02:00:00"
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"dataset": {
 									"referenceName": "AzureSqlTable_SH_IR",
@@ -184,7 +185,8 @@
 										"value": "@activity('AF Get SQL Create Statement Target').output.CreateStatement",
 										"type": "Expression"
 									},
-									"queryTimeout": "02:00:00"
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"dataset": {
 									"referenceName": "AzureSqlTable_SH_IR",
@@ -251,6 +253,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Data Movement/Azure SH IR/Common"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-08-04T13:09:30Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

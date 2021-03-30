@@ -97,6 +97,10 @@
       "destination": "wwwroot/lib/malihu-custom-scrollbar-plugin/"
     },
     {
+      "library": "json-editor@2.5.3",
+      "destination": "wwwroot/lib/json-editor/"
+    },
+    {
       "provider": "filesystem",
       "library": "wwwroot/js/bswindow/",
       "destination": "wwwroot/lib/bswindow/"

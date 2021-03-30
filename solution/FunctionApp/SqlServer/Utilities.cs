@@ -1,4 +1,10 @@
-﻿using FormatWith;
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+using FormatWith;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,9 @@
 ## TaskInstance
 
+This table records a scheduled execution of a TaskMaster.
 
-1. Create, read, update and delete task instances
-2. Has selectable last execution status, task master, task runner and schedule instance
-3. Can mark each entry untried, failed or completed status
+The LastExecutionStatus has a number of states:
+* Untried
+* InProgress
+* Complete
+* Failed 

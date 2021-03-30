@@ -1,4 +1,10 @@
-﻿using AdsGoFast.SqlServer;
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+using AdsGoFast.SqlServer;
 using System;
 using System.Collections;
 using System.Collections.Generic;

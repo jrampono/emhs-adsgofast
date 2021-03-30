@@ -156,7 +156,10 @@
                 params.StatsLevel = "TaskGroup";
             }
 
-            $('#pagetitle').text(" " + params.StatsLevel + " Statistics");
+            var rawTitle = params.StatsLevel;
+            var humanisedTitle = rawTitle.split(/(?=[A-Z])/).join(" ");
+
+            $('#pagetitle').text(" " + humanisedTitle + " Statistics");
             $('#PageIcon').removeClass();
 
             if (params.StatsLevel === "TaskGroup") { $('#PageIcon').addClass("fas fa-object-group"); }

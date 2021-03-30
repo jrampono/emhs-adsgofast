@@ -1,5 +1,4 @@
 ## TaskGroup
 
 
-1. Create, read, update and delete task groups
-2. Has corresponding subject area (dataset)
+The TaskGroup table describes a group of tasks which may all be executed at the same time.

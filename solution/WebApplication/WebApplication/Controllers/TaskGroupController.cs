@@ -11,6 +11,8 @@ using WebApplication.Framework;
 using WebApplication.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Web;
+using System.Collections.Specialized;
 
 namespace WebApplication.Controllers
 {
@@ -56,8 +58,15 @@ namespace WebApplication.Controllers
         // GET: TaskGroup/Create
         public IActionResult Create()
         {
-            ViewData["SubjectAreaId"] = new SelectList(_context.SubjectArea.OrderBy(x=>x.SubjectAreaId), "SubjectAreaId", "SubjectAreaId");
-     TaskGroup taskGroup = new TaskGroup();
+            NameValueCollection QueryParams = HttpUtility.ParseQueryString(new Uri(Request.Headers["Referer"]).Query);
+            if(QueryParams["SubjectAreaId"] != null)
+            {
+                ViewData["selectedSubjectAreaId"] = int.Parse(QueryParams["SubjectAreaId"]);
+            }
+
+            ViewData["SubjectAreaId"] = new SelectList(_context.SubjectArea.OrderBy(x => x.SubjectAreaId), "SubjectAreaId", "SubjectAreaName");
+
+            TaskGroup taskGroup = new TaskGroup();
             taskGroup.ActiveYn = true;
             return View(taskGroup);
         }

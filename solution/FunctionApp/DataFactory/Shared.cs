@@ -1,4 +1,10 @@
-﻿using Microsoft.Azure.Management.DataFactory;
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+using Microsoft.Azure.Management.DataFactory;
 using Microsoft.Rest;
 
 namespace AdsGoFast

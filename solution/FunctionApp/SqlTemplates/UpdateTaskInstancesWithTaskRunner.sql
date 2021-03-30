@@ -1,4 +1,10 @@
-﻿Declare @TotalConcurrencySlots numeric(18,4), @ActiveRunners int, @TasksPerRunner int, @MaxRunnerIndex int
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+Declare @TotalConcurrencySlots numeric(18,4), @ActiveRunners int, @TasksPerRunner int, @MaxRunnerIndex int
 Set @TotalConcurrencySlots = (Select sum(ConcurrencySlotsAllocated) from {TempTable})
 Set @ActiveRunners = (Select count(*) from FrameworkTaskRunner where ActiveYN = 1)
 Set @TasksPerRunner =  floor(@TotalConcurrencySlots / @ActiveRunners)

@@ -1,4 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+using Newtonsoft.Json.Linq;
 using System;
 using Azure.Storage.Sas;
 using Azure.Storage.Blobs;

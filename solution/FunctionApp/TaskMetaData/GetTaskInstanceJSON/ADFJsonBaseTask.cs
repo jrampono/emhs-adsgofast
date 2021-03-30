@@ -1,4 +1,10 @@
-﻿using Dapper;
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+using Dapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

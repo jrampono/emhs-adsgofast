@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
 using AdsGoFast.GetTaskInstanceJSON.TaskMasterJson.AZ_SQL_StoredProcedure;
 using AdsGoFast.SqlServer;
 using AdsGoFast.TaskMetaData;

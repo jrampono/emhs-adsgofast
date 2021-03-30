@@ -113,7 +113,8 @@
 							"value": "@activity('AF Get Information Schema SQL').output.InformationSchemaSQL",
 							"type": "Expression"
 						},
-						"queryTimeout": "02:00:00"
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "SqlServerTable_OnPrem_SH_IR",
@@ -255,10 +256,11 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "SELECT MAX(@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalField}) AS newWatermark\nFROM [@{pipeline().parameters.TaskObject.Source.Extraction.TableSchema}].[@{pipeline().parameters.TaskObject.Source.Extraction.TableName}] \nWHERE [@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalField}] > CAST('@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalValue}' as datetime)",
+												"value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00"
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
 										"dataset": {
 											"referenceName": "SqlServerTable_OnPrem_SH_IR",
@@ -352,10 +354,11 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "SELECT CAST(CEILING(count(*))/@{pipeline().parameters.TaskObject.Source.Extraction.ChunkSize} + 0.00001 as int) as  batchcount\nFROM [@{pipeline().parameters.TaskObject.Source.Extraction.TableSchema}].[@{pipeline().parameters.TaskObject.Source.Extraction.TableName}] ",
+												"value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00"
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
 										"dataset": {
 											"referenceName": "SqlServerTable_OnPrem_SH_IR",
@@ -453,10 +456,11 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "SELECT MAX(@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalField}) AS newWatermark, CAST(CEILING(count(*))/@{pipeline().parameters.TaskObject.Source.Extraction.ChunkSize} + 0.00001 as int) as  batchcount\nFROM [@{pipeline().parameters.TaskObject.Source.Extraction.TableSchema}].[@{pipeline().parameters.TaskObject.Source.Extraction.TableName}] \nWHERE [@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalField}] > CAST('@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalValue}' as datetime)",
+												"value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00"
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
 										"dataset": {
 											"referenceName": "SqlServerTable_OnPrem_SH_IR",
@@ -510,7 +514,8 @@
 		"folder": {
 			"name": "ADS Go Fast/Data Movement/OnPrem SH IR"
 		},
-		"annotations": []
+		"annotations": [],
+		"lastPublishTime": "2020-08-04T12:40:45Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

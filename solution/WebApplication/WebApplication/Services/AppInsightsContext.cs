@@ -7,7 +7,7 @@ using WebApplication.Services;
 
 namespace WebApplication.Models
 {
-    public class AppInsightsContext 
+    public class AppInsightsContext
     {
         private readonly HttpClient _httpClient;
         private readonly AzureAuthenticationCredentialProvider _authProvider;
@@ -32,7 +32,7 @@ namespace WebApplication.Models
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                tables = ((JArray)(JObject.Parse(content)["tables"]));                
+                tables = ((JArray)(JObject.Parse(content)["tables"]));
             }
             return tables;
         }

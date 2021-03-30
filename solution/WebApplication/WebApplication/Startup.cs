@@ -58,7 +58,7 @@ namespace WebApplication
             services.AddHttpClient<AppInsightsContext>(async (s,c) =>
             {
                 var authProvider = s.GetService<AzureAuthenticationCredentialProvider>();
-                var token = await authProvider.GetAzureRestApiToken(new Azure.Core.TokenRequestContext(new string[] { "https://api.applicationinsights.io" }), new System.Threading.CancellationToken());
+                var token = authProvider.GetAzureRestApiToken("https://api.applicationinsights.io");
                 c.DefaultRequestHeaders.Accept.Clear();
                 c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -66,15 +66,15 @@ namespace WebApplication
                 .AddPolicyHandler(GetRetryPolicy());
 
             services.AddSingleton<AzureAuthenticationCredentialProvider>();
-            services.AddSingleton<AppInsightsContext>();
             services.AddSingleton<AdsGoFastDapperContext>();
             services.AddSingleton<ISecurityAccessProvider, SecurityAccessProvider>();
             services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
             services.AddSingleton<IAuthorizationHandler, PermissionAssignedViaRoleHandler>();
+            services.AddScoped<IAuthorizationHandler, PermissionAssignedViaControllerActionHandler>();
 
             services.AddControllersWithViews(opt =>
             {
-                opt.Filters.Add(new Helpers.DefaultHelpLinkActionFilter());
+                opt.Filters.Add(new DefaultHelpLinkActionFilter());
             }).AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
 
             services.AddRazorPages();

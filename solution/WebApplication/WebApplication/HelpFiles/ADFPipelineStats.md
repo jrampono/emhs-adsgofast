@@ -1,4 +1,4 @@
 ## ADFPipelineStats
 
 
-Displays the information relating to an ADF pipeline and its statistics.
+Records Azure Data Factory pipeline statistics.

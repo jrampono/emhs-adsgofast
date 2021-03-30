@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
 using AdsGoFast.SqlServer;
 using System.Collections.Generic;
 using System.Linq;

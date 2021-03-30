@@ -21,6 +21,10 @@
 	<ItemGroup>
     <Compile Remove="EasyAuth.cs" />
 		<Content Include="HelpFiles\*.md" />
+		<None Remove="HelpFiles\TaskMaster\EditPlus.md" />
+		<Content Include="HelpFiles\TaskMaster\EditPlus.md">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Update="HelpFiles\*.md">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -56,8 +60,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Enums\" />
+    <Folder Include="wwwroot\js\bswindow\" />
     <Folder Include="Models\Stats\" />
-    <Folder Include="wwwroot\lib\bswindow\" />
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
 

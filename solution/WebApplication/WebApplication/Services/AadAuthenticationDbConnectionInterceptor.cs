@@ -20,7 +20,12 @@ namespace WebApplication.Services
         public override InterceptionResult ConnectionOpening(DbConnection connection,
             ConnectionEventData eventData,
             InterceptionResult result)
-        => throw new InvalidOperationException("Open connections asynchronously when using AAD authentication.");
+        {
+            var sqlConnection = (SqlConnection)connection;
+            var ct = new CancellationToken();
+            sqlConnection.AccessToken = GetAzureSqlAccessToken(ct).Result;
+            return base.ConnectionOpening(connection, eventData, result);
+        }
 
         public override async Task<InterceptionResult> ConnectionOpeningAsync(
             DbConnection connection,
@@ -36,7 +41,7 @@ namespace WebApplication.Services
         private async Task<string> GetAzureSqlAccessToken(CancellationToken cancellationToken)
         {
             var tokenRequestContext = new TokenRequestContext(new[] { "https://database.windows.net//.default" });
-            var tokenRequestResult = await _azureAuthenticationCredentialProvider.GetAzureRestApiToken(tokenRequestContext, cancellationToken);
+            var tokenRequestResult = await _azureAuthenticationCredentialProvider.GetMsalRestApiToken(tokenRequestContext, cancellationToken);
 
             return tokenRequestResult;
         }

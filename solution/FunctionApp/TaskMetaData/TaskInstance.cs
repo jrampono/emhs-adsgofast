@@ -1,4 +1,10 @@
-﻿using AdsGoFast.SqlServer;
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
+using AdsGoFast.SqlServer;
 using Dapper;
 using FormatWith;
 using Microsoft.Azure.Management.AppService.Fluent.Models;
@@ -196,12 +202,13 @@ namespace AdsGoFast.TaskMetaData
                             if (JObject.Parse(T.TaskInstanceJson)["IncrementalColumnType"].ToString() == "DateTime")
                             {
                                 DateTime _IncrementalValue = (DateTime)JObject.Parse(T.TaskInstanceJson)["IncrementalValue"];
-                                Extraction["IncrementalValue"] = _IncrementalValue.ToString("yyyy-MM-dd HH:mm:ss.fff");//JObject.Parse(T.TaskInstanceJson)["IncrementalValue"].ToString();
+                                Extraction["IncrementalValue"] = _IncrementalValue.ToString("yyyy-MM-dd HH:mm:ss.fff");//JObject.Parse(T.TaskInstanceJson)["IncrementalValue"].ToString();       
                             }
                             else if (JObject.Parse(T.TaskInstanceJson)["IncrementalColumnType"].ToString() == "BigInt")
                             {
                                 int _IncrementalValue = (int)JObject.Parse(T.TaskInstanceJson)["IncrementalValue"];
                                 Extraction["IncrementalValue"] = _IncrementalValue.ToString();//JObject.Parse(T.TaskInstanceJson)["IncrementalValue"].ToString();
+                                
                             }
                         }
 
@@ -212,6 +219,8 @@ namespace AdsGoFast.TaskMetaData
                         Extraction["TableName"] = JObject.Parse(T.TaskMasterJson)["Source"]["TableName"];
 
                         Extraction["SQLStatement"] = CreateSQLStatement(JObject.Parse(T.TaskMasterJson), JObject.Parse(T.TaskInstanceJson));
+
+                        Extraction["IncrementalSQLStatement"] = CreateIncrementalSQLStatement(Extraction);
 
                         Source["Extraction"] = Extraction;
 
@@ -502,6 +511,74 @@ namespace AdsGoFast.TaskMetaData
             return _SQLStatement;
         }
 
+        public static string CreateIncrementalSQLStatement(JObject Extraction)
+        {
+            string _SQLStatement = "";
+
+            if (Extraction["IncrementalType"] != null)
+            {
+
+                if (Extraction["IncrementalType"].ToString().ToLower() == "full")
+                {
+                    _SQLStatement = "";
+                }
+
+                if (Extraction["IncrementalType"].ToString().ToLower() == "full-chunk")
+                {
+                    _SQLStatement = @$"
+                       SELECT 
+		                    CAST(CEILING(count(*))/{Extraction["ChunkSize"]} + 0.00001 as int) as  batchcount
+	                    FROM [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
+                    ";
+                }
+
+                if (Extraction["IncrementalType"].ToString().ToLower() == "watermark" && Extraction["IncrementalColumnType"].ToString().ToLower() == "datetime")
+                {
+                    _SQLStatement = @$"
+                        SELECT 
+	                        MAX([{Extraction["IncrementalField"]}]) AS newWatermark
+                        FROM 
+	                        [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
+                        WHERE [{Extraction["IncrementalField"]}] > CAST('{Extraction["IncrementalValue"]}' as datetime)
+                    ";
+                }
+
+                if (Extraction["IncrementalType"].ToString().ToLower() == "watermark" && Extraction["IncrementalColumnType"].ToString().ToLower() != "datetime")
+                {
+                    _SQLStatement = @$"
+                        SELECT 
+	                        MAX({Extraction["IncrementalField"]}]) AS newWatermark
+                        FROM 
+	                        [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
+                        WHERE [{Extraction["IncrementalField"]}] > {Extraction["IncrementalValue"]}
+                    ";
+                }
+
+                if (Extraction["IncrementalType"].ToString().ToLower() == "watermark-chunk" && Extraction["IncrementalColumnType"].ToString().ToLower() == "datetime")
+                {
+                    _SQLStatement = @$"
+                        SELECT MAX([{Extraction["IncrementalField"]}]) AS newWatermark, 
+		                       CAST(CEILING(count(*))/{Extraction["ChunkSize"]} + 0.00001 as int) as  batchcount
+	                    FROM  [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
+	                    WHERE [{Extraction["IncrementalField"]}] > CAST('{Extraction["IncrementalValue"]}' as datetime)
+                    ";
+                }
+
+                if (Extraction["IncrementalType"].ToString().ToLower() == "watermark-chunk" && Extraction["IncrementalColumnType"].ToString().ToLower() != "datetime")
+                {
+                    _SQLStatement = @$"
+                        SELECT MAX([{Extraction["IncrementalField"]}]) AS newWatermark, 
+		                       CAST(CEILING(count(*))/{Extraction["ChunkSize"]} + 0.00001 as int) as  batchcount
+	                    FROM  [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
+	                    WHERE [{Extraction["IncrementalField"]}] > {Extraction["IncrementalValue"]}
+                    ";
+                }
+
+            }
+
+            return _SQLStatement;
+        }
+
         public static string IncrementalType(JObject JSONValue)
         {
             string _Type = "";
@@ -640,7 +717,7 @@ namespace AdsGoFast.TaskMetaData
                 case "String": return "nvarchar";
                 case "Single": return "real";
                 case "Int16": return "smallint";
-                case "Object 2": return "sql_variant";
+                case "Object�2": return "sql_variant";
                 case "TimeSpan": return "time";
                 case "Byte": return "tinyint";
                 case "Guid": return "uniqueidentifier";

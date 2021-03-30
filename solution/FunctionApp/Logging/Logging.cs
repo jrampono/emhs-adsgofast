@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------------
+
+ Copyright (c) Microsoft Corporation.
+ Licensed under the MIT license.
+
+-----------------------------------------------------------------------*/
 using AdsGoFast.SqlServer;
 using Microsoft.Extensions.Logging;
 using System;
