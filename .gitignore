@@ -276,4 +276,8 @@ __pycache__/
 *.pyc
 
 #Old Deploy Folder 
+<<<<<<< HEAD
 Deploy/
+=======
+Deploy/
+>>>>>>> 65ec745264b49defe0a18e184eca32eb4a7ff5cf
