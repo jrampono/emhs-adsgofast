@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +11,21 @@ namespace WebApplication.Services
 {
     public class SecurityAccessProvider : ISecurityAccessProvider
     {
+        private readonly ILogger _logger;
         private readonly IOptions<SecurityModelOptions> _options;
         private const string WildCardString = "*";
 
-        public SecurityAccessProvider(IOptions<SecurityModelOptions> options)
+        public SecurityAccessProvider(IOptions<SecurityModelOptions> options, ILogger<SecurityAccessProvider> logger)
         {
             _options = options;
+            _logger = logger;
         }
 
         public bool CanPerformOperation(string controllerName, string actionName, ClaimsIdentity identity)
         {
             if (identity == null || !identity.IsAuthenticated)
                 return false;
-
+            
             var roles = GetUserGlobalRoles(identity);
             return CanPerformOperation(controllerName, actionName, roles);
         }
@@ -82,6 +85,13 @@ namespace WebApplication.Services
                 : identity.Claims.Where(x => x.Type == "groups").Select(v => v.Value).ToArray();
         }
 
+        public string[] GetUserRoles(ClaimsIdentity identity)
+        {
+            return identity is null
+               ? (new string[0])
+               : identity.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(v => v.Value).ToArray();
+        }
+
         public Guid[] GetUserAdGroupIds(ClaimsIdentity claimsIdentity)
         {
             //todo: probably need to resolve these using graph API in case it changes to group names
@@ -91,9 +101,15 @@ namespace WebApplication.Services
         public string[] GetUserGlobalRoles(ClaimsIdentity identity)
         {
             var groups = GetUserGroups(identity);
+           
+            //First Get Role Based on AD Groups attached to roles in app settings. This requires app has Graph group read priviledges 
+            string[] roles = _options.Value.SecurityRoles.Where(x => groups.Any(a => a == x.Value.SecurityGroupId) || x.Value.UserOverideList.Contains(identity.Name)).Select(x => x.Key).ToArray();
 
-            var roles = _options.Value.SecurityRoles.Where(x => groups.Any(a => a == x.Value.SecurityGroupId)).Select(x => x.Key).ToArray();
-
+            if (roles.Length == 0)
+            {
+                //Next Get Role based on App Roles
+                roles = GetUserRoles(identity);
+            }
             return roles;
         }
 

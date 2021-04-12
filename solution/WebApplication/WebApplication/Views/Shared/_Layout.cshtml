@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@using  Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    string name =
+       httpContextAccessor.HttpContext.User.FindFirst("name").Value;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -32,7 +40,7 @@
                 </div>
             </div>
 
-            <ul class="list-unstyled components">               
+            <ul class="list-unstyled components">
                 <li>
                     <a href="#pageSubmenuAdv" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Advanced Settings</a>
                     <ul class="collapse list-unstyled" id="pageSubmenuAdv">
@@ -176,29 +184,29 @@
                 </li>
             </ul>
             <a class="navbar-link">
-                <div>@User.Identity.Name</div>
+                <div>&nbsp;User: @name</div>
             </a>
         </nav>
 
         <!-- Page Content -->
         <div id="content">
             <header class="sticky-top">
-            <nav class="navbar navbar-expand-md navbar bg header-center">
-                @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 nav">*@
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-info">
-                        <i class="fas fa-align-left"></i>
-                        <span>View Menu</span>
-                    </button>
+                <nav class="navbar navbar-expand-md navbar bg header-center">
+                    @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 nav">*@
+                    <div class="container-fluid">
+                        <button type="button" id="sidebarCollapse" class="btn btn-info">
+                            <i class="fas fa-align-left"></i>
+                            <span>View Menu</span>
+                        </button>
 
-                    <div class="helpIcon fab">
-                        <div>
-                            <i onclick="toggleHelpVisibility()"
-                               style="font-size: 40px;" class="far fa-question-circle"></i>
+                        <div class="helpIcon fab">
+                            <div>
+                                <i onclick="toggleHelpVisibility()"
+                                   style="font-size: 40px;" class="far fa-question-circle"></i>
+                            </div>
                         </div>
-                    </div>                    
-                </div>
-            </nav>
+                    </div>
+                </nav>
             </header>
             <div class="row">
                 <div id="mainBody" class="col-12">
@@ -218,7 +226,7 @@
 
             <footer class="border-top footer bg text-muted">
                 <div class="container">
-                    &copy; 2020 - Microsoft - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    &copy; 2021 - Microsoft - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </div>
             </footer>
         </div>

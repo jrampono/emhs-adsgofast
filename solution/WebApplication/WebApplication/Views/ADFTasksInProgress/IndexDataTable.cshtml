@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "ADFTasksInProgress";
+}
+
+<h1>Azure Data Factory Tasks In Progress</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "ADFTasksInProgress";
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+            setInterval(function () {
+                table.ajax.reload(null, false); // user paging is not reset on reload
+            }, 30000);
+
+            var DrillButton = {
+                extend: 'selectedSingle',
+                className: 'btn-outline-primary ads-btn-nav',
+                text: '<i data-toggle="tooltip" class="fas fa-industry" style=\'width: 16px\' title="View in Azure Data Factory"></i>',
+                action: function (e, dt, node, config) {
+                    window.location = "https://ms-adf.azure.com/en-us/monitoring/pipelineruns/" + dt.data()[dt.rows({ selected: true }).indexes()[0]][8]+"?factory=" + dt.data()[dt.rows({ selected: true }).indexes()[0]][9];
+                }
+            };
+            buttons = [];
+            buttons.push(DrillButton);
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+            
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

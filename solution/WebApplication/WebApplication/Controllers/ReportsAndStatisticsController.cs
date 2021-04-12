@@ -181,6 +181,13 @@ namespace WebApplication.Controllers
                 }
 
                 //Filter based on querystring params
+                if (!(string.IsNullOrEmpty(Request.Form["QueryParams[ScheduleInstanceId]"])))
+                {
+                    //Convert to int first to protect agains sql injection
+                    whereclauses.Add("si.ScheduleInstanceId = " + System.Convert.ToInt64(Request.Form["QueryParams[ScheduleInstanceId]"]).ToString());
+                }
+
+                //Filter based on querystring params
                 if (!(string.IsNullOrEmpty(Request.Form["QueryParams[TimeFrame]"])))
                 {
                     var Lag = System.Convert.ToInt64(Request.Form["QueryParams[TimeFrame]"]);

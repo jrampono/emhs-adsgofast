@@ -13,9 +13,9 @@ namespace WebApplication.Services
     public class AzureAuthenticationCredentialProvider
     {
         private readonly IOptions<ApplicationOptions> _appOptions;
-        private readonly IOptions<MicrosoftIdentityOptions> _authOptions;
+        private readonly IOptions<AuthOptions> _authOptions;
 
-        public AzureAuthenticationCredentialProvider(IOptions<ApplicationOptions> appOptions, IOptions<MicrosoftIdentityOptions> authOptions)
+        public AzureAuthenticationCredentialProvider(IOptions<ApplicationOptions> appOptions, IOptions<AuthOptions> authOptions)
         {
             _appOptions = appOptions;
             _authOptions = authOptions;

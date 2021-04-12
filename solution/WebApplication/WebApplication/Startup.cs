@@ -36,10 +36,11 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry();
-
+         
             services.Configure<ApplicationOptions>(Configuration.GetSection("ApplicationOptions"));
             services.Configure<SecurityModelOptions>(Configuration.GetSection("SecurityModelOptions"));
-            
+            services.Configure<AuthOptions>(Configuration.GetSection("AzureAd"));
+
             //Configure Entity Framework with Token Auth via Interceptor
             services.AddSingleton<AadAuthenticationDbConnectionInterceptor>();
             services.AddDbContext<AdsGoFastContext>((provider, options) =>
@@ -65,7 +66,24 @@ namespace WebApplication
             }).SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
 
-            services.AddSingleton<AzureAuthenticationCredentialProvider>();
+            services.AddHttpClient<LogAnalyticsContext>(async (s, c) =>
+            {
+                var authProvider = s.GetService<AzureAuthenticationCredentialProvider>();
+                var token = authProvider.GetAzureRestApiToken("https://api.loganalytics.io");
+                c.DefaultRequestHeaders.Accept.Clear();
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }).SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
+
+         
+            services.AddSingleton<AzureAuthenticationCredentialProvider>((provider) =>
+            {
+                var appOptions = provider.GetService<IOptions<ApplicationOptions>>();
+                var authOptions = provider.GetService<IOptions<AuthOptions>>();
+                return new AzureAuthenticationCredentialProvider(appOptions,authOptions);
+            }
+            );
             services.AddSingleton<AdsGoFastDapperContext>();
             services.AddSingleton<ISecurityAccessProvider, SecurityAccessProvider>();
             services.AddTransient<IEntityRoleProvider, EntityRoleProvider>();
@@ -79,7 +97,7 @@ namespace WebApplication
 
             services.AddRazorPages();
 
-            services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
+            services.AddMicrosoftIdentityWebAppAuthentication(Configuration, "AzureAdAuth");
             services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options => options.AccessDeniedPath = "/Home/AccessDenied");
 
             services.AddAuthorization(options =>

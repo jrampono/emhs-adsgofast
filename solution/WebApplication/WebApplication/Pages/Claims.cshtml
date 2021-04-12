@@ -9,19 +9,35 @@
             </thead>
             @if (HttpContext.User.Identity.IsAuthenticated)
             {
-                foreach (var c in Model.Roles)
-                {
-                    <tr>
-                        <td>Role: @c</td>
-                    </tr>
-                }
+            <tr>
+                <td>UserName:  @HttpContext.User.Identity.</td>
+            </tr>
+            <tr>
+                <td>Roles:</td>
+            </tr>
+                    foreach (var c in Model.Roles)
+                    {
+            <tr>
+                <td>Role: @c</td>
+            </tr>
+                    }
+
+            <tr>
+                <td>Claims:</td>
+            </tr>
+                    foreach (var c in Model.Claims.Claims)
+                    {
+            <tr>
+                <td>@c.ToString()</td>
+            </tr>
+                    }
             }
             else
             {
-                <tr>
-                    <td>Current Status</td>
-                    <td><strong>Not Authenticated</strong></td>
-                </tr>
+            <tr>
+                <td>Current Status</td>
+                <td><strong>Not Authenticated</strong></td>
+            </tr>
             }
         </table>
     </div>

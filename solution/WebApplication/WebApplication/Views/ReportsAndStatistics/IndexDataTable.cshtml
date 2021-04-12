@@ -58,7 +58,8 @@
             var nextstatslevelimage = "fas fa-list";
             var nextstatslevelfilterkey = "TaskGroupId";
 
-            if (StatsLevel === "TaskGroup" || StatsLevel === "ScheduleInstance") { nextstatslevel = "TaskMaster"; nextstatslevelimage = "fas fa-list"; nextstatslevelfilterkey = "TaskGroupId";}
+            if (StatsLevel === "TaskGroup") { nextstatslevel = "TaskMaster"; nextstatslevelimage = "fas fa-list"; nextstatslevelfilterkey = "TaskGroupId"; }
+            if (StatsLevel === "ScheduleInstance") { nextstatslevel = "TaskInstance"; nextstatslevelimage = "fas fa-list"; nextstatslevelfilterkey = "ScheduleInstanceId"; }
             if (StatsLevel === "TaskMaster") { nextstatslevel = "TaskInstance"; nextstatslevelimage = "fas fa-list-alt"; nextstatslevelfilterkey = "TaskMasterId"; }
             if (StatsLevel === "TaskInstance") { nextstatslevel = "TaskInstanceExecution"; nextstatslevelimage = "fas fa-bolt"; nextstatslevelfilterkey = "TaskInstanceId"; }
 
@@ -68,7 +69,7 @@
             var DrillButton = {
                 extend: 'selectedSingle',
                 className: 'btn-outline-primary ads-btn-nav',
-                text: '<i data-toggle="tooltip" class="' + nextstatslevelimage + ' style=\'width: 16px\' title="View Task Master Statistics"></i>',
+                text: '<i data-toggle="tooltip" class="' + nextstatslevelimage + '" style=\'width: 16px\' title="View '+nextstatslevel+' Statistics"></i>',
                 action: function (e, dt, node, config) {
                     window.location = '@Url.Action("IndexDataTable", "ReportsAndStatistics")' + "?&StatsLevel=" + nextstatslevel + "&" + nextstatslevelfilterkey + "=" + dt.data()[dt.rows({ selected: true }).indexes()[0]][nextstatslevelfilterkey] + "&TimeFrame=" + CurrentTimeFrame;
                 }
