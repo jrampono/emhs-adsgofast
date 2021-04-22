@@ -16,6 +16,7 @@ using Microsoft.Azure.Management.DataFactory.Models;
 using Microsoft.Azure.Management.Storage.Fluent.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using SendGrid;
@@ -28,17 +29,24 @@ using System.Net.Http;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AdsGoFast.Services;
 
 namespace AdsGoFast
 {
 
-    public static class RunFrameworkTasksHttpTrigger
+    public class RunFrameworkTasksHttpTrigger
     {
+        private readonly ISecurityAccessProvider _sap;
+        public RunFrameworkTasksHttpTrigger(ISecurityAccessProvider sap)
+        {
+            _sap = sap;
+        }
+
         [FunctionName("RunFrameworkTasksHttpTrigger")]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req, ILogger log, ExecutionContext context, System.Security.Claims.ClaimsPrincipal principal)
+        public  async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req, ILogger log, ExecutionContext context, System.Security.Claims.ClaimsPrincipal principal)
         {
             bool Allowed = false;
-            var roles = principal.Claims.Where(e => e.Type == "roles").Select(e => e.Value);
+            /*var roles = principal.Claims.Where(e => e.Type == "roles").Select(e => e.Value);
 
             foreach (string r in roles)
             {
@@ -51,6 +59,9 @@ namespace AdsGoFast
                 log.LogError(err);
                 return new BadRequestObjectResult(new { Error = err });
             }
+            */
+            //var Token = Shared.Azure.Security.GetAccessToken(req);
+            //var Blah = Shared.Azure.Security.ValidateAccessToken(Token,log).Result;
 
             Guid ExecutionId = context.InvocationId;
             using FrameworkRunner FR = new FrameworkRunner(log, ExecutionId);
@@ -68,7 +79,7 @@ namespace AdsGoFast
         }
     }
 
-    public static class RunFrameworkTasksTimerTrigger
+    public  class RunFrameworkTasksTimerTrigger
     {
         /// <summary>
         /// 
@@ -85,7 +96,7 @@ namespace AdsGoFast
         /// <param name="myTimer"></param>
         /// <param name="log"></param>
         [FunctionName("RunFrameworkTasksTimerTrigger")]         
-        public static async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public  async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             if (Shared.GlobalConfigs.GetBoolConfig("EnableRunFrameworkTasks"))
             {
@@ -135,7 +146,7 @@ namespace AdsGoFast
 
     }
 
-    public static class RunFrameworkTasks
+    public  class RunFrameworkTasks
     {
         public static dynamic RunFrameworkTasksCore(HttpRequest req, Logging logging)
         {
