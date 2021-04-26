@@ -22,60 +22,70 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FormatWith;
 using Microsoft.Azure.Management.Network.Fluent.Models;
+using Microsoft.Extensions.Options;
+using AdsGoFast.Models.Options;
+using AdsGoFast.Models;
 
 namespace AdsGoFast
 {
 
-    public static class GetActivityLevelLogsTimerTrigger
+    public  class GetActivityLevelLogsTimerTrigger
     {
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        private readonly IAppInsightsContext _appInsightsContext;
+
+        public GetActivityLevelLogsTimerTrigger(IOptions<ApplicationOptions> appOptions, IAppInsightsContext appInsightsContext)
+        {
+            _appOptions = appOptions;
+            _appInsightsContext = appInsightsContext;
+        }
+
         [FunctionName("GetActivityLevelLogs")]
-        public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public  async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             Guid ExecutionId = context.InvocationId;
 
-            if (Shared.GlobalConfigs.GetBoolConfig("EnableGetActivityLevelLogs"))
+            if (_appOptions.Value.TimerTriggers.EnableGetADFStats)
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {
-                    FrameworkRunner.FrameworkRunnerWorker worker = GetActivityLevelLogs.GetActivityLevelLogsCore;
+                    FrameworkRunner.FrameworkRunnerWorker worker = GetActivityLevelLogsCore;
                     FrameworkRunner.FrameworkRunnerResult result = FR.Invoke("GetActivityLevelLogs", worker);
                 }
             }
         }
-    }
 
-    public static class GetActivityLevelLogs
-    {
-        public static dynamic GetActivityLevelLogsCore(Logging logging)
+        public dynamic GetActivityLevelLogsCore(Logging logging)
         {
-            string AppInsightsWorkspaceId = System.Environment.GetEnvironmentVariable("AppInsightsWorkspaceId");
-            using var client = new HttpClient();
-            string token = Shared.Azure.AzureSDK.GetAzureRestApiToken("https://api.applicationinsights.io");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            string AppInsightsWorkspaceId = _appOptions.Value.ServiceConnections.AppInsightsWorkspaceId;
+            using var client = _appInsightsContext.httpClient.CreateClient(_appInsightsContext.httpClientName);
 
             TaskMetaDataDatabase TMD = new TaskMetaDataDatabase();
             using SqlConnection _conRead = TMD.GetSqlConnection();
 
             //Get Last Request Date
-            var MaxTimesGen = _conRead.QueryWithRetry(@"
-                                    select max([timestamp]) maxtimestamp from ActivityLevelLogs");
+            var MaxTimesGenQuery = _conRead.QueryWithRetry(@"
+                                    select max([timestamp]) maxtimestamp from ActivityLevelLogs");        
 
-            DateTimeOffset MaxLogTimeGenerated = DateTimeOffset.UtcNow.AddDays(-30);
-
-            foreach (var datafactory in MaxTimesGen)
+            foreach (var datafactory in MaxTimesGenQuery)
             {
+                DateTimeOffset MaxAllowedLogTimeGenerated = DateTimeOffset.UtcNow.AddDays(-1*_appOptions.Value.ServiceConnections.AppInsightsMaxNumberOfDaysToRequest);
+                DateTimeOffset MaxObservedLogTimeGenerated = DateTimeOffset.UtcNow.AddDays(-1*_appOptions.Value.ServiceConnections.AppInsightsMaxNumberOfDaysToRequest);
                 if (datafactory.maxtimestamp != null)
                 {
-                    MaxLogTimeGenerated = ((DateTimeOffset)datafactory.maxtimestamp).AddMinutes(-5);
+                    MaxObservedLogTimeGenerated = ((DateTimeOffset)datafactory.maxtimestamp).AddMinutes(-1* _appOptions.Value.ServiceConnections.AppInsightsMinutesOverlap);
+                    //Make sure that we don't get more than max to ensure we dont get timeouts etc.
+                    if ((MaxObservedLogTimeGenerated) <= MaxAllowedLogTimeGenerated)
+                    {
+                        MaxObservedLogTimeGenerated = MaxAllowedLogTimeGenerated;
+                    }
                 }
 
                 //string workspaceId = datafactory.LogAnalyticsWorkspaceId.ToString();
 
                 Dictionary<string, object> KqlParams = new Dictionary<string, object>
                 {
-                    {"MaxLogTimeGenerated", MaxLogTimeGenerated.ToString("yyyy-MM-dd HH:mm:ss.ff K") }
+                    {"MaxLogTimeGenerated", MaxObservedLogTimeGenerated.ToString("yyyy-MM-dd HH:mm:ss.ff K") }
                     //{"SubscriptionId", ((string)datafactory.SubscriptionUid.ToString()).ToUpper()},
                     //{"ResourceGroupName", ((string)datafactory.ResourceGroup.ToString()).ToUpper() },
                     //{"DataFactoryName", ((string)datafactory.Name.ToString()).ToUpper() },
@@ -162,7 +172,7 @@ namespace AdsGoFast
 
         }
 
-    
+
         private static Dictionary<string, Type> KustoDataTypeMapper
         {
             get
@@ -182,11 +192,9 @@ namespace AdsGoFast
                 return dataMapper;
             }
         }
-
-
-
     }
 
+ 
 }
 
 

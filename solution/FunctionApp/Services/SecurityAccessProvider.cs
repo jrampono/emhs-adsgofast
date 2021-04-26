@@ -33,7 +33,7 @@ namespace AdsGoFast.Services
             bool ret = false;
             string token = GetAccessToken(req, log);
             var principal = ValidateAccessToken(token, log).Result;
-            foreach(var r in _appOptions.Value.CoreFunctionsAllowedRoles)
+            foreach(var r in _appOptions.Value.ServiceConnections.CoreFunctionsAllowedRoles)
             if (principal.IsInRole(r))
             {
                 ret = true;

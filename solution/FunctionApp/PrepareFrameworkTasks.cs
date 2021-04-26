@@ -4,11 +4,13 @@
  Licensed under the MIT license.
 
 -----------------------------------------------------------------------*/
+using AdsGoFast.Models.Options;
 using AdsGoFast.SqlServer;
 using AdsGoFast.TaskMetaData;
 using Cronos;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -21,13 +23,19 @@ using System.Threading.Tasks;
 namespace AdsGoFast
 {
 
-    public static class PrepareFrameworkTasksTimerTrigger
+    public class PrepareFrameworkTasksTimerTrigger
     {
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        public PrepareFrameworkTasksTimerTrigger(IOptions<ApplicationOptions> appOptions)
+        {
+            _appOptions = appOptions;
+        }
+
         [FunctionName("PrepareFrameworkTasksTimerTrigger")]
-        public static async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             Guid ExecutionId = context.InvocationId;
-            if (Shared.GlobalConfigs.GetBoolConfig("EnablePrepareFrameworkTasks"))
+            if (_appOptions.Value.TimerTriggers.EnablePrepareFrameworkTasks)
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {

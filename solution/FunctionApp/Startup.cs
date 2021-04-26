@@ -47,7 +47,8 @@ namespace AdsGoFast
             builder.Services.AddSingleton<ISecurityAccessProvider>((provider) =>
             {
                 var authOptions = provider.GetService<IOptions<DownstreamAuthOptionsViaAppReg>>();
-                return new SecurityAccessProvider(authOptions);
+                var appOptions = provider.GetService<IOptions<ApplicationOptions>>();
+                return new SecurityAccessProvider(authOptions, appOptions);
             });
 
             //Inject Http Client for chained calling of core functions
@@ -64,6 +65,30 @@ namespace AdsGoFast
 
             //Inject Context for chained calling of core functions
             builder.Services.AddSingleton<ICoreFunctionsContext,CoreFunctionsContext>();
+
+            builder.Services.AddSingleton<IAppInsightsContext, AppInsightsContext>();
+
+            builder.Services.AddHttpClient("AppInsights", async (s, c) =>
+            {
+                var downstreamAuthOptions= s.GetService<IOptions<DownstreamAuthOptionsDirect>>();
+                var appOptions = s.GetService<IOptions<ApplicationOptions>>();
+                var authProvider = new AzureAuthenticationCredentialProvider(appOptions, downstreamAuthOptions.Value);
+                var token = authProvider.GetAzureRestApiToken("https://api.applicationinsights.io");
+                c.DefaultRequestHeaders.Accept.Clear();
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }).SetHandlerLifetime(TimeSpan.FromMinutes(5));  //Set lifetime to five minutes
+
+            builder.Services.AddHttpClient("TaskMetaDataDatabase", async (s, c) =>
+            {
+                var downstreamAuthOptions = s.GetService<IOptions<DownstreamAuthOptionsDirect>>();
+                var appOptions = s.GetService<IOptions<ApplicationOptions>>();
+                var authProvider = new AzureAuthenticationCredentialProvider(appOptions, downstreamAuthOptions.Value);
+                var token = authProvider.GetAzureRestApiToken("https://database.windows.net/");
+                c.DefaultRequestHeaders.Accept.Clear();
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }).SetHandlerLifetime(TimeSpan.FromMinutes(5));  //Set lifetime to five minutes
 
             //builder.Services.AddScoped<Logging>((s) =>
             //{

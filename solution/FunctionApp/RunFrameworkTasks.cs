@@ -31,6 +31,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AdsGoFast.Services;
 using AdsGoFast.Models;
+using Microsoft.Extensions.Options;
+using AdsGoFast.Models.Options;
 
 namespace AdsGoFast
 {
@@ -38,7 +40,6 @@ namespace AdsGoFast
     public class RunFrameworkTasksHttpTrigger
     {
         private readonly ISecurityAccessProvider _sap;
-       
         public RunFrameworkTasksHttpTrigger(ISecurityAccessProvider sap)
         {
             _sap = sap;
@@ -74,7 +75,9 @@ namespace AdsGoFast
     public  class RunFrameworkTasksTimerTrigger
     {
         private readonly ICoreFunctionsContext _functionscontext;
-        public RunFrameworkTasksTimerTrigger(ICoreFunctionsContext functionsContext)
+
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        public RunFrameworkTasksTimerTrigger(ICoreFunctionsContext functionsContext, IOptions<ApplicationOptions> appOptions)
         {
             _functionscontext = functionsContext;
         }
