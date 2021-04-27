@@ -36,6 +36,8 @@ namespace AdsGoFast
         // Hack for now -- need to add to Dependency Injection 
         public static ApplicationOptions _ApplicationOptions { get; set; }
 
+        public static DownstreamAuthOptionsDirect _DownstreamAuthOptionsDirect { get; set; }
+
         public static partial class Azure
         {
             public static string AuthenticateAsyncViaRest(bool UseMSI, string ResourceUrl = null, string AuthorityUrl = null, string ClientId = null, string ClientSecret = null, string Username = null, string Password = null, string Scope = null, string GrantType = null)
@@ -105,14 +107,14 @@ namespace AdsGoFast
 
                 public static string GetAzureRestApiToken(string ServiceURI)
                 {
-                    if (Shared.GlobalConfigs.GetBoolConfig("UseMSI"))
+                    if (Shared._ApplicationOptions.UseMSI)
                     {
-                        return GetAzureRestApiToken(ServiceURI, Shared.GlobalConfigs.GetBoolConfig("UseMSI"), null, null);
+                        return GetAzureRestApiToken(ServiceURI, Shared._ApplicationOptions.UseMSI, null, null);
                     }
                     else
                     {
                         //By Default Use Local SP Credentials
-                        return GetAzureRestApiToken(ServiceURI, Shared.GlobalConfigs.GetBoolConfig("UseMSI"), Shared.GlobalConfigs.GetStringConfig("ApplicationId"), Shared.GlobalConfigs.GetStringConfig("AuthenticationKey"));
+                        return GetAzureRestApiToken(ServiceURI, Shared._ApplicationOptions.UseMSI, Shared._DownstreamAuthOptionsDirect.ClientId, Shared._DownstreamAuthOptionsDirect.ClientSecret);
                     }
                 }
 
@@ -125,7 +127,7 @@ namespace AdsGoFast
                     else
                     {
                         //By Default Use Local SP Credentials
-                        return GetAzureRestApiToken(ServiceURI, UseMSI, Shared.GlobalConfigs.GetStringConfig("ApplicationId"), Shared.GlobalConfigs.GetStringConfig("AuthenticationKey"));
+                        return GetAzureRestApiToken(ServiceURI, UseMSI, Shared._DownstreamAuthOptionsDirect.ClientId, Shared._DownstreamAuthOptionsDirect.ClientSecret);
                     }
                 }
 
@@ -142,7 +144,7 @@ namespace AdsGoFast
                     else
                     {
 
-                        AuthenticationContext context = new AuthenticationContext("https://login.windows.net/" + Shared.GlobalConfigs.GetStringConfig("TenantId"));
+                        AuthenticationContext context = new AuthenticationContext("https://login.windows.net/" + Shared._DownstreamAuthOptionsDirect.TenantId);
                         ClientCredential cc = new ClientCredential(ApplicationId, AuthenticationKey);
                         AuthenticationResult result = context.AcquireTokenAsync(ServiceURI, cc).Result;
                         return result.AccessToken;
@@ -166,7 +168,7 @@ namespace AdsGoFast
                     else
                     {
                         //Service Principal
-                        creds = f.FromServicePrincipal(Shared.GlobalConfigs.GetStringConfig("ApplicationId"), Shared.GlobalConfigs.GetStringConfig("AuthenticationKey"), Shared.GlobalConfigs.GetStringConfig("TenantId"), AzureEnvironment.AzureGlobalCloud);
+                        creds = f.FromServicePrincipal(Shared._DownstreamAuthOptionsDirect.ClientId, Shared._DownstreamAuthOptionsDirect.ClientSecret, Shared._DownstreamAuthOptionsDirect.TenantId, AzureEnvironment.AzureGlobalCloud);
 
                     }
 

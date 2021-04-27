@@ -76,7 +76,7 @@ namespace AdsGoFast
             }
 
             _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
 
             if (!(_sourceType == "Azure Blob" && _sourceType == "ADLS") && (_metadataType == "Parquet"))
             {
@@ -195,7 +195,7 @@ namespace AdsGoFast
             string _schemaFileName = data["SchemaFileName"].ToString();
 
             _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
 
             string _schemaStructure = Shared.Azure.Storage.ReadFile(_storageAccountName, _storageAccountContainer, _relativePath, _schemaFileName, StorageToken);
 
@@ -254,7 +254,7 @@ namespace AdsGoFast
 
                 _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
 
-                TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken("https://" + _storageAccountName + ".blob.core.windows.net", Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+                TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken("https://" + _storageAccountName + ".blob.core.windows.net", Shared._ApplicationOptions.UseMSI));
 
                 arr = (JArray)JsonConvert.DeserializeObject(Shared.Azure.Storage.ReadFile(_storageAccountName, _storageAccountContainer, _relativePath, _schemaFileName, StorageToken));
             }
@@ -774,7 +774,7 @@ namespace AdsGoFast.ADSSupport.ManipulateTaskMasters
                 { "TempTableName", TempTableName }
             };
 
-            string _sql = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "GenerateTaskMasters", SqlParams);
+            string _sql = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "GenerateTaskMasters", SqlParams);
             TMD.ExecuteSql(_sql, _con);
 
             return new { }; //Return Empty Object

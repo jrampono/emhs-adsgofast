@@ -91,7 +91,20 @@ namespace AdsGoFast
                 c.DefaultRequestHeaders.Accept.Clear();
                 c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }).SetHandlerLifetime(TimeSpan.FromMinutes(5));  //Set lifetime to five minutes          
+
+            builder.Services.AddHttpClient("LogAnalytics", async (s, c) =>
+            {
+                var downstreamAuthOptions = s.GetService<IOptions<DownstreamAuthOptionsDirect>>();
+                var appOptions = s.GetService<IOptions<ApplicationOptions>>();
+                var authProvider = new AzureAuthenticationCredentialProvider(appOptions, downstreamAuthOptions.Value);
+                var token = authProvider.GetAzureRestApiToken("https://api.loganalytics.io");
+                c.DefaultRequestHeaders.Accept.Clear();
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }).SetHandlerLifetime(TimeSpan.FromMinutes(5));  //Set lifetime to five minutes
+
+            builder.Services.AddSingleton<ILogAnalyticsContext, LogAnalyticsContext>();
 
             builder.Services.AddHttpClient("TaskMetaDataDatabase", async (s, c) =>
             {

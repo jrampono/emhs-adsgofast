@@ -36,7 +36,7 @@ namespace AdsGoFast
             BlobStorageContainerName = Shared.GlobalConfigs.GetStringRequestParam("BlobStorageContainerName", req, reqbody).ToString();
             BlobStorageFolderPath = Shared.GlobalConfigs.GetStringRequestParam("BlobStorageFolderPath", req, reqbody).ToString();
 
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://storage.azure.com/", BlobStorageAccountName), Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://storage.azure.com/", BlobStorageAccountName), Shared._ApplicationOptions.UseMSI));
 
             string TargetFileName = Shared.GlobalConfigs.GetStringRequestParam("TargetFileName", req, reqbody).ToString();
             string DownloadResult = Shared.Azure.Storage.ReadFile(BlobStorageAccountName, BlobStorageContainerName, BlobStorageFolderPath, TargetFileName, StorageToken);

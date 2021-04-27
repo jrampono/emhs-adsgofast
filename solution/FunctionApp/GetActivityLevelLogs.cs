@@ -92,7 +92,7 @@ namespace AdsGoFast
                     //{"DatafactoryId", datafactory.Id.ToString()  }
                 };
 
-                string KQL = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("KQLTemplateLocation") + "GetActivityLevelLogs.kql");
+                string KQL = System.IO.File.ReadAllText(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.KQLTemplateLocation, "GetActivityLevelLogs.kql"));
                 KQL = KQL.FormatWith(KqlParams, FormatWith.MissingKeyBehaviour.ThrowException, null, '{', '}');
 
                 JObject JsonContent = new JObject();
@@ -152,7 +152,7 @@ namespace AdsGoFast
                                 { "DatafactoryId", "1"}
                             };
 
-                            string MergeSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "MergeIntoActivityLevelLogs", SqlParams);
+                            string MergeSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath,Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "MergeIntoActivityLevelLogs", SqlParams);
                             logging.LogInformation(MergeSQL.ToString());
                             _conWrite.ExecuteWithRetry(MergeSQL);
                             _conWrite.Close();

@@ -19,8 +19,8 @@ namespace AdsGoFast
         public static string GetActiveTasks(Logging logging, long TaskGroupId, short TopCount)
         {
             logging.LogDebug("Get Active Tasks called.");
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net/", Shared.GlobalConfigs.GetStringConfig("TaskMetaDataStorageAccount").ToString()), Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
-            string FileResult = Shared.Azure.Storage.ReadFile(Shared.GlobalConfigs.GetStringConfig("TaskMetaDataStorageAccount"), Shared.GlobalConfigs.GetStringConfig("TaskMetaDataStorageContainer"), Shared.GlobalConfigs.GetStringConfig("TaskMetaDataStorageFolder"), "ActiveTasks.json", StorageToken);
+            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net/", Shared._ApplicationOptions.TestingOptions.TaskMetaDataStorageAccount), Shared._ApplicationOptions.UseMSI));
+            string FileResult = Shared.Azure.Storage.ReadFile(Shared._ApplicationOptions.TestingOptions.TaskMetaDataStorageAccount, Shared._ApplicationOptions.TestingOptions.TaskMetaDataStorageContainer, Shared._ApplicationOptions.TestingOptions.TaskMetaDataStorageFolder, "ActiveTasks.json", StorageToken);
             return FileResult;
         }
     }

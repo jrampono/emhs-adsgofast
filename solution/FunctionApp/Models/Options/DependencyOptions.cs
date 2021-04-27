@@ -5,6 +5,7 @@ namespace AdsGoFast.Models.Options
     public class ApplicationOptions
     {
         public bool UseMSI { get; set; }
+        public System.Int16 FrameworkWideMaxConcurrency { get; set; }
         public cServiceConnections ServiceConnections { get; set; }
         public cTimerTriggers TimerTriggers { get; set; }
         public cLocalPaths LocalPaths { get; set; }

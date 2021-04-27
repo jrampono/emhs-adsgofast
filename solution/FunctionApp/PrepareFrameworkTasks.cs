@@ -54,7 +54,7 @@ namespace AdsGoFast
             TMD.ExecuteSql(string.Format("Insert into Execution values ('{0}', '{1}', '{2}')", logging.DefaultActivityLogItem.ExecutionUid, DateTimeOffset.Now.ToString("u"), DateTimeOffset.Now.AddYears(999).ToString("u")));
 
             //Check status of running pipelines and calculate available "slots" based on max concurrency settings
-            short _FrameworkWideMaxConcurrency = Shared.GlobalConfigs.GetInt16Config("FrameworkWideMaxConcurrency");
+            short _FrameworkWideMaxConcurrency = Shared._ApplicationOptions.FrameworkWideMaxConcurrency;
 
             //ToDo: Write Pipelines that need to be checked to Queue for now I have just reduced to only those tasks that have been running for longer than x minutes.
             //CheckLongRunningPipelines(logging);
@@ -96,7 +96,7 @@ namespace AdsGoFast
                     {
                         { "TempTable", TempTarget.QuotedSchemaAndName() }
                     };
-                    string _sql = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "UpdateTaskInstancesWithTaskRunner", _params);
+                    string _sql = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "UpdateTaskInstancesWithTaskRunner", _params);
                     TMD.ExecuteSql(_sql, _con);
                 }
             }
@@ -312,7 +312,7 @@ namespace AdsGoFast
                 { "tmpTaskInstance", tmpTaskInstanceTargetTable.QuotedSchemaAndName() }
             };
 
-            string InsertSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "InsertScheduleInstance_TaskInstance", SqlParams);
+            string InsertSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "InsertScheduleInstance_TaskInstance", SqlParams);
 
             _con.ExecuteWithRetry(InsertSQL);
             _con.Close();

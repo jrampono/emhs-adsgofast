@@ -178,9 +178,9 @@ namespace AdsGoFast
                     //Check Task Type and execute appropriate ADF Pipeline
                     //Todo: Potentially extract switch into metadata
 
-                    if (Shared.GlobalConfigs.GetBoolConfig("GenerateTaskObjectTestFiles"))
+                    if (Shared._ApplicationOptions.TestingOptions.GenerateTaskObjectTestFiles)
                     {
-                        string FileFullPath = Shared.GlobalConfigs.GetStringConfig("TaskObjectTestFileLocation") +  /*UtcCurDay +*/ "/";
+                        string FileFullPath = Shared._ApplicationOptions.TestingOptions.TaskObjectTestFileLocation +  /*UtcCurDay +*/ "/";
                         // Determine whether the directory exists.
                         if (!System.IO.Directory.Exists(FileFullPath))
                         {
@@ -405,10 +405,10 @@ namespace AdsGoFast
                                 Params.Add("Source.DataFileName", task["Source"]["DataFileName"].ToString());
                                 Params.Add("Alert.EmailRecepientName", Alert["EmailRecepientName"].ToString());
 
-                                string _plainTextContent = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("HTMLTemplateLocation") + Alert["EmailTemplateFileName"].ToString() + ".txt");
+                                string _plainTextContent = System.IO.File.ReadAllText(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.HTMLTemplateLocation,Alert["EmailTemplateFileName"].ToString() + ".txt"));
                                 _plainTextContent = _plainTextContent.FormatWith(Params, MissingKeyBehaviour.ThrowException, null, '{', '}');
 
-                                string _htmlContent = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("HTMLTemplateLocation") + Alert["EmailTemplateFileName"].ToString() + ".html");
+                                string _htmlContent = System.IO.File.ReadAllText(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.HTMLTemplateLocation, Alert["EmailTemplateFileName"].ToString() + ".html"));
                                 _htmlContent = _htmlContent.FormatWith(Params, MissingKeyBehaviour.ThrowException, null, '{', '}');
 
                                 var apiKey = System.Environment.GetEnvironmentVariable("SENDGRID_APIKEY");

@@ -70,7 +70,7 @@ namespace AdsGoFast
                 string VmResourceGroup = data["Target"]["ResourceGroup"].ToString();
                 string VmAction = data["Target"]["Action"].ToString();
 
-                Microsoft.Azure.Management.Fluent.Azure.IAuthenticated azureAuth = Microsoft.Azure.Management.Fluent.Azure.Configure().WithLogLevel(HttpLoggingDelegatingHandler.Level.BodyAndHeaders).Authenticate(Shared.Azure.AzureSDK.GetAzureCreds(Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+                Microsoft.Azure.Management.Fluent.Azure.IAuthenticated azureAuth = Microsoft.Azure.Management.Fluent.Azure.Configure().WithLogLevel(HttpLoggingDelegatingHandler.Level.BodyAndHeaders).Authenticate(Shared.Azure.AzureSDK.GetAzureCreds(Shared._ApplicationOptions.UseMSI));
                 IAzure azure = azureAuth.WithSubscription(Subscription);
                 logging.LogInformation("Selected subscription: " + azure.SubscriptionId);
                 IVirtualMachine vm = azure.VirtualMachines.GetByResourceGroup(VmResourceGroup, VmName);
