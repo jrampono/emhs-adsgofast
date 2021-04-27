@@ -3,7 +3,7 @@ function ConfigureAzureFunction
     if($env:AzureFunctionPublish -eq $true)
     {
         Write-Host  "Publishing Azure Function from source code"
-        az functionapp deployment source config-zip -g $env:ResourceGroupName -n $env:AzureFunction --src "$env:PublishAssetsFolder/azurefunction/Publish.zip" --subscription $env:Subscription
+        az functionapp deployment source config-zip -g $env:ResourceGroupName -n $env:AzureFunction --src "$env:PublishAssetsFolder/azurefunction/compressed/Publish.zip" --subscription $env:Subscription
     }
 
     $AzureFunctionAuthSPName = $env:AzureFunction + 'Auth2Test2' 
@@ -103,3 +103,8 @@ function ConfigureAzureFunction
 
 
 }
+
+
+az functionapp config appsettings set --name $env:AzureFunction --resource-group $env:ResourceGroupName --settings "'AzureAdAzureServicesDirect'=$Setting"
+
+Compress-Archive -LiteralPath "Y:\Source\GitMS\azure-data-services-go-fast-codebase\deploy\azurefunction\Uncompressed\" -DestinationPath "$env:PublishAssetsFolder\azurefunction\compressed\Publish.zip"
