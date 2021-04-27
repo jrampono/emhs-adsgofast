@@ -4,17 +4,20 @@ $env:RootFolder=$PSScriptRoot
 # Switch between local development and DevOps Deployment
 #############################################################
 $LocalDev=$true
-if($LocalDev)
+if($LocalDev -eq $true)
 {
     $env:RootFolder="." #Manual Testing Only
     . "$env:RootFolder/LoadDevelopmentSettings.ps1"
     LoadDevelopmentSettings
 }
 
+#Folder into which you have extracted the binaries from the release 
+$env:PublishAssetsFolder = $env:RootFolder+"\..\..\deploy"
+
 #############################################################
 # Do Local Prereq Installs
 #############################################################
-if($env:PerformLocalInstalls)
+if($env:PerformLocalInstalls -eq $true)
 {
     Write-Host "Performing Pre-req Installs"
     . "$env:RootFolder/LocalInstalls.ps1"

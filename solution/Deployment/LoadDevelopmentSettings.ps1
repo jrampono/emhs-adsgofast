@@ -46,9 +46,9 @@ function LoadDevelopmentSettings {
     $env:AzureSQLServerAdAdminGrant=$false
     $env:AzureSQLServerFirewallExceptions=$false
     $env:AzureSQLServerGrantADFRightsToAdventureWorksDB=$false
-    $env:AzureSQLServerGrantWebAppRightsToAdsGoFastDB=$true
+    $env:AzureSQLServerGrantWebAppRightsToAdsGoFastDB=$false
     $env:AzureSQLServerGrantADFRightsToStagingDB=$false
-    $env:AzureSQLServerGrantAFRightsToAdsGoFastDB=$false
+    $env:AzureSQLServerGrantAFRightsToAdsGoFastDB=$true
     $env:AzureSQLServerGrantSPRightsToAdsGoFastDB=$false
     $env:AzureSQLServerAutoCreateAzureAdAccess=$false #Will attempt to automatically grant AzureAD accounts rights to db. May fail if your AAD security settings do not allow this kind of login. When set to false this will print the SQL statement for manual execution
     #RBACOptions
@@ -64,9 +64,9 @@ function LoadDevelopmentSettings {
     $env:RBACAADUserToADLSGen2=$false
     #AzureFunctionOptions
     $env:AzureFunctionEnableAADAuth=$false
-    $env:AzureFunctionPublish=$false
+    $env:AzureFunctionPublish=$true
     $env:AzureFunctionGenerateFunctionKeys=$false
-    $env:AzureFunctionSetAppSettings=$false
+    $env:AzureFunctionSetAppSettings=$true
     $env:AzureFunctionCreateRole=$false
     
 }
