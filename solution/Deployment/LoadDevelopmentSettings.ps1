@@ -2,10 +2,15 @@
 function LoadDevelopmentSettings {
     #Core Input Parameters
     $env:Subscription = "Jorampon Internal Consumption"
-    $env:ResourceGroupName = "AdsGoFastDataLakeAccel"
+    $env:ResourceGroupName = "AdsTest"
     $env:AADUser="jorampon@microsoft.com"
-    $env:ServicePrincipalName="AdsGoFastDeployTestSP"
-    $env:ServicePrincipalNameWeb="AdsGoFastDeployTestSPWeb"
+    # Service Principal Used by Azure Functions for downstream azure service connections 
+    $env:ServicePrincipalNameAFDownstream="AdsGoFastDeployTestSP"
+    # Service Principal Used for Web App AAD integration
+    $env:ServicePrincipalNameWebAuth="adsgofastwebappauth"
+    # Service Principal Used for Function pp AAD integration
+    $env:ServicePrincipalNameAFAuth="adsgofastwebappauth"
+    
     $env:Location="australiaeast"
     $env:TemplateFile="$env:RootFolder/azuredeploy.json"
     $env:TemplateParametersFile="$env:RootFolder/azuredeploy.parameters.json"

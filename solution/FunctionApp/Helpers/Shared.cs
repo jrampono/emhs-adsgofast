@@ -24,6 +24,7 @@ using System.Security.Cryptography;
 using System.Configuration;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using AdsGoFast.Models.Options;
 
 namespace AdsGoFast
 {
@@ -31,7 +32,9 @@ namespace AdsGoFast
 
     public partial class Shared
     {
-
+        public static string _ApplicationBasePath {get;set;}
+        // Hack for now -- need to add to Dependency Injection 
+        public static ApplicationOptions _ApplicationOptions { get; set; }
 
         public static partial class Azure
         {
@@ -594,9 +597,10 @@ namespace AdsGoFast
 
                     //Todo refactor config helper to use dependency injection
                     var config = new ConfigurationBuilder()
-                      .SetBasePath(Environment.CurrentDirectory)
+                      .SetBasePath(_ApplicationBasePath)
                       .AddEnvironmentVariables()
                       .AddUserSecrets("3956e7aa-4d13-430a-bb5f-a5f8f5a450ee", true)
+                      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                       .Build();
                     
                     Ret = config[ConfigName];

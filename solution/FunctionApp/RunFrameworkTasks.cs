@@ -80,6 +80,7 @@ namespace AdsGoFast
         public RunFrameworkTasksTimerTrigger(ICoreFunctionsContext functionsContext, IOptions<ApplicationOptions> appOptions)
         {
             _functionscontext = functionsContext;
+            _appOptions = appOptions;
         }
 
         /// <summary>
@@ -99,7 +100,8 @@ namespace AdsGoFast
         [FunctionName("RunFrameworkTasksTimerTrigger")]         
         public  async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
-            if (Shared.GlobalConfigs.GetBoolConfig("EnableRunFrameworkTasks"))
+            log.LogInformation("FunctionAppDirectory:" + context.FunctionAppDirectory);
+            if (_appOptions.Value.TimerTriggers.EnableRunFrameworkTasks)
             {
                 TaskMetaDataDatabase TMD = new TaskMetaDataDatabase();
                 var client = _functionscontext.httpClient.CreateClient(_functionscontext.httpClientName);

@@ -12,12 +12,14 @@ using AdsGoFast.Models;
 using AdsGoFast.Models.Options;
 using AdsGoFast.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -31,17 +33,29 @@ namespace AdsGoFast
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-   
+         
+            ExecutionContextOptions executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
+            
+            
             var config = new ConfigurationBuilder()
-              .SetBasePath(Environment.CurrentDirectory)                           
+              .SetBasePath(executionContextOptions.AppDirectory)
               .AddUserSecrets("3956e7aa-4d13-430a-bb5f-a5f8f5a450ee"/*Assembly.GetExecutingAssembly()*/, true)
+              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
               .AddEnvironmentVariables()
               .Build();
+
+          
+
+            Console.WriteLine("RootPath:" + executionContextOptions.AppDirectory);
 
             builder.Services.Configure<AuthOptions>(config.GetSection("AzureAdAuth"));
             builder.Services.Configure<ApplicationOptions>(config.GetSection("ApplicationOptions"));
             builder.Services.Configure<DownstreamAuthOptionsDirect>(config.GetSection("AzureAdAzureServicesDirect"));
             builder.Services.Configure<DownstreamAuthOptionsViaAppReg>(config.GetSection("AzureAdAzureServicesViaAppReg"));
+
+            Shared._ApplicationBasePath = executionContextOptions.AppDirectory;
+            Shared._ApplicationOptions = config.GetSection("ApplicationOptions").Get<ApplicationOptions>();
+
 
             //builder.Services.AddSingleton<IConfiguration>(config); 
             builder.Services.AddSingleton<ISecurityAccessProvider>((provider) =>

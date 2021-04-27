@@ -24,6 +24,7 @@ using FormatWith;
 using Microsoft.Azure.Management.Network.Fluent.Models;
 using Microsoft.Extensions.Options;
 using AdsGoFast.Models.Options;
+using System.IO;
 
 namespace AdsGoFast
 {
@@ -144,7 +145,7 @@ namespace AdsGoFast
                     {"DatafactoryId", datafactory.Id.ToString()  }
                 };
 
-                string KQL = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("KQLTemplateLocation") + "GetADFPipelineRuns.kql");
+                string KQL = System.IO.File.ReadAllText(Path.Combine(Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.KQLTemplateLocation), "GetADFPipelineRuns.kql"));
                 KQL = KQL.FormatWith(KqlParams, FormatWith.MissingKeyBehaviour.ThrowException, null, '{', '}');
 
                 JObject JsonContent = new JObject();
@@ -264,7 +265,7 @@ namespace AdsGoFast
                     {"DatafactoryId", datafactory.Id.ToString()  }
                 };
 
-                string KQL = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("KQLTemplateLocation") + "GetADFActivityErrors.kql");
+                string KQL = System.IO.File.ReadAllText(Path.Combine(Path.Combine(Shared._ApplicationBasePath,Shared._ApplicationOptions.LocalPaths.KQLTemplateLocation),"GetADFActivityErrors.kql"));
                 KQL = KQL.FormatWith(KqlParams, FormatWith.MissingKeyBehaviour.ThrowException, null, '{', '}');
 
                 JObject JsonContent = new JObject();
@@ -390,14 +391,14 @@ namespace AdsGoFast
                 };
 
                 //Add in the rates from ADFServiceRates.json
-                string ADFRatesStr = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("KQLTemplateLocation") + "ADFServiceRates.json");
+                string ADFRatesStr = System.IO.File.ReadAllText(Path.Combine(Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.KQLTemplateLocation), "ADFServiceRates.json"));
                 JObject ADFRates = JObject.Parse(ADFRatesStr);
                 foreach (JProperty p in ADFRates.Properties())
                 {
                     KqlParams.Add(p.Name, p.Value.ToString());
                 }
 
-                string KQL = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("KQLTemplateLocation") + "GetADFActivityRuns.kql");
+                string KQL = System.IO.File.ReadAllText(Path.Combine(Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.KQLTemplateLocation),  "GetADFActivityRuns.kql"));
                 KQL = KQL.FormatWith(KqlParams, FormatWith.MissingKeyBehaviour.ThrowException, null, '{', '}');
 
 
