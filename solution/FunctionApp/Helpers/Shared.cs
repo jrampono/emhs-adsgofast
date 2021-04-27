@@ -22,6 +22,8 @@ using System.Net.Http;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Configuration;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace AdsGoFast
 {
@@ -417,7 +419,7 @@ namespace AdsGoFast
 
             }
 
-
+ 
 
             /// <summary>
             /// You can take this class and drop it into another project and use this code
@@ -542,7 +544,7 @@ namespace AdsGoFast
         }
             public static class GlobalConfigs
             {
-
+                
                 public static string GetStringRequestParam(string Name, HttpRequest req, string reqbody)
                 {
                     try
@@ -594,9 +596,9 @@ namespace AdsGoFast
                     var config = new ConfigurationBuilder()
                       .SetBasePath(Environment.CurrentDirectory)
                       .AddEnvironmentVariables()
-                      .AddUserSecrets(System.Reflection.Assembly.GetExecutingAssembly(), true)
+                      .AddUserSecrets("3956e7aa-4d13-430a-bb5f-a5f8f5a450ee", true)
                       .Build();
-
+                    
                     Ret = config[ConfigName];
                 }
                 catch (Exception e)

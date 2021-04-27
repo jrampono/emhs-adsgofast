@@ -22,18 +22,26 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FormatWith;
 using Microsoft.Azure.Management.Network.Fluent.Models;
+using Microsoft.Extensions.Options;
+using AdsGoFast.Models.Options;
 
 namespace AdsGoFast
 {
 
-    public static class GetADFActivityRunsTimerTrigger
+    public  class GetADFActivityRunsTimerTrigger
     {
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        public GetADFActivityRunsTimerTrigger(IOptions<ApplicationOptions> appOptions)
+        {
+            _appOptions = appOptions;
+        }
+
         [FunctionName("GetADFActivityRunsTimerTrigger")]
-        public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public  async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             Guid ExecutionId = context.InvocationId;
 
-            if (Shared.GlobalConfigs.GetBoolConfig("EnableGetADFStats"))
+            if (_appOptions.Value.TimerTriggers.EnableGetADFStats)
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {
@@ -44,14 +52,20 @@ namespace AdsGoFast
         }
     }
 
-    public static class GetADFPipelineRunsTimerTrigger
+    public  class GetADFPipelineRunsTimerTrigger
     {
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        public GetADFPipelineRunsTimerTrigger(IOptions<ApplicationOptions> appOptions)
+        {
+            _appOptions = appOptions;
+        }
+
         [FunctionName("GetADFPipelineRunsTimerTrigger")]
-        public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public  async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             Guid ExecutionId = context.InvocationId;
 
-            if (Shared.GlobalConfigs.GetBoolConfig("EnableGetADFStats"))
+            if (_appOptions.Value.TimerTriggers.EnableGetADFStats)
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {
@@ -62,14 +76,20 @@ namespace AdsGoFast
         }
     }
 
-    public static class GetADFActivityErrorsTimerTrigger
+    public  class GetADFActivityErrorsTimerTrigger
     {
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        public GetADFActivityErrorsTimerTrigger(IOptions<ApplicationOptions> appOptions)
+        {
+            _appOptions = appOptions;
+        }
+
         [FunctionName("GetADFActivityErrors")]
-        public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public  async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             Guid ExecutionId = context.InvocationId;
 
-            if (Shared.GlobalConfigs.GetBoolConfig("EnableGetADFStats"))
+            if (_appOptions.Value.TimerTriggers.EnableGetADFStats)
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {

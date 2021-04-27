@@ -16,6 +16,7 @@ using Microsoft.Azure.Management.DataFactory.Models;
 using Microsoft.Azure.Management.Storage.Fluent.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using SendGrid;
@@ -28,48 +29,59 @@ using System.Net.Http;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AdsGoFast.Services;
+using AdsGoFast.Models;
+using Microsoft.Extensions.Options;
+using AdsGoFast.Models.Options;
 
 namespace AdsGoFast
 {
 
-    public static class RunFrameworkTasksHttpTrigger
+    public class RunFrameworkTasksHttpTrigger
     {
-        [FunctionName("RunFrameworkTasksHttpTrigger")]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req, ILogger log, ExecutionContext context, System.Security.Claims.ClaimsPrincipal principal)
+        private readonly ISecurityAccessProvider _sap;
+        public RunFrameworkTasksHttpTrigger(ISecurityAccessProvider sap)
         {
-            bool Allowed = false;
-            var roles = principal.Claims.Where(e => e.Type == "roles").Select(e => e.Value);
+            _sap = sap;
+        }
 
-            foreach (string r in roles)
+        [FunctionName("RunFrameworkTasksHttpTrigger")]
+        public  async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req, ILogger log, ExecutionContext context, System.Security.Claims.ClaimsPrincipal principal)
+        {
+            bool IsAuthorised = _sap.IsAuthorised(req,log);
+            if (IsAuthorised)
             {
-                if (r == "All") { Allowed = true;  }
-            }
+                Guid ExecutionId = context.InvocationId;
+                using FrameworkRunner FR = new FrameworkRunner(log, ExecutionId);
 
-            if (!Allowed && !Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL").Contains("localhost"))
-            {
-                string err = "Request was rejected as user is not allowed to perform this action";
-                log.LogError(err);
-                return new BadRequestObjectResult(new { Error = err });
-            }
-
-            Guid ExecutionId = context.InvocationId;
-            using FrameworkRunner FR = new FrameworkRunner(log, ExecutionId);
-
-            FrameworkRunner.FrameworkRunnerWorkerWithHttpRequest worker = RunFrameworkTasks.RunFrameworkTasksCore;
-            FrameworkRunner.FrameworkRunnerResult result = FR.Invoke(req, "RunFrameworkTasksHttpTrigger", worker);
-            if (result.Succeeded)
-            {
-                return new OkObjectResult(JObject.Parse(result.ReturnObject));
+                FrameworkRunner.FrameworkRunnerWorkerWithHttpRequest worker = RunFrameworkTasks.RunFrameworkTasksCore;
+                FrameworkRunner.FrameworkRunnerResult result = FR.Invoke(req, "RunFrameworkTasksHttpTrigger", worker);
+                if (result.Succeeded)
+                {
+                    return new OkObjectResult(JObject.Parse(result.ReturnObject));
+                }
+                else
+                {
+                    return new BadRequestObjectResult(new { Error = "Execution Failed...." });
+                }
             }
             else
-            {               
-                return new BadRequestObjectResult(new { Error = "Execution Failed...." });
+            {
+                return new BadRequestObjectResult(new { Error = "User is not authorised to call this API...." });
             }
         }
     }
 
-    public static class RunFrameworkTasksTimerTrigger
+    public  class RunFrameworkTasksTimerTrigger
     {
+        private readonly ICoreFunctionsContext _functionscontext;
+
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        public RunFrameworkTasksTimerTrigger(ICoreFunctionsContext functionsContext, IOptions<ApplicationOptions> appOptions)
+        {
+            _functionscontext = functionsContext;
+        }
+
         /// <summary>
         /// 
         /// 
@@ -85,13 +97,13 @@ namespace AdsGoFast
         /// <param name="myTimer"></param>
         /// <param name="log"></param>
         [FunctionName("RunFrameworkTasksTimerTrigger")]         
-        public static async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public  async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             if (Shared.GlobalConfigs.GetBoolConfig("EnableRunFrameworkTasks"))
             {
                 TaskMetaDataDatabase TMD = new TaskMetaDataDatabase();
-                using (var client = new System.Net.Http.HttpClient())
-                {
+                var client = _functionscontext.httpClient.CreateClient(_functionscontext.httpClientName);
+                
                     using (SqlConnection _con = TMD.GetSqlConnection())
                     {
                         var ftrs = _con.QueryWithRetry("Exec dbo.GetFrameworkTaskRunners");
@@ -105,13 +117,13 @@ namespace AdsGoFast
 
                                 //Lets get an access token based on MSI or Service Principal
                                 var secureFunctionAPIURL = string.Format("{0}/api/RunFrameworkTasksHttpTrigger?TaskRunnerId={1}", Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"), TaskRunnerId.ToString());
-                                var accessToken = Shared.Azure.AzureSDK.GetAzureRestApiToken(Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"));
+                                //var accessToken = Shared.Azure.AzureSDK.GetAzureRestApiToken(Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"));
 
                                 using HttpRequestMessage httpRequestMessage = new HttpRequestMessage
                                 {
                                     Method = HttpMethod.Get,
-                                    RequestUri = new Uri(secureFunctionAPIURL),
-                                    Headers = { { System.Net.HttpRequestHeader.Authorization.ToString(), "Bearer " + accessToken } }
+                                    RequestUri = new Uri(secureFunctionAPIURL)//,
+                                    //Headers = { { System.Net.HttpRequestHeader.Authorization.ToString(), "Bearer " + accessToken } }
                                 };
                                 
                                 //Todo Add some error handling in case function cannot be reached. Note Wait time is there to provide sufficient time to complete post before the HttpClient is disposed.
@@ -127,15 +139,15 @@ namespace AdsGoFast
                             }
                         }
                         
-                    }                    
-                }
+                    }                   
+                
             }
             
         }
 
     }
 
-    public static class RunFrameworkTasks
+    public  class RunFrameworkTasks
     {
         public static dynamic RunFrameworkTasksCore(HttpRequest req, Logging logging)
         {

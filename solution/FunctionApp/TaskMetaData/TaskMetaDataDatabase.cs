@@ -4,9 +4,12 @@
  Licensed under the MIT license.
 
 -----------------------------------------------------------------------*/
+using AdsGoFast.Models;
+using AdsGoFast.Models.Options;
 using AdsGoFast.SqlServer;
 using AdsGoFast.TaskMetaData;
 using Dapper;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,6 +21,14 @@ namespace AdsGoFast
     //Todo Update to IDisposable
     public class TaskMetaDataDatabase
     {
+        //private readonly IOptions<ApplicationOptions> _appOptions;
+        //private readonly ITaskMetaDataDBContext _TaskMetaDataDBContext;
+
+        //public TaskMetaDataDatabase(IOptions<ApplicationOptions> appOptions)
+        //{
+        //    _appOptions = appOptions;
+        //}
+
         public void LogTaskInstanceCompletion(System.Int64 TaskInstanceId, System.Guid Executionid, BaseTasks.TaskStatus Status, System.Guid AdfRunUid, string Comment)
         {
             SqlConnection _con = this.GetSqlConnection();
