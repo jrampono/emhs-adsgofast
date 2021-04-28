@@ -200,7 +200,7 @@ namespace AdsGoFast
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {
-                    FrameworkRunner.FrameworkRunnerWorker worker = GetADFStats.GetADFPipelineRuns;
+                    FrameworkRunner.FrameworkRunnerWorker worker = GetADFPipelineRuns;
                     FrameworkRunner.FrameworkRunnerResult result = FR.Invoke("GetADFPipelineRunsTimerTrigger", worker);
                 }
             }
@@ -341,7 +341,7 @@ namespace AdsGoFast
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {
-                    FrameworkRunner.FrameworkRunnerWorker worker = GetADFStats.GetADFActivityErrors;
+                    FrameworkRunner.FrameworkRunnerWorker worker = GetADFActivityErrors;
                     FrameworkRunner.FrameworkRunnerResult result = FR.Invoke("GetADFActivityErrorsTimerTrigger", worker);
                 }
             }

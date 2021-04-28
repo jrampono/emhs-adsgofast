@@ -33,29 +33,40 @@ namespace AdsGoFast
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-         
-            ExecutionContextOptions executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
-            
+            var local_root = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot");          
+            var azure_root = $"{Environment.GetEnvironmentVariable("HOME")}\\site\\wwwroot";
+
+            var actual_root = local_root ?? azure_root;
+
+            var logPath = (actual_root + "/StartupLogs/");
+            if (!Directory.Exists(logPath))
+                Directory.CreateDirectory(logPath);
+            var logFile = System.IO.File.Create(logPath+"/"+DateTime.UtcNow.ToString("yyyyMMddHHmm")+".tmp");
+            var logWriter = new System.IO.StreamWriter(logFile);
+            logWriter.WriteLine("StartingStartup");
+
             
             var config = new ConfigurationBuilder()
-              .SetBasePath(executionContextOptions.AppDirectory)
+              .SetBasePath(actual_root)
               .AddUserSecrets("3956e7aa-4d13-430a-bb5f-a5f8f5a450ee"/*Assembly.GetExecutingAssembly()*/, true)
               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
               .AddEnvironmentVariables()
               .Build();
 
-          
-
-            Console.WriteLine("RootPath:" + executionContextOptions.AppDirectory);
+            logWriter.WriteLine("RootPath:" + actual_root);
 
             builder.Services.Configure<AuthOptions>(config.GetSection("AzureAdAuth"));
             builder.Services.Configure<ApplicationOptions>(config.GetSection("ApplicationOptions"));
             builder.Services.Configure<DownstreamAuthOptionsDirect>(config.GetSection("AzureAdAzureServicesDirect"));
             builder.Services.Configure<DownstreamAuthOptionsViaAppReg>(config.GetSection("AzureAdAzureServicesViaAppReg"));
 
-            Shared._ApplicationBasePath = executionContextOptions.AppDirectory;
-            Shared._ApplicationOptions = config.GetSection("ApplicationOptions").Get<ApplicationOptions>();
 
+            var AppOptions = config.GetSection("ApplicationOptions").Get<ApplicationOptions>();
+            var DownstreamAuthOptionsDirect = config.GetSection("AzureAdAzureServicesDirect").Get<DownstreamAuthOptionsDirect>();
+            Shared._ApplicationBasePath = actual_root;
+            Shared._ApplicationOptions = AppOptions;
+            Shared._DownstreamAuthOptionsDirect = DownstreamAuthOptionsDirect;
+            Shared._AzureAuthenticationCredentialProvider = new AzureAuthenticationCredentialProvider(Options.Create(AppOptions), DownstreamAuthOptionsDirect);
 
             //builder.Services.AddSingleton<IConfiguration>(config); 
             builder.Services.AddSingleton<ISecurityAccessProvider>((provider) =>
@@ -121,8 +132,8 @@ namespace AdsGoFast
             //{
             //    return new Logging();
             //});
-
-
+            logWriter.WriteLine("Finished Startup");
+            logWriter.Dispose();
         }
     }
 }

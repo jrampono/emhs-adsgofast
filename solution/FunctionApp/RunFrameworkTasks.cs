@@ -118,7 +118,7 @@ namespace AdsGoFast
                             {
 
                                 //Lets get an access token based on MSI or Service Principal
-                                var secureFunctionAPIURL = string.Format("{0}/api/RunFrameworkTasksHttpTrigger?TaskRunnerId={1}", Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"), TaskRunnerId.ToString());
+                                var secureFunctionAPIURL = string.Format("{0}/api/RunFrameworkTasksHttpTrigger?TaskRunnerId={1}", Shared._ApplicationOptions.ServiceConnections.CoreFunctionsURL, TaskRunnerId.ToString());
                                 //var accessToken = Shared.Azure.AzureSDK.GetAzureRestApiToken(Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"));
 
                                 using HttpRequestMessage httpRequestMessage = new HttpRequestMessage
@@ -131,8 +131,6 @@ namespace AdsGoFast
                                 //Todo Add some error handling in case function cannot be reached. Note Wait time is there to provide sufficient time to complete post before the HttpClient is disposed.
                                 var HttpTask = client.SendAsync(httpRequestMessage).Wait(3000);
                             
-                            //string queryString = string.Format("{0}/api/RunFrameworkTasksHttpTrigger?TaskRunnerId={1}&code={2}", Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"), TaskRunnerId.ToString(), Shared.GlobalConfigs.GetStringConfig("RunFrameworkTasksHttpTriggerAzureFunctionKey"));
-                            //client.GetAsync(queryString).Wait(5000);
                         }
                             catch (Exception e)
                             {
@@ -264,8 +262,8 @@ namespace AdsGoFast
                                         using (var client = new System.Net.Http.HttpClient())
                                         {
                                             //Lets get an access token based on MSI or Service Principal
-                                            var secureFunctionAPIURL = string.Format("{0}/api/GetSASUriSendEmailHttpTrigger", Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"));
-                                            var accessToken = Shared.Azure.AzureSDK.GetAzureRestApiToken(secureFunctionAPIURL);
+                                            var secureFunctionAPIURL = string.Format("{0}/api/GetSASUriSendEmailHttpTrigger", Shared._ApplicationOptions.ServiceConnections.CoreFunctionsURL);
+                                            var accessToken = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken(secureFunctionAPIURL);
 
                                             using HttpRequestMessage httpRequestMessage = new HttpRequestMessage
                                             {
@@ -286,8 +284,8 @@ namespace AdsGoFast
                                         {                                            
                                             
                                             //Lets get an access token based on MSI or Service Principal
-                                            var secureFunctionAPIURL = string.Format("{0}/api/AZStorageCacheFileListHttpTrigger", Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"));
-                                            var accessToken = Shared.Azure.AzureSDK.GetAzureRestApiToken(secureFunctionAPIURL);
+                                            var secureFunctionAPIURL = string.Format("{0}/api/AZStorageCacheFileListHttpTrigger", Shared._ApplicationOptions.ServiceConnections.CoreFunctionsURL);
+                                            var accessToken = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken(secureFunctionAPIURL);
 
                                             using HttpRequestMessage httpRequestMessage = new HttpRequestMessage
                                             {
@@ -371,14 +369,14 @@ namespace AdsGoFast
         }
 
         private static string GetSecureFunctionURI(string FunctionName) {
-            return string.Format("{0}/api/{1}", Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL"), FunctionName);
+            return string.Format("{0}/api/{1}", Shared._ApplicationOptions.ServiceConnections.CoreFunctionsURL, FunctionName);
         }
         private static string GetSecureFunctionToken(string FunctionName) {
             string ret = "";            
-            string secureFunctionAPIURL = Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL");
+            string secureFunctionAPIURL = Shared._ApplicationOptions.ServiceConnections.CoreFunctionsURL;
             if (!secureFunctionAPIURL.Contains("localhost"))
             { 
-                ret = Shared.Azure.AzureSDK.GetAzureRestApiToken(secureFunctionAPIURL); 
+                ret = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken(secureFunctionAPIURL); 
             }
 
             return ret;

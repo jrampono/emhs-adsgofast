@@ -76,7 +76,7 @@ namespace AdsGoFast
             }
 
             _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
+            TokenCredential StorageToken = new TokenCredential(Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
 
             if (!(_sourceType == "Azure Blob" && _sourceType == "ADLS") && (_metadataType == "Parquet"))
             {
@@ -195,7 +195,7 @@ namespace AdsGoFast
             string _schemaFileName = data["SchemaFileName"].ToString();
 
             _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
+            TokenCredential StorageToken = new TokenCredential(Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
 
             string _schemaStructure = Shared.Azure.Storage.ReadFile(_storageAccountName, _storageAccountContainer, _relativePath, _schemaFileName, StorageToken);
 
@@ -254,7 +254,7 @@ namespace AdsGoFast
 
                 _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
 
-                TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken("https://" + _storageAccountName + ".blob.core.windows.net", Shared._ApplicationOptions.UseMSI));
+                TokenCredential StorageToken = new TokenCredential(Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://" + _storageAccountName + ".blob.core.windows.net", Shared._ApplicationOptions.UseMSI));
 
                 arr = (JArray)JsonConvert.DeserializeObject(Shared.Azure.Storage.ReadFile(_storageAccountName, _storageAccountContainer, _relativePath, _schemaFileName, StorageToken));
             }
@@ -349,7 +349,7 @@ namespace AdsGoFast
             TaskMetaDataDatabase TMD = new TaskMetaDataDatabase();
             using (SqlConnection _con = TMD.GetSqlConnection())
             {
-                string _token = Shared.Azure.AzureSDK.GetAzureRestApiToken("https://database.windows.net/");
+                string _token = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://database.windows.net/");
                 String g = Guid.NewGuid().ToString().Replace("-", "");
 
                 _con.AccessToken = _token;

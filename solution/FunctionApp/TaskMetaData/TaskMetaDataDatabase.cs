@@ -93,7 +93,7 @@ namespace AdsGoFast
             SqlConnection _con = new SqlConnection(GetConnectionString());
             if (!Shared.GlobalConfigs.GetBoolConfig("AdsGoFastTaskMetaDataDatabaseUseTrustedConnection"))
             {
-                string _token = Shared.Azure.AzureSDK.GetAzureRestApiToken("https://database.windows.net/");
+                string _token = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://database.windows.net/");
                 _con.AccessToken = _token;
             }
             return _con;

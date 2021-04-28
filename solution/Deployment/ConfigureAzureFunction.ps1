@@ -107,4 +107,4 @@ function ConfigureAzureFunction
 
 az functionapp config appsettings set --name $env:AzureFunction --resource-group $env:ResourceGroupName --settings "'AzureAdAzureServicesDirect'=$Setting"
 
-Compress-Archive -LiteralPath "Y:\Source\GitMS\azure-data-services-go-fast-codebase\deploy\azurefunction\Uncompressed\" -DestinationPath "$env:PublishAssetsFolder\azurefunction\compressed\Publish.zip"
+Compress-Archive -Path "$env:PublishAssetsFolder\azurefunction\uncompressed\*" -DestinationPath "$env:PublishAssetsFolder\azurefunction\compressed\Publish.zip" -force 

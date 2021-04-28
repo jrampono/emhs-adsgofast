@@ -25,6 +25,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using AdsGoFast.Models.Options;
+using AdsGoFast.Services;
 
 namespace AdsGoFast
 {
@@ -37,120 +38,14 @@ namespace AdsGoFast
         public static ApplicationOptions _ApplicationOptions { get; set; }
 
         public static DownstreamAuthOptionsDirect _DownstreamAuthOptionsDirect { get; set; }
+        public static AzureAuthenticationCredentialProvider _AzureAuthenticationCredentialProvider { get; set; }
 
         public static partial class Azure
         {
-            public static string AuthenticateAsyncViaRest(bool UseMSI, string ResourceUrl = null, string AuthorityUrl = null, string ClientId = null, string ClientSecret = null, string Username = null, string Password = null, string Scope = null, string GrantType = null)
-            {
-                HttpResponseMessage result = new HttpResponseMessage();
-                if (UseMSI == true)
-                {
-
-                    //Logging.LogInformation("AuthenticateAsyncViaRest is using MSI");
-                    using (HttpClient client = new HttpClient())
-                    {
-                        client.DefaultRequestHeaders.Add("Secret", Environment.GetEnvironmentVariable("MSI_SECRET"));
-                        result = client.GetAsync(string.Format("{0}/?resource={1}&api-version={2}", Environment.GetEnvironmentVariable("MSI_ENDPOINT"), ResourceUrl, "2017-09-01")).Result;
-                    }
-
-                }
-                else
-                {
-                    //Logging.LogInformation("AuthenticateAsyncViaRest is using Service Principal");
-                    Uri oauthEndpoint = new Uri(AuthorityUrl);
-
-                    using (HttpClient client = new HttpClient())
-                    {
-                        List<KeyValuePair<string, string>> body = new List<KeyValuePair<string, string>>();
-
-                        if (ResourceUrl != null) { body.Add(new KeyValuePair<string, string>("resource", ResourceUrl)); }
-                        if (ClientId != null) { body.Add(new KeyValuePair<string, string>("client_id", ClientId)); }
-                        if (ClientSecret != null) { body.Add(new KeyValuePair<string, string>("client_secret", ClientSecret)); }
-                        if (GrantType != null) { body.Add(new KeyValuePair<string, string>("grant_type", GrantType)); }
-                        if (Username != null) { body.Add(new KeyValuePair<string, string>("username", Username)); }
-                        if (Password != null) { body.Add(new KeyValuePair<string, string>("password", Password)); }
-                        if (Scope != null) { body.Add(new KeyValuePair<string, string>("scope", Scope)); }
-
-                        result = client.PostAsync(oauthEndpoint, new FormUrlEncodedContent(body)).Result;
-                    }
-                }
-                if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    string content = result.Content.ReadAsStringAsync().Result;
-                    var definition = new { access_token = "" };
-                    var jobject = JsonConvert.DeserializeAnonymousType(content, definition);
-                    return (jobject.access_token);
-                }
-                else
-                {
-                    string error = "AuthenticateAsyncViaRest Failed..";
-                    try
-                    {
-                        string content = result.Content.ReadAsStringAsync().Result;
-                        error = error + content;
-                    }
-                    catch
-                    {
-
-                    }
-                    finally
-                    {
-                        //Logging.LogErrors(new Exception(error));
-                        throw new Exception(error);
-                    }
-                }
-            }
 
             public static class AzureSDK
             {
-                //Gets RestAPI Token for various Azure Resources using the SDK Helper Classes
-
-                public static string GetAzureRestApiToken(string ServiceURI)
-                {
-                    if (Shared._ApplicationOptions.UseMSI)
-                    {
-                        return GetAzureRestApiToken(ServiceURI, Shared._ApplicationOptions.UseMSI, null, null);
-                    }
-                    else
-                    {
-                        //By Default Use Local SP Credentials
-                        return GetAzureRestApiToken(ServiceURI, Shared._ApplicationOptions.UseMSI, Shared._DownstreamAuthOptionsDirect.ClientId, Shared._DownstreamAuthOptionsDirect.ClientSecret);
-                    }
-                }
-
-                public static string GetAzureRestApiToken(string ServiceURI, bool UseMSI)
-                {
-                    if (UseMSI)
-                    {
-                        return GetAzureRestApiToken(ServiceURI, UseMSI, null, null);
-                    }
-                    else
-                    {
-                        //By Default Use Local SP Credentials
-                        return GetAzureRestApiToken(ServiceURI, UseMSI, Shared._DownstreamAuthOptionsDirect.ClientId, Shared._DownstreamAuthOptionsDirect.ClientSecret);
-                    }
-                }
-
-                public static string GetAzureRestApiToken(string ServiceURI, bool UseMSI, string ApplicationId, string AuthenticationKey)
-                {
-                    if (UseMSI == true)
-                    {
-
-                        AzureServiceTokenProvider tokenProvider = new AzureServiceTokenProvider();
-                        //https://management.azure.com/                    
-                        return tokenProvider.GetAccessTokenAsync(ServiceURI).Result;
-
-                    }
-                    else
-                    {
-
-                        AuthenticationContext context = new AuthenticationContext("https://login.windows.net/" + Shared._DownstreamAuthOptionsDirect.TenantId);
-                        ClientCredential cc = new ClientCredential(ApplicationId, AuthenticationKey);
-                        AuthenticationResult result = context.AcquireTokenAsync(ServiceURI, cc).Result;
-                        return result.AccessToken;
-                    }
-                }
-
+                
                 //Gets AzureCredentials Object Using SDK Helper Classes 
                 public static AzureCredentials GetAzureCreds(bool UseMSI)
                 {

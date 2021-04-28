@@ -20,7 +20,7 @@ namespace AdsGoFast
                 {
                     public static DataFactoryManagementClient CreateDataFactoryClient(string SubscriptionId)
                     {
-                        string token = Shared.Azure.AzureSDK.GetAzureRestApiToken("https://management.azure.com/");
+                        string token = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://management.azure.com/");
                         ServiceClientCredentials cred = new TokenCredentials(token);
 
                         DataFactoryManagementClient adfClient = new DataFactoryManagementClient(cred)

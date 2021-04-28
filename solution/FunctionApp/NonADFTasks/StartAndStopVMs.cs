@@ -33,7 +33,7 @@ namespace AdsGoFast
                 if (r == "All") { Allowed = true; }
             }
 
-            if (!Allowed && !Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL").Contains("localhost"))
+            if (!Allowed && !Shared._ApplicationOptions.ServiceConnections.CoreFunctionsURL.Contains("localhost"))
             {
                 string err = "Request was rejected as user is not allowed to perform this action";
                 log.LogError(err);
