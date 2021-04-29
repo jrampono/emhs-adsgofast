@@ -33,14 +33,14 @@ jobs:
       working-directory: ./solution/FunctionApp
     - name: Publish functions
       run: dotnet publish --no-restore --configuration Release --output './deploy'
-      working-directory: ./solution/FunctionApp
+      working-directory: ./solution/FunctionApp/deploy
     - run: echo "starting Zip"
     - name: zip functions
-      run: zip -r publish.zip ./deploy 
+      run: zip -r ../publish.zip * 
       working-directory: ./solution/FunctionApp
     - name: Package functions
       uses: actions/upload-artifact@v2.2.3
       with:
           name: functions
-          path: ./deploy/functionapp/
+          path: ./solution/FunctionApp/publish.zip
     
