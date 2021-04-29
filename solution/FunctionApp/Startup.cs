@@ -33,7 +33,7 @@ namespace AdsGoFast
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            //Swap between local development and deployed root paths..
+            //Swap between local development and deployed root paths
             var local_root = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot");          
             var azure_root = $"{Environment.GetEnvironmentVariable("HOME")}\\site\\wwwroot";
 
