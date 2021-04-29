@@ -32,10 +32,10 @@ jobs:
       run: dotnet restore 
       working-directory: ./solution/FunctionApp
     - name: Publish functions
-      run: dotnet publish --no-restore --configuration Release --output './deploy/azurefunction'
+      run: dotnet publish --no-restore --configuration Release --output './deploy'
       working-directory: ./solution/FunctionApp
     - name: Package functions
       uses: actions/upload-artifact@v2.2.3
       with:
           name: functions
-          path: ./deploy/azurefunction
+          path: ./solution/FunctionApp/deploy
