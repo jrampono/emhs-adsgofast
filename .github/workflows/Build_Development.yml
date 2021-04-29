@@ -52,17 +52,17 @@ jobs:
     #Web App Build
     - name: Restore dependencies for Web App
       run: dotnet restore
-      working-directory: ./solution/WebApplication/WebApplication
+      working-directory: ./solution/WebApplication
     - name: Publish Web App
       run: dotnet publish --no-restore --configuration Release --output './deploy'
-      working-directory: ./solution/WebApplication/WebApplication
+      working-directory: ./solution/WebApplication
     - run: echo "starting Zip"
     - name: zip web app
       run: zip -r ../publish.zip * 
-      working-directory: ./solution/WebApplication/WebApplication/deploy
+      working-directory: ./solution/WebApplication/deploy
     - name: Package Web App
       uses: actions/upload-artifact@v2.2.3
       with:
           name: Web App Package
-          path: ./solution/WebApplication/WebApplication/publish.zip
+          path: ./solution/WebApplication/publish.zip
     
