@@ -1,13 +1,6 @@
 name: Build Source Artifacts
 
-on:
-  push:
-    branches: 
-     - 'development/0.1'
-  pull_request:
-    branches: 
-    - 'development/0.1'
-
+on: push
 
 env:
   AZURE_WEBAPP_NAME: my-app-name    # set this to your application's name
