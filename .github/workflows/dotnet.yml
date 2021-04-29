@@ -1,6 +1,9 @@
 name: Build Source Artifacts
 
-on: push
+on: 
+  push:
+    branches:
+      - development/0.1
 
 env:
   AZURE_WEBAPP_NAME: my-app-name    # set this to your application's name
@@ -41,6 +44,6 @@ jobs:
     - name: Package functions
       uses: actions/upload-artifact@v2.2.3
       with:
-          name: functions
+          name: azurefunctions
           path: ./solution/FunctionApp/publish.zip
     
