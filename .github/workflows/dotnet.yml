@@ -31,6 +31,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore 
       working-directory: ./solution/FunctionApp
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Publish functions
+      run: dotnet publish --no-restore --configuration Release --output ${{ env.OUTPUT_PATH }}
       working-directory: ./solution/FunctionApp
+    - name: Package functions
+      uses: actions/upload-artifact@v2.2.3
+      with:
+          name: functions
+          path: ${{ env.OUTPUT_PATH }}
