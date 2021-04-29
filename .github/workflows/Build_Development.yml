@@ -33,7 +33,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         
     #Azure Function App Build
-    - name: Restore dependencies
+    - name: Restore dependencies for Function App
       run: dotnet restore 
       working-directory: ./solution/FunctionApp
     - name: Publish functions
@@ -50,8 +50,8 @@ jobs:
           path: ./solution/FunctionApp/publish.zip
           
     #Web App Build
-    - name: Restore dependencies
-      run: dotnet restore for Web App
+    - name: Restore dependencies for Web App
+      run: dotnet restore
       working-directory: ./solution/WebApplication/WebApplication
     - name: Publish Web App
       run: dotnet publish --no-restore --configuration Release --output './deploy'
