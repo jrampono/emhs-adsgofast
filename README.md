@@ -1,7 +1,8 @@
 ## Documentation
 Documentation for this codebase is mantained in a **separate repository**. You can find it at [https://github.com/microsoft/azure-data-services-go-fast-documentation](https://github.com/microsoft/azure-data-services-go-fast-documentation). Please feel free to contribute to the documentation.
 
-## Contributing
+## Contributing 
+
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
