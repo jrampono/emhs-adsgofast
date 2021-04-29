@@ -31,6 +31,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    #Azure Function App Build
     - name: Restore dependencies
       run: dotnet restore 
       working-directory: ./solution/FunctionApp
@@ -44,6 +46,23 @@ jobs:
     - name: Package functions
       uses: actions/upload-artifact@v2.2.3
       with:
-          name: azurefunctions
+          name: Azure Functions Package
           path: ./solution/FunctionApp/publish.zip
+          
+    #Web App Build
+    - name: Restore dependencies
+      run: dotnet restore for Web App
+      working-directory: ./solution/WebApplication
+    - name: Publish Web App
+      run: dotnet publish --no-restore --configuration Release --output './deploy'
+      working-directory: ./solution/WebApplication
+    - run: echo "starting Zip"
+    - name: zip web app
+      run: zip -r ../publish.zip * 
+      working-directory: ./solution/WebApplication/deploy
+    - name: Package Web App
+      uses: actions/upload-artifact@v2.2.3
+      with:
+          name: Web App Package
+          path: ./solution/WebApplication/publish.zip
     
