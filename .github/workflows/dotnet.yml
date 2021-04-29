@@ -35,8 +35,8 @@ jobs:
       run: dotnet publish --no-restore --configuration Release --output './deploy'
       working-directory: ./solution/FunctionApp
     - run: echo "starting Zip"
-    - run: ls './deploy/functionapp/' 2>/dev/null||mkdir './deploy/functionapp/'
-    - run: zip -r './deploy/functionapp/Publish.zip' './solution/FunctionApp/deploy'
+    - run: ls ./deploy/functionapp 2>/dev/null||mkdir ./deploy/functionapp
+    - run: zip -r ./deploy/functionapp/Publish.zip ./solution/FunctionApp/deploy
     - name: Package functions
       uses: actions/upload-artifact@v2.2.3
       with:
