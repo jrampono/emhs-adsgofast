@@ -2,9 +2,11 @@ name: Build Source Artifacts
 
 on:
   push:
-    branches: [ development/0.1 ]
+    branches: 
+     - 'development/0.1'
   pull_request:
-    branches: [ development/0.1 ]
+    branches: 
+    - 'development/0.1'
 
 
 env:
