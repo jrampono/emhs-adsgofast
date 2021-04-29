@@ -79,7 +79,7 @@ jobs:
     
     - name: Set Env Variable Test
       shell: pwsh
-      run: echo "action_state=yellow" >> $GITHUB_ENV
+      run: echo "action_state=yellow" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
       
     - name: test env variable
       run:  echo "${{ env.action_state }}" # This will output 'yellow'
