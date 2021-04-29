@@ -7,10 +7,6 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '3.1.x'           # set this to the dot net version to use
 
-defaults:
-  run:
-    working-directory: ./solution/FunctionApp
-
 jobs:
   build:
 
@@ -33,6 +29,8 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore 
+      working-directory: ./solution/FunctionApp
     - name: Build
       run: dotnet build --no-restore
+      working-directory: ./solution/FunctionApp
