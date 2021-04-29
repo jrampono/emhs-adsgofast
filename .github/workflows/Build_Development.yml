@@ -77,8 +77,10 @@ jobs:
           name: Web App Package
           path: ./solution/WebApplication/publish.zip
     
-    - name: Install Powershell Core
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y powershell
+    - name: Set Env Variable Test
+      shell: pwsh
+      run: echo "action_state=yellow" >> $GITHUB_ENV
+      
+    - name: test env variable
+      run: set
     
