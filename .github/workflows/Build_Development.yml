@@ -32,10 +32,13 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
     #Load AdsGoFast Environment Variables
-    - name: lj
+    - name: Push Environment File Variables into GitHub compliant Env Variables
       shell: pwsh
       run: .\PushEnvFileIntoVariables.ps1
       working-directory: ./solution/Deployment
+      
+    - name: test env variable 0
+      run:  echo "${{ env.AdsOpts_Location }}" # This will output 'yellow'
     
     #Azure Function App Build
     - name: Restore dependencies for Function App
