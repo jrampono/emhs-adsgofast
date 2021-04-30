@@ -5,6 +5,7 @@ on:
     branches:
       - development/0.1
 
+
 env:
   TOGGLE_BUILD_FUNCTIONS: false,
   TOGGLE_BUILD_WEBAPP: false,
@@ -16,6 +17,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: development
     steps:
     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
