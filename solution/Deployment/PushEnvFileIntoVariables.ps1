@@ -1,7 +1,7 @@
 
 
 
-function ParseEnv([string]$Json, [string]$NamePrefix)
+function ParseEnvFragment([string]$Json, [string]$NamePrefix)
 {   
     foreach($p in ($Json | ConvertFrom-Json).psobject.properties.where({$_.MemberType -eq "NoteProperty"}))
     { 
@@ -21,16 +21,19 @@ function ParseEnv([string]$Json, [string]$NamePrefix)
         else {
             Write-Host "Further Parsing of $Name required"
             $JsonString = $p.Value | ConvertTo-Json
-            ParseEnv -Json $JsonString -NamePrefix $Name
+            ParseEnvFragment -Json $JsonString -NamePrefix $Name
         }
     }
 }
 
-if ($null -eq $Env:GITHUB_ENV) 
+
+function ParseEnvFile ($EnvFile)
 {
-    $Env:GITHUB_ENV="./bin/GitEnv.txt"
+    if ($null -eq $Env:GITHUB_ENV) 
+    {
+        $Env:GITHUB_ENV="./bin/GitEnv.txt"
+    }
+
+    $Json = Get-Content -Path "./environments/$($EnvFile).json"  | Out-String
+    ParseEnvFragment -Json $Json -NamePrefix ""
 }
-
-$Json = Get-Content -Path "./environments/development.json"  | Out-String
-ParseEnv -Json $Json -NamePrefix ""
-
