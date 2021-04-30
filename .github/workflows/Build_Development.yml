@@ -12,6 +12,7 @@ env:
   AZURE_WEBAPP_NAME: my-app-name    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '3.1.x'           # set this to the dot net version to use
+  ENVIRONMENT_FILE : ${{ secrets.ENVIRONMENT_FILE }}
 
 jobs:
   build:
@@ -34,7 +35,9 @@ jobs:
     #Load AdsGoFast Environment Variables
     - name: Push Environment File Variables into GitHub compliant Env Variables
       shell: pwsh
-      run: .\PushEnvFileIntoVariables.ps1
+      run: |
+        . .\PushEnvFileIntoVariables.ps1
+        ParseEnvFile("${{ env.ENVIRONMENT_FILE }}")
       working-directory: ./solution/Deployment
       
     - name: test env variable 0
