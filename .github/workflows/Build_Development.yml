@@ -37,7 +37,7 @@ jobs:
       shell: pwsh
       run: |
         . .\PushEnvFileIntoVariables.ps1
-        ParseEnvFile("${{ env.ENVIRONMENT_NAME }}")
+        ParseEnvFile("$ENVIRONMENT_NAME")
       working-directory: ./solution/Deployment
       
     - name: test env variable 0
