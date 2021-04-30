@@ -12,7 +12,7 @@ env:
   AZURE_WEBAPP_NAME: my-app-name    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '3.1.x'           # set this to the dot net version to use
-  ENVIRONMENT_FILE : ${{ secrets.ENVIRONMENT_FILE }}
+  ENVIRONMENT_FILE : ${{ secrets.ENVIRONMENT_NAME }}
 
 jobs:
   build:
@@ -37,7 +37,7 @@ jobs:
       shell: pwsh
       run: |
         . .\PushEnvFileIntoVariables.ps1
-        ParseEnvFile("${{ env.ENVIRONMENT_FILE }}")
+        ParseEnvFile("${{ env.ENVIRONMENT_NAME }}")
       working-directory: ./solution/Deployment
       
     - name: test env variable 0
