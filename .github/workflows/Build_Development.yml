@@ -34,7 +34,7 @@ jobs:
     #Load AdsGoFast Environment Variables
     - name: lj
       shell: pwsh
-      run: .PushEnvFileIntoVariables.ps1
+      run: .\PushEnvFileIntoVariables.ps1
       working-directory: ./solution/Deployment
     
     #Azure Function App Build
