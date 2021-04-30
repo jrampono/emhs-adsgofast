@@ -51,7 +51,7 @@ SignInToPowershellAz
 SignInToAzureAD
 
 #############################################################
-# Create Resource Group and Deploy ARM Template
+# Create Resource Group and Deployment SP
 #############################################################
 if($env:CreateResourceGroup -eq $true)
 {
@@ -59,10 +59,58 @@ if($env:CreateResourceGroup -eq $true)
     az group create --name $env:ResourceGroupName --location $env:Location
 }
 
+$env:SubcriptionId = (az account show -s "Jorampon Internal Consumption" | ConvertFrom-Json).id
+
+if($env:CreateDeploymentSP -eq $true)
+{
+    Write-Host "Creating Deployment Service Principal"
+    az ad sp create-for-rbac --name $env:ServicePrincipal_Deployment --role contributor --scopes /subscriptions/$env:SubcriptionId/resourceGroups/$env:ResourceGroupName
+}
+
+$env:ResourceGroupHash = Get-UniqueString ($env:SubcriptionId, $length=13)
+
+#############################################################
+# Deploy ARM Template
+#############################################################
+
+
+az deployment group create --name "AdsGoFastDeployment" --resource-group $env:ResourceGroupName --template-file $env:TemplateFile -- $env:TemplateParametersFile
+
 if($env:PerformDeployment -eq $true)
 {
     Write-Host "Deploying ARM Template"
     az deployment group create --name "AdsGoFastDeployment" --resource-group $env:ResourceGroupName --template-file $env:TemplateFile --parameters $env:TemplateParametersFile
+}
+
+$env:LogStorageAccountName = "logstg" + $env:ResourceGroupHash
+if($env:PerformDeploymentStorageLogging -eq $true)
+{
+    #StorageAccount For Logging
+    az deployment group create -g $env:ResourceGroupName --template-file ./arm/Storage_Logging.json --parameters location=$env:location storage-log-account-name=$env:LogStorageAccountName
+}
+
+$env:LogAnalyticsWorkspaceName = "adsloganalytics" + $env:ResourceGroupHash
+if($env:PerformDeploymentLogAnalytics -eq $true)
+{
+    #LogAnalytics
+    az deployment group create -g $env:ResourceGroupName --template-file ./arm/LogAnalytics.json --parameters location=$env:location workspaces_adsgofastloganalytics_name=$env:LogAnalyticsWorkspaceName
+}
+
+$env:AzureFunctionSiteName = "AdsFuncApp" + $env:ResourceGroupHash
+$env:WebAppSiteName = "AdsWebApp" + $env:ResourceGroupHash
+$env:ApplicationInsightsName = "appinsights-adsgofast" + $env:ResourceGroupHash
+if($env:PerformDeploymentAppService -eq $true)
+{
+    #App Service (Includes both functions and web)
+    $storageaccountkey = (az storage account keys list -g $env:ResourceGroupName -n $env:LogStorageAccountName | ConvertFrom-Json)[0].value
+    az deployment group create -g $env:ResourceGroupName --template-file ./arm/AppService.json --parameters location=$env:location azure-function-site-name=$env:LogAnalyticsWorkspaceName resource-group-name=$env:ResourceGroupName app-insights-name=$env:ApplicationInsightsName sites_AdsGoFastWebApp_name=$env:WebAppSiteName storage-log-account-name=$env:LogStorageAccountName storage-log-account-key=$storageaccountkey
+}
+
+$env:ApplicationInsightsName = "adsloganalytics" + $env:ResourceGroupHash
+if($env:PerformDeploymentLogAnalytics -eq $true)
+{
+    #Application Insights
+    az deployment group create -g $env:ResourceGroupName --template-file ./arm/LogAnalytics.json --parameters location=$env:location workspaces_adsgofastloganalytics_name=$env:LogAnalyticsWorkspaceName
 }
 
 if($env:FetchDeploymentDetails -eq $true)

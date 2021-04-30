@@ -4,6 +4,7 @@ function LoadDevelopmentSettings {
     $env:Subscription = "Jorampon Internal Consumption"
     $env:ResourceGroupName = "AdsTest"
     $env:AADUser="jorampon@microsoft.com"
+    $env:ServicePrincipal_Deployment="AdsGoFastDeploymentSP"
     # Service Principal Used by Azure Functions for downstream azure service connections 
     $env:ServicePrincipalNameAFDownstream="AdsGoFastDeployTestSP"
     # Service Principal Used for Web App AAD integration
@@ -27,6 +28,9 @@ function LoadDevelopmentSettings {
 
     #ARM Deployment Options
     $env:PerformDeployment=$false #Set to true if you are performing ARM deployment
+    $env:PerformDeploymentStorageLogging=$false
+    $env:PerformDeploymentAppService=$false
+
     $env:FetchDeploymentDetails=$false  #Set to true if you want additional details to be fetched from the ARM deployment if this is false then the values below need to be provided
     $env:DataFactoryName="adsgofastdatakakeacceladf"
     $env:LogStorageAccount=$null
