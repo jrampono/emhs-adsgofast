@@ -1,40 +1,37 @@
-{   
-    "AdsOpts":
-    {
-        "Location":"australiaeast",
-        "ServiceNames":
-        { 
-            "Subscription" : "Jorampon Internal Consumption",
-            "ResourceGroupName" : "AdsTest",
-            "AADUser":"jorampon@microsoft.com",
-            "ServicePrincipal_Deployment":"AdsGoFastDeploymentSP",
-            "ServicePrincipalNameAFDownstream":"AdsGoFastDeployTestSP",
-            "ServicePrincipalNameWebAuth":"adsgofastwebappauth",
-            "ServicePrincipalNameAFAuth":"adsgofastwebappauth"
+{
+    "AdsOpts": {
+        "CI": {
+            "BuildFunctionApp": false,
+            "BuildWebApp": false,
+            "BuildAdsGoFastDatabase": false
         },
-        "FolderPaths":
-        {
-            "ArmTemplates":"./arm"
-        },
-            
-        "AzureLoginOptions": 
-        {
-            "UseInteractiveAzCliLogin":true 
-        },
-
-        "EnviroInstalls":
-        {
-            "PerformLocalInstalls":true,
-            "PerformLocalInstallsAzCli":false,
-            "PerformLocalInstallsAzCliAddToPath":true
-        },
-        "ArmOptions":
-        {
-            "PerformDeployment":false,
-            "PerformDeploymentStorageLogging":false,
-            "PerformDeploymentAppService":false
+        "CD": {
+            "Location": "australiaeast",
+            "ServiceNames": {
+                "Subscription": "Jorampon Internal Consumption",
+                "ResourceGroupName": "AdsTest",
+                "AADUser": "jorampon@microsoft.com",
+                "ServicePrincipal_Deployment": "AdsGoFastDeploymentSP",
+                "ServicePrincipalNameAFDownstream": "AdsGoFastDeployTestSP",
+                "ServicePrincipalNameWebAuth": "adsgofastwebappauth",
+                "ServicePrincipalNameAFAuth": "adsgofastwebappauth"
+            },
+            "FolderPaths": {
+                "ArmTemplates": "./arm"
+            },
+            "AzureLoginOptions": {
+                "UseInteractiveAzCliLogin": true
+            },
+            "EnviroInstalls": {
+                "PerformLocalInstalls": true,
+                "PerformLocalInstallsAzCli": false,
+                "PerformLocalInstallsAzCliAddToPath": true
+            },
+            "ArmOptions": {
+                "PerformDeployment": false,
+                "PerformDeploymentStorageLogging": false,
+                "PerformDeploymentAppService": false
+            }
         }
     }
 }
-    
-

@@ -15,8 +15,11 @@ function ParseEnvFragment([string]$Json, [string]$NamePrefix)
         $Value =  $p.Value   
         if($p.TypeNameOfValue -ne "System.Management.Automation.PSCustomObject")
         {
+            #Push Variables to the GitHub Actions Compatible Store
             Write-Host "Writing $Name to env file"
             echo "$Name=$Value" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+            #Also Push Variables to the Session Env Variables for local testing
+            [Environment]::SetEnvironmentVariable($Name, "$Value")
         }
         else {
             Write-Host "Further Parsing of $Name required"
@@ -36,4 +39,7 @@ function ParseEnvFile ($EnvFile)
 
     $Json = Get-Content -Path "./environments/$($EnvFile).json"  | Out-String
     ParseEnvFragment -Json $Json -NamePrefix ""
+
+    
+
 }

@@ -43,25 +43,25 @@ jobs:
         ParseEnvFile("$env:ENVIRONMENT_NAME")
       working-directory: ./solution/Deployment
       
-    - name: test env variable 0
-      run:  echo "${{ env.AdsOpts_Location }}" # This will output 'yellow'
+    - name: test that the AdsOpts variables have been set
+      run:  echo "${{ env.AdsOpts_CD_Location }}" 
     
     #Azure Function App Build
     - name: Restore dependencies for Function App
-      if: ${{env.TOGGLE_BUILD_FUNCTIONS==true}} 
+      if: ${{env.AdsOpts_CI_BuildFunctionApp=="True"}} 
       run: dotnet restore 
       working-directory: ./solution/FunctionApp
     - name: Publish functions
-      if: ${{env.TOGGLE_BUILD_FUNCTIONS==true}}
+      if: ${{env.AdsOpts_CI_BuildFunctionApp=="True"}}
       run: dotnet publish --no-restore --configuration Release --output './deploy'
       working-directory: ./solution/FunctionApp
     - run: echo "starting Zip"
     - name: zip functions
-      if: ${{env.TOGGLE_BUILD_FUNCTIONS==true}}
+      if: ${{env.AdsOpts_CI_BuildFunctionApp=="True"}}
       run: zip -r ../publish.zip * 
       working-directory: ./solution/FunctionApp/deploy
     - name: Package functions
-      if: ${{env.TOGGLE_BUILD_FUNCTIONS==true}}
+      if: ${{env.AdsOpts_CI_BuildFunctionApp=="True"}}
       uses: actions/upload-artifact@v2.2.3
       with:
           name: Azure Functions Package
@@ -69,20 +69,20 @@ jobs:
           
     #Web App Build
     - name: Restore dependencies for Web App
-      if: ${{env.TOGGLE_BUILD_WEBAPP==true}}
+      if: ${{env.AdsOpts_CI_BuildWebApp=="True"}}
       run: dotnet restore
       working-directory: ./solution/WebApplication
     - name: Publish Web App
-      if: ${{env.TOGGLE_BUILD_WEBAPP==true}}
+      if: ${{env.AdsOpts_CI_BuildWebApp=="True"}}
       run: dotnet publish --no-restore --configuration Release --output './deploy'
       working-directory: ./solution/WebApplication
     - run: echo "starting Zip"
     - name: zip web app
-      if: ${{env.TOGGLE_BUILD_WEBAPP==true}}
+      if: ${{env.AdsOpts_CI_BuildWebApp=="True"}}
       run: zip -r ../publish.zip * 
       working-directory: ./solution/WebApplication/deploy
     - name: Package Web App
-      if: ${{env.TOGGLE_BUILD_WEBAPP==true}}
+      if: ${{env.AdsOpts_CI_BuilWebApp=="True"}}
       uses: actions/upload-artifact@v2.2.3
       with:
           name: Web App Package
@@ -90,8 +90,8 @@ jobs:
     
     - name: Set Env Variable Test
       shell: pwsh
-      run: echo "action_state=yellow" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+      run: echo "AdsOpts_CD_Location=yellow" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
       
     - name: test env variable
-      run:  echo "${{ env.action_state }}" # This will output 'yellow'
+      run:  echo "${{ env.AdsOpts_CD_Location }}" # This will output 'yellow'
     
