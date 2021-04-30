@@ -8,6 +8,7 @@ on:
 env:
   TOGGLE_BUILD_FUNCTIONS: false,
   TOGGLE_BUILD_WEBAPP: false,
+  TOGGLE_DEPLOY_RESOURCEGROUP: true,
   AZURE_WEBAPP_NAME: my-app-name    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '3.1.x'           # set this to the dot net version to use
@@ -75,4 +76,11 @@ jobs:
       with:
           name: Web App Package
           path: ./solution/WebApplication/publish.zip
+    
+    - name: Set Env Variable Test
+      shell: pwsh
+      run: echo "action_state=yellow" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+      
+    - name: test env variable
+      run:  echo "${{ env.action_state }}" # This will output 'yellow'
     
