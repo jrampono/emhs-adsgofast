@@ -34,10 +34,20 @@ function ParseEnvFile ($EnvFile)
 {
     if ($null -eq $Env:GITHUB_ENV) 
     {
-        $Env:GITHUB_ENV="./bin/GitEnv.txt"
+        [Environment]::SetEnvironmentVariable("GITHUB_ENV","..\bin\GitEnv.txt")
+        $FileNameOnly = Split-Path $env:GITHUB_ENV -leaf
+        $PathOnly =  Split-Path $env:GITHUB_ENV
+        if ((Test-Path $env:GITHUB_ENV))
+        {      
+        #    Remove-Item -Path $env:GITHUB_ENV
+        }
+        
+        
+        New-Item -Path $PathOnly -Name $FileNameOnly -type "file" -value ""
+        
     }
 
-    $Json = Get-Content -Path "./environments/$($EnvFile).json"  | Out-String
+    $Json = Get-Content -Path "..\environments\$($EnvFile).json"  | Out-String
     ParseEnvFragment -Json $Json -NamePrefix ""
 
     
