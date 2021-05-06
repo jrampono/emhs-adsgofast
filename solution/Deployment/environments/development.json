@@ -1,20 +1,24 @@
 {
     "AdsOpts": {
         "CI": {
+            "Enable": false,
             "BuildFunctionApp": false,
             "BuildWebApp": false,
             "BuildAdsGoFastDatabase": false
         },
         "CD": {
-            "Location": "australiaeast",
-            "ServiceNames": {
+            "Enable": true,
+            "ResourceGroup": {
+                "Enabled":true,
                 "Subscription": "Jorampon Internal Consumption",
-                "ResourceGroupName": "AdsTest",
+                "Location": "australiaeast",
+                "Name": "AdsTest",
                 "AADUser": "jorampon@microsoft.com",
                 "ServicePrincipal_Deployment": "AdsGoFastDeploymentSP",
                 "ServicePrincipalNameAFDownstream": "AdsGoFastDeployTestSP",
                 "ServicePrincipalNameWebAuth": "adsgofastwebappauth",
-                "ServicePrincipalNameAFAuth": "adsgofastwebappauth"
+                "ServicePrincipalNameAFAuth": "adsgofastwebappauth",
+                "Hash":"DummyValueToBeReplacedAtRuntime"
             },
             "FolderPaths": {
                 "ArmTemplates": "./arm"
@@ -31,6 +35,51 @@
                 "PerformDeployment": false,
                 "PerformDeploymentStorageLogging": false,
                 "PerformDeploymentAppService": false
+            },
+            "Services":{
+                "UseARMDefaults":false,
+                "ADF":{
+                    "Enabled":true,
+                    "FactoryName":"adsgofastdatakakeacceladf"
+                },
+                "AdsGoFastDB":{
+                    "Enabled":true,
+                    "Server":"adsgofastdatakakeaccelsqlsvr",
+                    "Database":"AdsGoFast"
+                },
+                "CoreFunctionApp": {
+                    "Enabled":true,
+                    "Name":"AdsGoFastFunc2",
+                    "ApplyNamePostFix":true
+                },
+                "WebSite":{
+                    "Enabled":true,
+                    "Name": "AdsGoFast",
+                    "ApplyNamePostFix":true
+                },
+                "AppInsights":
+                {
+                    "Name": "appinsights-adsgofast",
+                    "ApplyNamePostFix":true
+                },
+                "LogAnalytics":{
+                    "Name":"ADSGoFastLogAnalytics",
+                    "ApplyNamePostFix":true
+                },
+                "KeyVault":{
+                    "Name":"adsgofastkeyvault",
+                    "ApplyNamePostFix":true
+                },
+                "Storage":
+                {
+                    "Logging":{
+                        "Name":"DummyValueToBeReplacedAtRuntime",
+                        "ApplyNamePostFix":true,
+                        "Enable":true,
+                        "Dummy":""
+                    }
+                }
+                
             }
         }
     }
