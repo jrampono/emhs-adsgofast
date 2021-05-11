@@ -1,7 +1,7 @@
 #Move From Workflows to Function App
 $CurrentPath = (Get-Location).Path
-Set-Location "..\..\Database\ADSGoFastDatabase\AdsGoFastBuild\"
-dotnet build --configuration Release --output '..\..\..\Deployment\bin\publish\unzipped\database\'
+Set-Location "..\..\Database\AdsGoFastDbUp\AdsGoFastDbUp\"
+dotnet build --configuration Release --output ".\..\..\..\Deployment\bin\publish\unzipped\database\"
 #Move back to workflows 
 Set-Location $CurrentPath
 Set-Location "../bin/publish"

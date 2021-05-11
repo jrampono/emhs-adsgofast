@@ -11,7 +11,7 @@ function LocalInstalls
     if($null -eq $SqlInstalled)
     {
         write-host "Installing SqlServer Module"
-        Install-Module -Name SqlServer 
+        Install-Module -Name SqlServer -Scope CurrentUser 
     }
     
     # Az Cli Install

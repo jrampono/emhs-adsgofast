@@ -6,7 +6,7 @@
 -----------------------------------------------------------------------*/
 
 /*
-SCHEDULEMASTER
+ Schedule Master, Subject Area, Task Groups, TaskGroupDependency, FrameworkTaskRunner, DataFactory
 */
 
 INSERT INTO [dbo].[ScheduleMaster] ([ScheduleCronExpression],[ScheduleDesciption],[ActiveYN])

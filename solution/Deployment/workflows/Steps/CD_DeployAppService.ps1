@@ -1,7 +1,5 @@
-SetServiceName -RootElement "AdsOpts_CD_Services_CoreFunctionApp"
-SetServiceName -RootElement "AdsOpts_CD_Services_WebSite" 
-SetServiceName -RootElement "AdsOpts_CD_Services_AppInsights"
-if ($env:AdsOpts_CD_Services_CoreFunctionApp_Enabled -eq $true)
+
+if ($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
 {
     #App Service (Includes both functions and web)
     $storageaccountkey = (az storage account keys list -g $env:AdsOpts_CD_ResourceGroup_Name -n $env:AdsOpts_CD_Services_Storage_Logging_Name | ConvertFrom-Json)[0].value

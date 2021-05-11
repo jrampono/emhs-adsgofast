@@ -1,3 +1,4 @@
+
 function SetServiceName($RootElement)
 {
     $PostFixHash = [Environment]::GetEnvironmentVariable(($RootElement + "_ApplyNamePostFix"))
@@ -75,6 +76,15 @@ function ParseEnvFile ($EnvFile)
     $Json = Get-Content -Path "..\environments\$($EnvFile).json"  | ConvertFrom-Json
     ParseEnvFragment -Json $Json -NamePrefix ""
 
+    ParseSecretsFile ($SecretFile)
+
+}
+
+function ParseSecretsFile ($SecretFile)
+{
+
+    $Json = Get-Content -Path "..\bin\Secrets.json"  | ConvertFrom-Json
+    ParseEnvFragment -Json $Json -NamePrefix "secrets"
     
 
 }

@@ -43,7 +43,7 @@
             "metadata": {
                 "description": "Name of Azure Bastion resource"
             }
-        },
+        }
     },
     "variables": {
         "bastion-subnet-name": "AzureBastionSubnet",

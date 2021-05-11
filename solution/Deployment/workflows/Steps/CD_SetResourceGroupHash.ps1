@@ -13,3 +13,12 @@ Write-Host $ResourceGroupHash
 
 PersistEnvVariable -Name "AdsOpts_CD_ResourceGroup_Hash" -Value $ResourceGroupHash
 Write-Host "Created RG Hash"
+Write-Host "Setting Service Names"
+SetServiceName -RootElement "AdsOpts_CD_Services_AzureSQLServer"
+SetServiceName -RootElement "AdsOpts_CD_Services_CoreFunctionApp"
+SetServiceName -RootElement "AdsOpts_CD_Services_WebSite" 
+SetServiceName -RootElement "AdsOpts_CD_Services_AppInsights"
+SetServiceName -RootElement "AdsOpts_CD_Services_Storage_Logging"
+SetServiceName -RootElement "AdsOpts_CD_ServicePrincipals_DeploymentSP"
+SetServiceName -RootElement "AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP"
+SetServiceName -RootElement "AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP"
