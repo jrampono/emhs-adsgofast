@@ -57,6 +57,10 @@ if($null -eq $SqlInstalled)
     Install-Module -Name SqlServer -Scope CurrentUser 
 }
 
+#Add Ip to SQL Firewall
+$myIp = (Invoke-WebRequest ifconfig.me/ip).Content
+az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
+
 $token=$(az account get-access-token --resource=https://database.windows.net --query accessToken --output tsv)
 Invoke-Sqlcmd -ServerInstance "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken $token -query $sqlcommand
 
