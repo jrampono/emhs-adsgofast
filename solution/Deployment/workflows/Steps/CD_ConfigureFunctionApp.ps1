@@ -10,6 +10,7 @@ if($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
     $appSettings.ApplicationOptions.UseMSI = $true
     $appSettings.ApplicationOptions.ServiceConnections.AdsGoFastTaskMetaDataDatabaseServer = "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net"
     $appSettings.ApplicationOptions.ServiceConnections.AdsGoFastTaskMetaDataDatabaseName = $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name
+    $appSettings.ApplicationOptions.ServiceConnections.CoreFunctionsURL = "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name"
     $appSettings.AzureAdAzureServicesViaAppReg.Domain=$env:AdsOpts_CD_ResourceGroup_Domain
     $appSettings.AzureAdAzureServicesViaAppReg.TenantId=$env:AdsOpts_CD_ResourceGroup_TenantId
     $appSettings.AzureAdAzureServicesViaAppReg.ClientId=$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_ClientId

@@ -15,12 +15,11 @@ if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_Enable")) -eq "True")
 {
     Write-Host "Starting CD.."
 
-    #Invoke-Expression -Command  ".\Steps\CD_ConfigureAzureSQLServer.ps1"
+    Invoke-Expression -Command  ".\Steps\CD_ConfigureAzureSQLServer.ps1"
 
-    #Invoke-Expression -Command  ".\Steps\CD_ConfigureWebApp.ps1"
+    Invoke-Expression -Command  ".\Steps\CD_ConfigureWebApp.ps1"
 
-    Invoke-Expression -Command  ".\Steps\CD_ConfigureFunctionApp.ps1"
-  
+    Invoke-Expression -Command  ".\Steps\CD_ConfigureFunctionApp.ps1"  
 
     Write-Host "Finishing CD.."
 }

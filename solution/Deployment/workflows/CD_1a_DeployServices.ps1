@@ -12,8 +12,6 @@ if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_Enable")) -eq "True")
 {
     Write-Host "Starting CD.."
 
-    Invoke-Expression -Command  ".\Steps\CD_DeployResourceGroup.ps1"
-
     Invoke-Expression -Command  ".\Steps\CD_DeployStorageForLogging.ps1"
     
     Invoke-Expression -Command  ".\Steps\CD_DeployAppService.ps1"

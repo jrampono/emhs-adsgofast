@@ -18,13 +18,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "db5fa9bb-a57f-4dd7-8458-1abdec12f4b9"
+          "ClientId": "ae896824-22f1-4f15-9985-17aa1735bb47"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "c7695b07-9071-478a-a17a-58f3bdcd9e4b"
+          "ClientId": "17c6e333-54e7-425d-8880-a23870109cf0"
         }
       },
       "ResourceGroup": {
@@ -95,6 +95,12 @@
           "ApplyNamePostFix": true,
           "PrincipalId": ""
         },
+        "DataFactory": {
+          "Enable": true,
+          "Name": "adsgfadf",
+          "ApplyNamePostFix": true,
+          "PrincipalId": ""
+        },
         "WebSite": {
           "Enable": true,
           "Name": "adsgofastweb",
@@ -123,6 +129,16 @@
             "ApplyNamePostFix": true,
             "Enable": true,
             "Dummy": ""
+          },
+          "ADLS": {
+            "Name": "adls",
+            "ApplyNamePostFix": true,
+            "Enable": true
+          },
+          "Blob": {
+            "Name": "blob",
+            "ApplyNamePostFix": true,
+            "Enable": true
           }
         }
       }
