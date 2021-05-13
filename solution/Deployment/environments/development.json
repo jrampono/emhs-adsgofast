@@ -18,13 +18,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "ae896824-22f1-4f15-9985-17aa1735bb47"
+          "ClientId": "5bde52f8-eece-419b-aa1b-f581be4c29ee"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "17c6e333-54e7-425d-8880-a23870109cf0"
+          "ClientId": "f04b158c-00a4-4d0e-bf7d-2c6e2f67f763"
         }
       },
       "ResourceGroup": {
@@ -67,6 +67,23 @@
           "FactoryName": "adsgfadf",
           "ApplyNamePostFix": true
         },
+        "AppInsights": {
+          "Enable": true,
+          "Name": "adsgfappin",
+          "ApplyNamePostFix": true
+        },
+        "AppPlans": {
+          "WebApp": {
+            "Enable": true,
+            "Name": "adsgfappplanweb",
+            "ApplyNamePostFix": true
+          },
+          "FunctionApp": {
+            "Enable": true,
+            "Name": "adsgfappplanfnc",
+            "ApplyNamePostFix": true
+          }
+        },
         "AzureSQLServer": {
           "Enable": true,
           "Name": "adsgfazsql",
@@ -93,7 +110,9 @@
           "Enable": true,
           "Name": "adsgofastfunc",
           "ApplyNamePostFix": true,
-          "PrincipalId": ""
+          "PrincipalId": "",
+          "AppServiceName": null,
+          "AppServiceResourceGroup": null
         },
         "DataFactory": {
           "Enable": true,
@@ -105,11 +124,9 @@
           "Enable": true,
           "Name": "adsgofastweb",
           "ApplyNamePostFix": true,
-          "PrincipalId": ""
-        },
-        "AppInsights": {
-          "Name": "appinsights-adsgofast",
-          "ApplyNamePostFix": true
+          "PrincipalId": "",
+          "AppServiceName": null,
+          "AppServiceResourceGroup": null
         },
         "LogAnalytics": {
           "Name": "adsgofastloganalytics",

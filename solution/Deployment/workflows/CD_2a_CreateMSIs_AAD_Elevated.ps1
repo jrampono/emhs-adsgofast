@@ -58,9 +58,11 @@ if($null -eq $SqlInstalled)
 }
 
 #Add Ip to SQL Firewall
+write-host "Creating SQL Server Firewall Rules"
 $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
 
+write-host "Granting MSI Privileges on ADS Go Fast DB"
 $token=$(az account get-access-token --resource=https://database.windows.net --query accessToken --output tsv)
 Invoke-Sqlcmd -ServerInstance "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken $token -query $sqlcommand
 
