@@ -16,9 +16,27 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
     
     Set-Location $CurrentPath
     
+
+    #Environment Specific Updates 
+    $subid = (az account show -s $env:AdsOpts_CD_ResourceGroup_Subscription | ConvertFrom-Json).id
+    $LogAnalyticsId = az monitor log-analytics workspace show --resource-group $env:AdsOpts_CD_ResourceGroup_Name --workspace-name $env:AdsOpts_CD_Services_LogAnalytics_Name --query customerId --out tsv 
+    
+    $sql = 
+    "Update [dbo].[DataFactory]
+        Set [Name] = '$env:AdsOpts_CD_Services_DataFactory_Name', 
+	    ResourceGroup = '$env:AdsOpts_CD_ResourceGroup_Name',
+	    SubscriptionUid = '$subid',
+	    DefaultKeyVaultURL = 'https://$env:AdsOpts_CD_Services_KeyVault_Name.vault.azure.net/', 
+	    LogAnalyticsWorkspaceId = '$LogAnalyticsId'
+    where id = 1"
+
+    Write-Host "Updating DataFactory in ADS Go Fast DB Config"
+    Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -Username $env:AdsOpts_CD_Services_AzureSQLServer_AdminUser -Password $env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword -Query $sql 
+
+    #TODO - Add in source and target system updates
+    
     #sqlpackage.exe /a:Publish /sf:'./../bin/publish/unzipped/database/AdsGoFastBuild.dacpac' /tsn:$targetserver  /tdn:$env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name /tu:$env:AdsOpts_CD_Services_AzureSQLServer_AdminUser /tp:$env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword
 
-    #$LogAnalyticsId = az monitor log-analytics workspace show --resource-group $env:AdsOpts_CD_ResourceGroup_Name --workspace-name $env:AdsOpts_CD_Services_LogAnalytics_Name --query customerId --out tsv 
     
     #Database - Post Script Deployment
     #Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -Username $env:AdsOpts_CD_Services_AzureSQLServer_AdminUser -Password $env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword -InputFile "./../../Database/AdsGoFastDatabase"  

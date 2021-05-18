@@ -28,6 +28,9 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     # Deploy Web App
     az webapp deployment source config-zip --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_WebSite_Name --src $SourceFile
 
+    #Enable App Insights
+    #az resource create --resource-group $env:AdsOpts_CD_ResourceGroup_Name --resource-type "Microsoft.Insights/components" --name $env:AdsOpts_CD_Services_WebSite_Name --location $env:AdsOpts_CD_ResourceGroup_Location --properties '{\"Application_Type\":\"web\"}'
+
 }
 else 
 {

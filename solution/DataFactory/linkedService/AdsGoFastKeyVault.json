@@ -1,0 +1,11 @@
+{
+    "name": "AdsGoFastKeyVault",
+    "properties": {
+        "description": "Default Key Vault (Non-Dynamic)",
+        "annotations": [],
+        "type": "AzureKeyVault",
+        "typeProperties": {
+            "baseUrl": "https://adsgfkvyckrmqteklajm.vault.azure.net/"
+        }
+    }
+}

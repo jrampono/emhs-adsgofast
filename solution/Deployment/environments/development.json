@@ -18,16 +18,17 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "5bde52f8-eece-419b-aa1b-f581be4c29ee"
+          "ClientId": "9401e6c3-3955-4f57-9439-53f627177723"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "f04b158c-00a4-4d0e-bf7d-2c6e2f67f763"
+          "ClientId": "14addaac-a85a-4f87-89e4-072e5f4ab8e5"
         }
       },
       "ResourceGroup": {
+        "Id": "/subscriptions/035a1364-f00d-48e2-b582-4fe125905ee3/resourceGroups/AdsTest",
         "Enable": true,
         "Subscription": "Jorampon Internal Consumption",
         "Domain": "microsoft.com",
@@ -62,11 +63,6 @@
       },
       "Services": {
         "UseARMDefaults": false,
-        "ADF": {
-          "Enable": true,
-          "FactoryName": "adsgfadf",
-          "ApplyNamePostFix": true
-        },
         "AppInsights": {
           "Enable": true,
           "Name": "adsgfappin",
@@ -118,7 +114,16 @@
           "Enable": true,
           "Name": "adsgfadf",
           "ApplyNamePostFix": true,
-          "PrincipalId": ""
+          "AzVnetIr": {
+            "Enable": true,
+            "Name": "SelfHostedIntegrationRuntime-Azure-VNET",
+            "Type": "ManagedVnet"
+          },
+          "OnPremVnetIr": {
+            "Enable": false,
+            "Name": "SelfHostedIntegrationRuntime-OnPem-Net",
+            "Type": "ManagedVnet"
+          }
         },
         "WebSite": {
           "Enable": true,
@@ -129,11 +134,13 @@
           "AppServiceResourceGroup": null
         },
         "LogAnalytics": {
+          "Enable": true,
           "Name": "adsgofastloganalytics",
-          "ApplyNamePostFix": true
+          "ApplyNamePostFix": false
         },
         "KeyVault": {
-          "Name": "adsgofastkeyvault",
+          "Enable": true,
+          "Name": "adsgfkv",
           "ApplyNamePostFix": true
         },
         "Vnet": {

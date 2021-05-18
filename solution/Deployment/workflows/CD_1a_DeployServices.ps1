@@ -12,9 +12,13 @@ if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_Enable")) -eq "True")
 {
     Write-Host "Starting CD.."
 
+    Invoke-Expression -Command  ".\Steps\CD_DeployKeyVault.ps1"
+
     Invoke-Expression -Command  ".\Steps\CD_DeployStorageForLogging.ps1"
 
     Invoke-Expression -Command  ".\Steps\CD_DeployAppInsights.ps1"
+
+    Invoke-Expression -Command  ".\Steps\CD_DeployLogAnalytics.ps1"
 
     Invoke-Expression -Command  ".\Steps\CD_DeployAppService.ps1"
 
@@ -25,6 +29,8 @@ if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_Enable")) -eq "True")
     Invoke-Expression -Command  ".\Steps\CD_DeployVnet.ps1"
 
     Invoke-Expression -Command  ".\Steps\CD_DeployAzureSqlServer.ps1"
+
+    Invoke-Expression -Command  ".\Steps\CD_DeployADF.ps1"
 
     Write-Host "Finishing CD.."
 }
