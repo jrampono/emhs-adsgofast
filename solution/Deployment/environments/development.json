@@ -18,13 +18,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "9401e6c3-3955-4f57-9439-53f627177723"
+          "ClientId": "904a7841-c19d-4c38-bb7e-ccd78e49a55b"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "14addaac-a85a-4f87-89e4-072e5f4ab8e5"
+          "ClientId": "835b082c-6a63-4fcc-b5d8-005dba169819"
         }
       },
       "ResourceGroup": {
@@ -89,6 +89,8 @@
           "AdsGoFastDB": {
             "Enable": true,
             "Name": "AdsGf",
+            "UpdateSourceAndTargetSystems": true,
+            "UpdateDataFactory": true,
             "ApplyNamePostFix": false
           },
           "StagingDB": {

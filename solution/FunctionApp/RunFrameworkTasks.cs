@@ -48,7 +48,7 @@ namespace AdsGoFast
         [FunctionName("RunFrameworkTasksHttpTrigger")]
         public  async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req, ILogger log, ExecutionContext context, System.Security.Claims.ClaimsPrincipal principal)
         {
-            bool IsAuthorised = _sap.IsAuthorised(req,log);
+            bool IsAuthorised = _sap.IsAuthorised(req, log);
             if (IsAuthorised)
             {
                 Guid ExecutionId = context.InvocationId;
@@ -67,6 +67,10 @@ namespace AdsGoFast
             }
             else
             {
+                log.LogWarning("User is not authorised to call RunFrameworkTasksHttpTrigger.");
+                TaskMetaDataDatabase TMD = new TaskMetaDataDatabase();
+                short TaskRunnerId = System.Convert.ToInt16(req.Query["TaskRunnerId"]);
+                TMD.ExecuteSql(string.Format("exec [dbo].[UpdFrameworkTaskRunner] {0}", TaskRunnerId));
                 return new BadRequestObjectResult(new { Error = "User is not authorised to call this API...." });
             }
         }

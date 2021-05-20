@@ -33,12 +33,24 @@ namespace AdsGoFast.Services
             bool ret = false;
             string token = GetAccessToken(req, log);
             var principal = ValidateAccessToken(token, log).Result;
-            foreach(var r in _appOptions.Value.ServiceConnections.CoreFunctionsAllowedRoles)
-            if (principal.IsInRole(r))
+            foreach (var r in _appOptions.Value.ServiceConnections.CoreFunctionsAllowedRoles)
             {
-                ret = true;
+                if (principal.IsInRole(r))
+                {
+                    ret = true;
+                }
             }
-            
+
+            if (ret == false)
+            {
+                log.LogWarning("Authorisation Failed for Principal");
+                foreach (var claim in principal.Claims)
+                {
+                    log.LogWarning(claim.Type + ":" + claim.Value); 
+                }
+                log.LogWarning(token);
+            }
+
             return ret;
         
         }

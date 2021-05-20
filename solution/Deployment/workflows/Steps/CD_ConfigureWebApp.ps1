@@ -10,6 +10,13 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     $appSettings.ApplicationOptions.UseMSI = $true
     $appSettings.ApplicationOptions.AdsGoFastTaskMetaDataDatabaseServer = "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net"
     $appSettings.ApplicationOptions.AdsGoFastTaskMetaDataDatabaseName = $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name
+
+    $AppInsightsWPId = (az monitor app-insights component show --app $env:AdsOpts_CD_Services_AppInsights_Name -g $env:AdsOpts_CD_ResourceGroup_Name | ConvertFrom-Json).appId
+    $appSettings.ApplicationOptions.AppInsightsWorkspaceId =  $AppInsightsWPId
+
+    $LogAnalyticsWorkspaceId = (az monitor log-analytics workspace show --workspace-name $env:AdsOpts_CD_Services_LogAnalytics_Name -g $env:AdsOpts_CD_ResourceGroup_Name | ConvertFrom-Json).customerId
+    $appSettings.ApplicationOptions.LogAnalyticsWorkspaceId =  $LogAnalyticsWorkspaceId
+
     $appSettings.AzureAdAuth.Domain=$env:AdsOpts_CD_ResourceGroup_Domain
     $appSettings.AzureAdAuth.TenantId=$env:AdsOpts_CD_ResourceGroup_TenantId
     $appSettings.AzureAdAuth.ClientId= $env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_ClientId

@@ -20,7 +20,7 @@ if($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
     $appSettings.AzureAdAzureServicesViaAppReg.TenantId=$env:AdsOpts_CD_ResourceGroup_TenantId
     
     #Client Secret is null as this is only used to validate the claims & to authenticate get a scope specific token based on MSI
-    $appSettings.AzureAdAzureServicesViaAppReg.Audience = "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name"
+    $appSettings.AzureAdAzureServicesViaAppReg.Audience = "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name"
     $appSettings.AzureAdAzureServicesViaAppReg.ClientSecret = $null
     $appSettings.AzureAdAzureServicesViaAppReg.ClientId=$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_ClientId
 
