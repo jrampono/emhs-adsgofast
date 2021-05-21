@@ -31,7 +31,21 @@ az sql server ad-admin create --display-name $cu.DisplayName --object-id $cu.Obj
 
 #az login --service-principal --username $env:secrets_AZURE_CREDENTIALS_clientId --password $env:secrets_AZURE_CREDENTIALS_clientSecret --tenant $env:secrets_AZURE_CREDENTIALS_tenantId
 
-#Function App to ADS GO FAST DB
+
+$SqlInstalled = Get-InstalledModule SqlServer
+if($null -eq $SqlInstalled)
+{
+    write-host "Installing SqlServer Module"
+    Install-Module -Name SqlServer -Scope CurrentUser 
+}
+
+#Add Ip to SQL Firewall
+write-host "Creating SQL Server Firewall Rules"
+$myIp = (Invoke-WebRequest ifconfig.me/ip).Content
+az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
+
+
+#ADS GO FAST DB
 $sqlcommand = "
         DROP USER IF EXISTS [$env:AdsOpts_CD_Services_CoreFunctionApp_Name] 
         CREATE USER [$env:AdsOpts_CD_Services_CoreFunctionApp_Name] FROM EXTERNAL PROVIDER;
@@ -50,21 +64,33 @@ $sqlcommand = $sqlcommand + "
         GO
 "
 
-$SqlInstalled = Get-InstalledModule SqlServer
-if($null -eq $SqlInstalled)
-{
-    write-host "Installing SqlServer Module"
-    Install-Module -Name SqlServer -Scope CurrentUser 
-}
-
-#Add Ip to SQL Firewall
-write-host "Creating SQL Server Firewall Rules"
-$myIp = (Invoke-WebRequest ifconfig.me/ip).Content
-az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
+$sqlcommand = $sqlcommand + "
+        DROP USER IF EXISTS [$env:AdsOpts_CD_Services_DataFactory_Name] 
+        CREATE USER [$env:AdsOpts_CD_Services_DataFactory_Name] FROM EXTERNAL PROVIDER;
+        ALTER ROLE db_datareader ADD MEMBER [$env:AdsOpts_CD_Services_DataFactory_Name];
+        ALTER ROLE db_datawriter ADD MEMBER [$env:AdsOpts_CD_Services_DataFactory_Name];
+        GRANT EXECUTE ON SCHEMA::[dbo] TO [$env:AdsOpts_CD_Services_DataFactory_Name];
+        GO
+"
 
 write-host "Granting MSI Privileges on ADS Go Fast DB"
 $token=$(az account get-access-token --resource=https://database.windows.net --query accessToken --output tsv)
 Invoke-Sqlcmd -ServerInstance "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken $token -query $sqlcommand
+
+#SAMPLE DB
+$sqlcommand = "
+        DROP USER IF EXISTS [$env:AdsOpts_CD_Services_DataFactory_Name] 
+        CREATE USER [$env:AdsOpts_CD_Services_DataFactory_Name] FROM EXTERNAL PROVIDER;
+        ALTER ROLE db_datareader ADD MEMBER [$env:AdsOpts_CD_Services_DataFactory_Name];
+        ALTER ROLE db_datawriter ADD MEMBER [$env:AdsOpts_CD_Services_DataFactory_Name];
+        GRANT EXECUTE ON SCHEMA::[dbo] TO [$env:AdsOpts_CD_Services_DataFactory_Name];
+        GO
+"
+
+write-host "Granting MSI Privileges on SAMPLE DB"
+$token=$(az account get-access-token --resource=https://database.windows.net --query accessToken --output tsv)
+Invoke-Sqlcmd -ServerInstance "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_SampleDB_Name -AccessToken $token -query $sqlcommand
+
 
 #Next Add MSIs Permissions
 #Function App MSI Access to App Role to allow chained function calls
