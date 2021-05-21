@@ -46,6 +46,11 @@ jobs:
     - name: test that the AdsOpts variables have been set
       run:  echo "${{ env.AdsOpts_CD_Location }}" 
     
+    -name: CI_1a_BuildCode
+      shell: pwsh
+      run: CI_1a_BuildCode.ps1 
+      working-directory: ./solution/Deployment/workflows
+
     #Azure Function App Build
     - name: Restore dependencies for Function App
       if: ${{env.AdsOpts_CI_BuildFunctionApp==true}} 
