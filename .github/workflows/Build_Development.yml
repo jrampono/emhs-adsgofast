@@ -48,20 +48,20 @@ jobs:
     
     #Azure Function App Build
     - name: Restore dependencies for Function App
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==True}} 
+      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}} 
       run: dotnet restore 
       working-directory: ./solution/FunctionApp
     - name: Publish functions
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==True}}
+      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}}
       run: dotnet publish --no-restore --configuration Release --output './deploy'
       working-directory: ./solution/FunctionApp
     - run: echo "starting Zip"
     - name: zip functions
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==True}}
+      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}}
       run: zip -r ../publish.zip * 
       working-directory: ./solution/FunctionApp/deploy
     - name: Package functions
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==True}}
+      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}}
       uses: actions/upload-artifact@v2.2.3
       with:
           name: Azure Functions Package
@@ -69,20 +69,20 @@ jobs:
           
     #Web App Build
     - name: Restore dependencies for Web App
-      if: ${{env.AdsOpts_CI_BuildWebApp==True}}
+      if: ${{env.AdsOpts_CI_BuildWebApp==true}}
       run: dotnet restore
       working-directory: ./solution/WebApplication
     - name: Publish Web App
-      if: ${{env.AdsOpts_CI_BuildWebApp==True}}
+      if: ${{env.AdsOpts_CI_BuildWebApp==true}}
       run: dotnet publish --no-restore --configuration Release --output './deploy'
       working-directory: ./solution/WebApplication
     - run: echo "starting Zip"
     - name: zip web app
-      if: ${{env.AdsOpts_CI_BuildWebApp==True}}
+      if: ${{env.AdsOpts_CI_BuildWebApp==true}}
       run: zip -r ../publish.zip * 
       working-directory: ./solution/WebApplication/deploy
     - name: Package Web App
-      if: ${{env.AdsOpts_CI_BuilWebApp==True}}
+      if: ${{env.AdsOpts_CI_BuilWebApp==true}}
       uses: actions/upload-artifact@v2.2.3
       with:
           name: Web App Package
