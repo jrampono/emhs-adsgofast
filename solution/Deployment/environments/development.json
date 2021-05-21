@@ -1,10 +1,10 @@
 {
   "AdsOpts": {
     "CI": {
-      "Enable": false,
-      "BuildFunctionApp": false,
-      "BuildWebApp": false,
-      "BuildAdsGoFastDatabase": false
+      "Enable": true,
+      "BuildFunctionApp": true,
+      "BuildWebApp": true,
+      "BuildAdsGoFastDatabase": true
     },
     "CD": {
       "Enable": true,
