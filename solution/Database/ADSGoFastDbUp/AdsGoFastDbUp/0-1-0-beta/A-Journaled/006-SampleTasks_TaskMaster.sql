@@ -3520,7 +3520,7 @@ INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [Task
   "Target": {
     "Type":"Table"
   }
-}', 1, NULL, 1)
+}', 0, NULL, 1)
 INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [TaskGroupId], [ScheduleMasterId], [SourceSystemId], [TargetSystemId], [DegreeOfCopyParallelism], [AllowMultipleActiveInstances], [TaskDatafactoryIR], [TaskMasterJSON], [ActiveYN], [DependencyChainTag], [DataFactoryId]) VALUES (227, N'Copy PipQiFile From Transient Stage', 2, 9, 3, 9, 3, 1, 0, N'SH IR', N'{
     "Source": {
         "Type": "*",
@@ -3539,7 +3539,7 @@ INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [Task
       {"AlertCategory": "Generic Task Executed Alert", "EmailTemplateFileName":"PipQI_FileDropped", "EmailRecepient": "jrampono@gmail.com", "EmailRecepientName": "jrampono@gmail.com"}
     ]
 
-}', 1, NULL, 1)
+}', 0, NULL, 1)
 INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [TaskGroupId], [ScheduleMasterId], [SourceSystemId], [TargetSystemId], [DegreeOfCopyParallelism], [AllowMultipleActiveInstances], [TaskDatafactoryIR], [TaskMasterJSON], [ActiveYN], [DependencyChainTag], [DataFactoryId]) VALUES (228, N'Send email alert PIpQiFle', 11, 9, 3, 3, 10, 1, 0, N'*', N'{
     "Source": {
         "Type": "*",
@@ -3567,5 +3567,5 @@ INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [Task
             }
         ]
     }
-}', 1, NULL, 1)
+}', 0, NULL, 1)
 SET IDENTITY_INSERT [dbo].[TaskMaster] OFF

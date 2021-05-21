@@ -368,7 +368,6 @@ namespace AdsGoFast
 
             DateTimeOffset MaxTimeGenerated = DateTimeOffset.UtcNow.AddDays(-30);
 
-
             foreach (var datafactory in MaxTimesGen)
             {
                 if (datafactory.MaxTimeGenerated != null)
@@ -377,6 +376,13 @@ namespace AdsGoFast
                 }
 
                 string workspaceId = datafactory.LogAnalyticsWorkspaceId.ToString();
+
+                logging.LogInformation(String.Format("Fetching Error Records for Subscription {0} ", datafactory.SubscriptionUid.ToString()));
+                logging.LogInformation(String.Format("Fetching Error Records for ResourceGroup {0} ", datafactory.ResourceGroup.ToString()));
+                logging.LogInformation(String.Format("Fetching Error Records for DataFactory {0} ", datafactory.Name.ToString()));
+                logging.LogInformation(String.Format("Fetching Error Records for DataFactoryId {0} ", datafactory.Id.ToString()));
+                logging.LogInformation(String.Format("Fetching Error Records for Workspace {0} ", workspaceId));
+                logging.LogInformation(String.Format("Fetching Error Records from {0} onwards", MaxTimeGenerated.ToString("yyyy-MM-dd HH:mm:ss.ff K")));
 
                 Dictionary<string, object> KqlParams = new Dictionary<string, object>
                 {

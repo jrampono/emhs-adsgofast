@@ -18,21 +18,21 @@
         },
         "storage-landing-container-name": {
             "type": "String",
-            "defaultValue": "adsgfadls",
+            "defaultValue": "datalakelanding",
             "metadata": {
-                "description": ""
+                "description": "datalakelanding"
             }
         },
         "storage-raw-container-name": {
             "type": "String",
-            "defaultValue": "adsgfadls",
+            "defaultValue": "datalakeraw",
             "metadata": {
-                "description": ""
+                "description": "datalakeraw"
             }
         },
         "storage-account-sku": {
             "type": "String",
-            "defaultValue": "adsgfadls",
+            "defaultValue": "Standard_GRS",
             "metadata": {
                 "description": ""
             }
@@ -46,7 +46,7 @@
             "name": "[parameters('storage-account-name')]",
             "kind": "StorageV2",
             "sku": {
-                "name": "[parameters('storage-account-sku')]"
+                "name":  "[parameters('storage-account-sku')]"
             },
             "properties": {
                 "encryption": {

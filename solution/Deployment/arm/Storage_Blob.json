@@ -18,21 +18,21 @@
         },
         "storage-landing-container-name": {
             "type": "String",
-            "defaultValue": "adsgfadls",
+            "defaultValue": "datalakelanding",
             "metadata": {
                 "description": ""
             }
         },
         "storage-raw-container-name": {
             "type": "String",
-            "defaultValue": "adsgfadls",
+            "defaultValue": "datalakeraw",
             "metadata": {
                 "description": ""
             }
         },
         "storage-account-sku": {
             "type": "String",
-            "defaultValue": "adsgfadls",
+            "defaultValue": "Standard_GRS",
             "metadata": {
                 "description": ""
             }
