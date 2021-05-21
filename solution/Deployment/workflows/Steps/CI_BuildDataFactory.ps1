@@ -1,6 +1,11 @@
 #Move From Workflows to Function App
 $CurrentPath = (Get-Location).Path
 Set-Location "..\..\DataFactory"
+if (-Not (Test-Path "..\Deployment\bin\publish\unzipped\datafactory\"))
+{
+     New-Item -ItemType Directory -Force -Path "..\Deployment\bin\publish\unzipped\datafactory\"
+}
+
 Copy-Item -Path ".\*" -Destination "..\Deployment\bin\publish\unzipped\datafactory\"  -PassThru -Force -Recurse
 #Move back to workflows 
 Set-Location $CurrentPath
