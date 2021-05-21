@@ -1,6 +1,7 @@
 #Move From Workflows to Function App
 $CurrentPath = (Get-Location).Path
 Set-Location "..\..\WebApplication"
+dotnet restore
 dotnet publish --no-restore --configuration Release --output '..\Deployment\bin\publish\unzipped\webapplication\'
 #Move back to workflows 
 Set-Location $CurrentPath
