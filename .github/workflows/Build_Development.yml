@@ -48,7 +48,7 @@ jobs:
     
     - name: CI_1a_BuildCode
       shell: pwsh
-      run: CI_1a_BuildCode.ps1 
+      run: ./CI_1a_BuildCode.ps1 
       working-directory: ./solution/Deployment/workflows
 
     #Azure Function App Build
