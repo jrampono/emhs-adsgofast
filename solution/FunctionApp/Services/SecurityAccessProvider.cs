@@ -48,7 +48,6 @@ namespace AdsGoFast.Services
                 {
                     log.LogWarning(claim.Type + ":" + claim.Value); 
                 }
-                log.LogWarning(token);
             }
 
             return ret;

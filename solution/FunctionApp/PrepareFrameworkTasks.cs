@@ -226,14 +226,20 @@ namespace AdsGoFast
             dtTaskInstance.Columns.Add(new DataColumn("LastExecutionStatus", typeof(string)));
             dtTaskInstance.Columns.Add(new DataColumn("ActiveYN", typeof(bool)));
 
+            DataTable dtTaskInstanceErrors = new DataTable();
+            dtTaskInstance.Columns.Add(new DataColumn("TaskMasterId", typeof(long)));
+            dtTaskInstance.Columns.Add(new DataColumn("ErrorMessage", typeof(string)));
+
             dynamic resTaskInstance = TMD.GetSqlConnection().QueryWithRetry(@"Exec dbo.GetTaskMaster");
             DataTable dtTaskTypeMapping = GetTaskTypeMapping(logging);
 
             foreach (dynamic _row in resTaskInstance)
             {
                 DataRow drTaskInstance = dtTaskInstance.NewRow();
+                //DataRow drTaskInstanceErrors = dtTaskInstance.NewRow();
                 logging.DefaultActivityLogItem.TaskInstanceId = _row.TaskInstanceId;
                 logging.DefaultActivityLogItem.TaskMasterId = _row.TaskMasterId;
+                string InstanceGenerationErrorMessage = "";
                 try
                 {
                     dynamic sourceSystemJson = JsonConvert.DeserializeObject(_row.SourceSystemJSON);
@@ -243,6 +249,9 @@ namespace AdsGoFast
                     string _ADFPipeline = GetTaskTypeMappingName(logging, _row.TaskExecutionType.ToString(), dtTaskTypeMapping, _row.TaskTypeId, _row.SourceSystemType.ToString(), taskMasterJson?.Source.Type.ToString(), _row.TargetSystemType.ToString(), taskMasterJson?.Target.Type.ToString(), _row.TaskDatafactoryIR);
 
                     drTaskInstance["TaskMasterId"] = _row.TaskMasterId ?? DBNull.Value;
+                    //drTaskInstanceErrors["TaskMasterId"] = _row.TaskMasterId ?? DBNull.Value;
+                    //drTaskInstanceErrors["ErrorMessage"] = "";
+
                     drTaskInstance["ScheduleInstanceId"] = 0;//_row.ScheduleInstanceId == null ? DBNull.Value : _row.ScheduleInstanceId;
                     drTaskInstance["ExecutionUid"] = logging.DefaultActivityLogItem.ExecutionUid;
                     drTaskInstance["ADFPipeline"] = _ADFPipeline;
@@ -279,6 +288,10 @@ namespace AdsGoFast
                         {
                             Root["IncrementalValue"] = _row.TaskMasterWaterMark_BigInt ?? -1;
                         }
+                        if ((Root["IncrementalField"] == null) || (Root["IncrementalField"].ToString() == ""))
+                        {
+                            InstanceGenerationErrorMessage += string.Format("TaskMasterId '{0}' has an IncrementalType of Watermark but does not have any entry in the TaskWatermark table. ", logging.DefaultActivityLogItem.TaskInstanceId);
+                        }
                     }
 
                     if (Root == null)
@@ -290,7 +303,14 @@ namespace AdsGoFast
                         drTaskInstance["TaskInstanceJson"] = Root;
                     }
 
-                    dtTaskInstance.Rows.Add(drTaskInstance);
+                    if (String.IsNullOrEmpty(InstanceGenerationErrorMessage))
+                    {
+                        dtTaskInstance.Rows.Add(drTaskInstance);
+                    }
+                    else
+                    {
+                        throw new Exception(InstanceGenerationErrorMessage);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -313,8 +333,26 @@ namespace AdsGoFast
             };
 
             string InsertSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "InsertScheduleInstance_TaskInstance", SqlParams);
-
             _con.ExecuteWithRetry(InsertSQL);
+
+            //PersistErrors
+            //if (dtTaskInstanceErrors.Rows.Count > 0)
+            //{
+            //    Table tmpTaskInstanceErrorsTargetTable = new Table
+            //    {
+            //        Name = "#TempErrors" + Guid.NewGuid().ToString()
+            //    };
+            //    TMD.BulkInsert(dtTaskInstanceErrors, tmpTaskInstanceErrorsTargetTable, true, _con);
+
+            //    Dictionary<string, string> SqlParamsTIErrors = new Dictionary<string, string>
+            //    {
+            //        { "tmpTaskInstanceErrors", tmpTaskInstanceErrorsTargetTable.QuotedSchemaAndName() }
+            //    };
+
+            //    string InsertSQLTIErrors = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "InsertTaskInstanceErrors", SqlParamsTIErrors);
+            //    _con.ExecuteWithRetry(InsertSQLTIErrors);
+            //}
+
             _con.Close();
         }
 
