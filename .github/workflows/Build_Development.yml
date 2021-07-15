@@ -42,12 +42,12 @@ jobs:
         . .\Steps\PushEnvFileIntoVariables.ps1
         ParseEnvFile("$env:ENVIRONMENT_NAME")
         Invoke-Expression -Command  ".\Steps\CD_SetResourceGroupHash.ps1"
-      working-directory: ./Deployment/workflows
+      working-directory: ./solution/Deployment/workflows
     
     - name: CI_1a_BuildCode
       shell: pwsh
       run: ./CI_1a_BuildCode.ps1 
-      working-directory: ./Deployment/workflows
+      working-directory: ./solution/Deployment/workflows
 
     - name: Login via Az module
       uses: azure/login@v1

@@ -1,5 +1,5 @@
 
-Invoke-Expression -Command  ".\Steps\CD_SetResourceGroupHash.ps1"
+#Invoke-Expression -Command  ".\Steps\CD_SetResourceGroupHash.ps1"
 
 az config set extension.use_dynamic_install=yes_without_prompt
 
