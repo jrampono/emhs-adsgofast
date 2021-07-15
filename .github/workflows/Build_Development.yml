@@ -54,3 +54,8 @@ jobs:
       with:
         creds: ${{secrets.AZURE_CREDENTIALS}}
         enable-AzPSSession: true 
+    
+    - name: CD_1a_DeployServices
+      shell: pwsh
+      run: ./CD_1a_DeployServices.ps1 
+      working-directory: ./solution/Deployment/workflows
