@@ -41,62 +41,16 @@ jobs:
       run: |
         . .\Steps\PushEnvFileIntoVariables.ps1
         ParseEnvFile("$env:ENVIRONMENT_NAME")
-      working-directory: ./solution/Deployment/workflows
-      
-    - name: test that the AdsOpts variables have been set
-      run:  echo "${{ env.AdsOpts_CD_Location }}" 
+        Invoke-Expression -Command  ".\Steps\CD_SetResourceGroupHash.ps1"
+      working-directory: ./Deployment/workflows
     
     - name: CI_1a_BuildCode
       shell: pwsh
       run: ./CI_1a_BuildCode.ps1 
-      working-directory: ./solution/Deployment/workflows
+      working-directory: ./Deployment/workflows
 
-    #Azure Function App Build
-    - name: Restore dependencies for Function App
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}} 
-      run: dotnet restore 
-      working-directory: ./solution/FunctionApp
-    - name: Publish functions
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}}
-      run: dotnet publish --no-restore --configuration Release --output './deploy'
-      working-directory: ./solution/FunctionApp
-    - run: echo "starting Zip"
-    - name: zip functions
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}}
-      run: zip -r ../publish.zip * 
-      working-directory: ./solution/FunctionApp/deploy
-    - name: Package functions
-      if: ${{env.AdsOpts_CI_BuildFunctionApp==true}}
-      uses: actions/upload-artifact@v2.2.3
+    - name: Login via Az module
+      uses: azure/login@v1
       with:
-          name: Azure Functions Package
-          path: ./solution/FunctionApp/publish.zip
-          
-    #Web App Build
-    - name: Restore dependencies for Web App
-      if: ${{env.AdsOpts_CI_BuildWebApp==true}}
-      run: dotnet restore
-      working-directory: ./solution/WebApplication
-    - name: Publish Web App
-      if: ${{env.AdsOpts_CI_BuildWebApp==true}}
-      run: dotnet publish --no-restore --configuration Release --output './deploy'
-      working-directory: ./solution/WebApplication
-    - run: echo "starting Zip"
-    - name: zip web app
-      if: ${{env.AdsOpts_CI_BuildWebApp==true}}
-      run: zip -r ../publish.zip * 
-      working-directory: ./solution/WebApplication/deploy
-    - name: Package Web App
-      if: ${{env.AdsOpts_CI_BuilWebApp==true}}
-      uses: actions/upload-artifact@v2.2.3
-      with:
-          name: Web App Package
-          path: ./solution/WebApplication/publish.zip
-    
-    - name: Set Env Variable Test
-      shell: pwsh
-      run: echo "AdsOpts_CD_Location=yellow" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-      
-    - name: test env variable
-      run:  echo "${{ env.AdsOpts_CD_Location }}" # This will output 'yellow'
-    
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+        enable-AzPSSession: true 
