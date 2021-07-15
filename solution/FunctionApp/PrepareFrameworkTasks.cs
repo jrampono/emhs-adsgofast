@@ -226,9 +226,9 @@ namespace AdsGoFast
             dtTaskInstance.Columns.Add(new DataColumn("LastExecutionStatus", typeof(string)));
             dtTaskInstance.Columns.Add(new DataColumn("ActiveYN", typeof(bool)));
 
-            DataTable dtTaskInstanceErrors = new DataTable();
-            dtTaskInstance.Columns.Add(new DataColumn("TaskMasterId", typeof(long)));
-            dtTaskInstance.Columns.Add(new DataColumn("ErrorMessage", typeof(string)));
+            //DataTable dtTaskInstanceErrors = new DataTable();
+            //dtTaskInstance.Columns.Add(new DataColumn("TaskMasterId", typeof(long)));
+            //dtTaskInstance.Columns.Add(new DataColumn("ErrorMessage", typeof(string)));
 
             dynamic resTaskInstance = TMD.GetSqlConnection().QueryWithRetry(@"Exec dbo.GetTaskMaster");
             DataTable dtTaskTypeMapping = GetTaskTypeMapping(logging);
