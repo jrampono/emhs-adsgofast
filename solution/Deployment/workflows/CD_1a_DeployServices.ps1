@@ -2,13 +2,17 @@
 ######################################################
 ### Continuous Deployment                         ####
 ######################################################Write-Host ([Environment]::GetEnvironmentVariable("AdsOpts_CI_Enable"))
-if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_Enable")) -eq "True")
+if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_EnableDeploy")) -eq "True")
 {
     Write-Host "Starting CD.."
 
     Invoke-Expression -Command  ".\Steps\CD_DeployKeyVault.ps1"
 
     Invoke-Expression -Command  ".\Steps\CD_DeployStorageForLogging.ps1"
+
+    Invoke-Expression -Command  ".\Steps\CD_DeployStorageADLS.ps1"
+
+    Invoke-Expression -Command  ".\Steps\CD_DeployStorageBlob.ps1"
 
     Invoke-Expression -Command  ".\Steps\CD_DeployAppInsights.ps1"
 

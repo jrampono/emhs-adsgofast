@@ -11,10 +11,10 @@ if ($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     }
 
     
-    $sn = $env:AdsOpts_CD_Services_WebSite_AppServiceName
+    $sn = $env:AdsOpts_CD_Services_AppPlans_WebApp_Name
     
     Write-Host "Deploying Wesite to $sn in resource group $rg" 
-    az deployment group create -g $env:AdsOpts_CD_ResourceGroup_Name --template-file ./../arm/WebApp.json resource-group-name=$env:AdsOpts_CD_ResourceGroup_Name sites_AdsGoFastWebApp_name=$env:AdsOpts_CD_Services_WebSite_Name appservice-name=$sn}
+    az deployment group create -g $rg --template-file ./../arm/WebApp.json --parameters resource-group-name=$rg sites_AdsGoFastWebApp_name=$env:AdsOpts_CD_Services_WebSite_Name appservice-name=$sn}
 else 
 {
     Write-Host "Skipped Creation of Web Site"

@@ -10,3 +10,8 @@ az ad app delete --id "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticat
 
 #Delete App and SP for Function App Auth
 az ad app delete --id "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name"
+
+$resources = az resource list --resource-group $env:AdsOpts_CD_ResourceGroup_Name  | ConvertFrom-Json
+foreach ($resource in $resources) {
+  az resource delete --resource-group myResourceGroup --ids $resource.id --verbose
+}

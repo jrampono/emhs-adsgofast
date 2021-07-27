@@ -1,9 +1,9 @@
-
+az config set extension.use_dynamic_install=yes_without_prompt
 if($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
 {
     $id = $null
     $id = ((az functionapp identity show --name $env:AdsOpts_CD_Services_CoreFunctionApp_Name --resource-group $env:AdsOpts_CD_ResourceGroup_Name) | ConvertFrom-Json).principalId
-    if ($IdentityExists-eq $null) {
+    if ($null -eq $id) {
         Write-Host "Creating MSI for FunctionApp"
         $id = ((az functionapp identity assign --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_CoreFunctionApp_Name) | ConvertFrom-Json).principalId
     }
@@ -13,7 +13,7 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
 {
     $id = $null
     $id = ((az webapp identity show --name $env:AdsOpts_CD_Services_WebSite_Name --resource-group $env:AdsOpts_CD_ResourceGroup_Name) | ConvertFrom-Json).principalId
-    if ($IdentityExists-eq $null) {
+    if ($id -eq $null) {
         Write-Host "Creating MSI for WebApp"
         $id = ((az webapp identity assign --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_WebSite_Name) | ConvertFrom-Json).principalId
     }
@@ -39,6 +39,8 @@ write-host "Creating SQL Server Firewall Rules"
 $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
 
+
+#May Need to add a wait here to allow MSI creation to have propogated completely
 
 #ADS GO FAST DB
 $sqlcommand = "

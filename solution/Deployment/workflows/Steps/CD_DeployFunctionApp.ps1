@@ -1,4 +1,5 @@
 
+Write-Host "Creating Function App"
 if ($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
 {   
     if ($env:AdsOpts_CD_Services_AppPlans_FunctionApp_ResourceGroup -eq $null)
@@ -21,6 +22,6 @@ if ($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
 }
 else 
 {
-    Write-Host "Skipped Creation of Web Site"
+    Write-Host "Skipped Creation of Function App"
 }
 
