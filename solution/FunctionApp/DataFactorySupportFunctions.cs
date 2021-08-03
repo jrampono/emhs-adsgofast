@@ -76,7 +76,7 @@ namespace AdsGoFast
             }
 
             _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+            TokenCredential StorageToken = new TokenCredential(Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
 
             if (!(_sourceType == "Azure Blob" && _sourceType == "ADLS") && (_metadataType == "Parquet"))
             {
@@ -195,7 +195,7 @@ namespace AdsGoFast
             string _schemaFileName = data["SchemaFileName"].ToString();
 
             _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
-            TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+            TokenCredential StorageToken = new TokenCredential(Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken(string.Format("https://{0}.blob.core.windows.net", _storageAccountName), Shared._ApplicationOptions.UseMSI));
 
             string _schemaStructure = Shared.Azure.Storage.ReadFile(_storageAccountName, _storageAccountContainer, _relativePath, _schemaFileName, StorageToken);
 
@@ -254,7 +254,7 @@ namespace AdsGoFast
 
                 _storageAccountName = _storageAccountName.Replace(".dfs.core.windows.net", "").Replace("https://", "").Replace(".blob.core.windows.net", "");
 
-                TokenCredential StorageToken = new TokenCredential(Shared.Azure.AzureSDK.GetAzureRestApiToken("https://" + _storageAccountName + ".blob.core.windows.net", Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+                TokenCredential StorageToken = new TokenCredential(Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://" + _storageAccountName + ".blob.core.windows.net", Shared._ApplicationOptions.UseMSI));
 
                 arr = (JArray)JsonConvert.DeserializeObject(Shared.Azure.Storage.ReadFile(_storageAccountName, _storageAccountContainer, _relativePath, _schemaFileName, StorageToken));
             }
@@ -349,7 +349,7 @@ namespace AdsGoFast
             TaskMetaDataDatabase TMD = new TaskMetaDataDatabase();
             using (SqlConnection _con = TMD.GetSqlConnection())
             {
-                string _token = Shared.Azure.AzureSDK.GetAzureRestApiToken("https://database.windows.net/");
+                string _token = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://database.windows.net/");
                 String g = Guid.NewGuid().ToString().Replace("-", "");
 
                 _con.AccessToken = _token;
@@ -416,7 +416,7 @@ namespace AdsGoFast
             string _TableName = JObject.Parse(data.ToString())["TableName"];
 
             string _InformationSchemaSQL = string.Format(@"
-                            SELECT DISTINCT
+                           SELECT DISTINCT
 	                            c.ORDINAL_POSITION,
 	                            c.COLUMN_NAME, 
 	                            c.DATA_TYPE,
@@ -428,20 +428,20 @@ namespace AdsGoFast
 	                            ac.is_computed IS_COMPUTED,
 	                            KEY_COLUMN = cast(CASE WHEN kcu.TABLE_NAME IS NULL THEN 0 ELSE 1 END as bit),
 	                            PKEY_COLUMN = cast(CASE WHEN tc.TABLE_NAME IS NULL THEN 0 ELSE 1 END as bit)
-                            FROM INFORMATION_SCHEMA.COLUMNS c
-                            INNER JOIN sys.all_columns ac ON object_id(QUOTENAME(c.TABLE_SCHEMA)+'.'+QUOTENAME(c.TABLE_NAME)) = ac.object_id and ac.name = c.COLUMN_NAME
-                            LEFT OUTER join INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu ON c.TABLE_CATALOG = kcu.TABLE_CATALOG and c.TABLE_SCHEMA = kcu.TABLE_SCHEMA AND c.TABLE_NAME = kcu.TABLE_NAME and c.COLUMN_NAME = kcu.COLUMN_NAME 
+                            FROM INFORMATION_SCHEMA.COLUMNS c with (NOLOCK)
+                            INNER JOIN sys.all_columns ac with (NOLOCK) ON object_id(QUOTENAME(c.TABLE_SCHEMA)+'.'+QUOTENAME(c.TABLE_NAME)) = ac.object_id and ac.name = c.COLUMN_NAME
+                            LEFT OUTER join INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu with (NOLOCK) ON c.TABLE_CATALOG = kcu.TABLE_CATALOG and c.TABLE_SCHEMA = kcu.TABLE_SCHEMA AND c.TABLE_NAME = kcu.TABLE_NAME and c.COLUMN_NAME = kcu.COLUMN_NAME 
                             LEFT OUTER join 
 	                            (SELECT Col.TABLE_CATALOG, Col.TABLE_SCHEMA, Col.TABLE_NAME, Col.COLUMN_NAME
 	                            from 
-		                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS Tab, 
-		                            INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Col 
+		                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS Tab with (NOLOCK), 
+		                            INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Col with (NOLOCK) 
 	                            WHERE 
 		                            Col.Constraint_Name = Tab.Constraint_Name
 		                            AND Col.Table_Name = Tab.Table_Name
 		                            AND Tab.Constraint_Type = 'PRIMARY KEY') tc
 	                            ON c.TABLE_CATALOG = tc.TABLE_CATALOG and c.TABLE_SCHEMA = tc.TABLE_SCHEMA and c.TABLE_NAME = tc.TABLE_NAME and c.COLUMN_NAME = tc.COLUMN_NAME
-                            WHERE c.TABLE_NAME = '{0}' AND c.TABLE_SCHEMA = '{1}'                                     
+                            WHERE c.TABLE_NAME = '{0}' AND c.TABLE_SCHEMA = '{1}'                                    
                         ", _TableName, _TableSchema);
 
             JObject Root = new JObject
@@ -774,7 +774,7 @@ namespace AdsGoFast.ADSSupport.ManipulateTaskMasters
                 { "TempTableName", TempTableName }
             };
 
-            string _sql = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "GenerateTaskMasters", SqlParams);
+            string _sql = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "GenerateTaskMasters", SqlParams);
             TMD.ExecuteSql(_sql, _con);
 
             return new { }; //Return Empty Object

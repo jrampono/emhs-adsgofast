@@ -33,7 +33,7 @@ namespace AdsGoFast
                 if (r == "All") { Allowed = true; }
             }
 
-            if (!Allowed && !Shared.GlobalConfigs.GetStringConfig("AzureFunctionURL").Contains("localhost"))
+            if (!Allowed && !Shared._ApplicationOptions.ServiceConnections.CoreFunctionsURL.Contains("localhost"))
             {
                 string err = "Request was rejected as user is not allowed to perform this action";
                 log.LogError(err);
@@ -70,7 +70,7 @@ namespace AdsGoFast
                 string VmResourceGroup = data["Target"]["ResourceGroup"].ToString();
                 string VmAction = data["Target"]["Action"].ToString();
 
-                Microsoft.Azure.Management.Fluent.Azure.IAuthenticated azureAuth = Microsoft.Azure.Management.Fluent.Azure.Configure().WithLogLevel(HttpLoggingDelegatingHandler.Level.BodyAndHeaders).Authenticate(Shared.Azure.AzureSDK.GetAzureCreds(Shared.GlobalConfigs.GetBoolConfig("UseMSI")));
+                Microsoft.Azure.Management.Fluent.Azure.IAuthenticated azureAuth = Microsoft.Azure.Management.Fluent.Azure.Configure().WithLogLevel(HttpLoggingDelegatingHandler.Level.BodyAndHeaders).Authenticate(Shared.Azure.AzureSDK.GetAzureCreds(Shared._ApplicationOptions.UseMSI));
                 IAzure azure = azureAuth.WithSubscription(Subscription);
                 logging.LogInformation("Selected subscription: " + azure.SubscriptionId);
                 IVirtualMachine vm = azure.VirtualMachines.GetByResourceGroup(VmResourceGroup, VmName);

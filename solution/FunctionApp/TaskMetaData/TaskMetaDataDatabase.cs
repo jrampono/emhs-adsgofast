@@ -4,9 +4,12 @@
  Licensed under the MIT license.
 
 -----------------------------------------------------------------------*/
+using AdsGoFast.Models;
+using AdsGoFast.Models.Options;
 using AdsGoFast.SqlServer;
 using AdsGoFast.TaskMetaData;
 using Dapper;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,6 +21,14 @@ namespace AdsGoFast
     //Todo Update to IDisposable
     public class TaskMetaDataDatabase
     {
+        //private readonly IOptions<ApplicationOptions> _appOptions;
+        //private readonly ITaskMetaDataDBContext _TaskMetaDataDBContext;
+
+        //public TaskMetaDataDatabase(IOptions<ApplicationOptions> appOptions)
+        //{
+        //    _appOptions = appOptions;
+        //}
+
         public void LogTaskInstanceCompletion(System.Int64 TaskInstanceId, System.Guid Executionid, BaseTasks.TaskStatus Status, System.Guid AdfRunUid, string Comment)
         {
             SqlConnection _con = this.GetSqlConnection();
@@ -40,10 +51,10 @@ namespace AdsGoFast
         {
             SqlConnectionStringBuilder _scsb = new SqlConnectionStringBuilder
             {
-                DataSource = Shared.GlobalConfigs.GetStringConfig("AdsGoFastTaskMetaDataDatabaseServer"),
-                InitialCatalog = Shared.GlobalConfigs.GetStringConfig("AdsGoFastTaskMetaDataDatabaseName")
+                DataSource = Shared._ApplicationOptions.ServiceConnections.AdsGoFastTaskMetaDataDatabaseServer,
+                InitialCatalog = Shared._ApplicationOptions.ServiceConnections.AdsGoFastTaskMetaDataDatabaseName
             };
-            if (Shared.GlobalConfigs.GetBoolConfig("AdsGoFastTaskMetaDataDatabaseUseTrustedConnection"))
+            if (Shared._ApplicationOptions.ServiceConnections.AdsGoFastTaskMetaDataDatabaseUseTrustedConnection)
             {
                 _scsb.IntegratedSecurity = true;
             }
@@ -82,7 +93,7 @@ namespace AdsGoFast
             SqlConnection _con = new SqlConnection(GetConnectionString());
             if (!Shared.GlobalConfigs.GetBoolConfig("AdsGoFastTaskMetaDataDatabaseUseTrustedConnection"))
             {
-                string _token = Shared.Azure.AzureSDK.GetAzureRestApiToken("https://database.windows.net/");
+                string _token = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://database.windows.net/");
                 _con.AccessToken = _token;
             }
             return _con;
@@ -151,7 +162,7 @@ namespace AdsGoFast
                 };
 
 
-                string MergeSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "GenericMerge", SqlParams);
+                string MergeSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "GenericMerge", SqlParams);
 
                 conn.Execute(MergeSQL);
             }
@@ -216,11 +227,11 @@ namespace AdsGoFast
 
             if (PrimaryKeyJoin.Length>=4)
             {
-                MergeSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "GenericMerge", SqlParams);
+                MergeSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "GenericMerge", SqlParams);
             }
             else
             {
-                MergeSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "GenericTruncateInsert", SqlParams);
+                MergeSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "GenericTruncateInsert", SqlParams);
             }
 
             return MergeSQL;
@@ -263,7 +274,7 @@ namespace AdsGoFast
             };
 
 
-            string MergeSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "GenericInsert", SqlParams);
+            string MergeSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "GenericInsert", SqlParams);
 
             return MergeSQL;
         }

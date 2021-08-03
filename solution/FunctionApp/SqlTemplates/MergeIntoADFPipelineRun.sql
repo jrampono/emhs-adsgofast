@@ -24,6 +24,7 @@ cross apply
 		LastExecutionStatus = case 
 			when apr.PipelineRunStatus = 'Failed' and ti.NumberOfRetries < (tg.MaximumTaskRetries-1) then 'FailedRetry' 
 			when apr.PipelineRunStatus = 'Failed' and ti.NumberOfRetries >= (tg.MaximumTaskRetries-1) then 'FailedNoRetry' 
+            when apr.PipelineRunStatus = 'Cancelled' then 'FailedNoRetry' 
 			else 'Succeeded' end
 ) c0
 cross apply 
@@ -31,7 +32,7 @@ cross apply
 		Select
 		NumberOfRetries = case when apr.PipelineRunStatus = 'Failed' then (ti.NumberOfRetries) + 1 else ti.NumberOfRetries end 
 	) c1
-where ti.LastExecutionStatus = 'InProgress' and apr.PipelineRunStatus in ('Failed','Succeeded')
+where ti.LastExecutionStatus = 'InProgress' and apr.PipelineRunStatus in ('Failed','Succeeded', 'Cancelled')
 
 --Update TaskInstanceExecutions
 Update TaskInstanceExecution 
@@ -50,9 +51,10 @@ cross apply
 		LastExecutionStatus = case 
 			when apr.PipelineRunStatus = 'Failed' and ti.NumberOfRetries <  (tg.MaximumTaskRetries-1) then 'FailedRetry' 
 			when apr.PipelineRunStatus = 'Failed' and ti.NumberOfRetries >=  (tg.MaximumTaskRetries-1) then 'FailedNoRetry' 
+            when apr.PipelineRunStatus = 'Cancelled' then 'FailedNoRetry' 
 			else 'Succeeded' end
 ) c0
-where tei.[Status] = 'InProgress' and apr.PipelineRunStatus in ('Failed','Succeeded')
+where tei.[Status] = 'InProgress' and apr.PipelineRunStatus in ('Failed','Succeeded', 'Cancelled')
 
 
 --Main Merge

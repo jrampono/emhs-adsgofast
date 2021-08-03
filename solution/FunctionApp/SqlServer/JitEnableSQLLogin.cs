@@ -124,10 +124,10 @@ namespace AdsGoFast
             public static class GlobalConfigs
             {
 
-                public static string TenantId = System.Environment.GetEnvironmentVariable("TenantId", EnvironmentVariableTarget.Process);
-                public static bool UseMSI = System.Convert.ToBoolean(System.Environment.GetEnvironmentVariable("UseMSI", EnvironmentVariableTarget.Process));
-                public static string ApplicationId = System.Environment.GetEnvironmentVariable("ApplicationId", EnvironmentVariableTarget.Process);
-                public static string AuthenticationKey = System.Environment.GetEnvironmentVariable("AuthenticationKey", EnvironmentVariableTarget.Process);
+                public static string TenantId = Shared._DownstreamAuthOptionsDirect.TenantId;
+                public static bool UseMSI = Shared._ApplicationOptions.UseMSI;
+                public static string ApplicationId = Shared._DownstreamAuthOptionsDirect.ClientId;
+                public static string AuthenticationKey = Shared._DownstreamAuthOptionsDirect.ClientSecret;
             }
 
             //ToDo: Consider Caching Configs so we dont fetch from key vault every time.

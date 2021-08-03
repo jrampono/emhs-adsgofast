@@ -4,11 +4,13 @@
  Licensed under the MIT license.
 
 -----------------------------------------------------------------------*/
+using AdsGoFast.Models.Options;
 using AdsGoFast.SqlServer;
 using AdsGoFast.TaskMetaData;
 using Cronos;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -21,13 +23,19 @@ using System.Threading.Tasks;
 namespace AdsGoFast
 {
 
-    public static class PrepareFrameworkTasksTimerTrigger
+    public class PrepareFrameworkTasksTimerTrigger
     {
+        private readonly IOptions<ApplicationOptions> _appOptions;
+        public PrepareFrameworkTasksTimerTrigger(IOptions<ApplicationOptions> appOptions)
+        {
+            _appOptions = appOptions;
+        }
+
         [FunctionName("PrepareFrameworkTasksTimerTrigger")]
-        public static async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             Guid ExecutionId = context.InvocationId;
-            if (Shared.GlobalConfigs.GetBoolConfig("EnablePrepareFrameworkTasks"))
+            if (_appOptions.Value.TimerTriggers.EnablePrepareFrameworkTasks)
             {
                 using (FrameworkRunner FR = new FrameworkRunner(log, ExecutionId))
                 {
@@ -46,7 +54,7 @@ namespace AdsGoFast
             TMD.ExecuteSql(string.Format("Insert into Execution values ('{0}', '{1}', '{2}')", logging.DefaultActivityLogItem.ExecutionUid, DateTimeOffset.Now.ToString("u"), DateTimeOffset.Now.AddYears(999).ToString("u")));
 
             //Check status of running pipelines and calculate available "slots" based on max concurrency settings
-            short _FrameworkWideMaxConcurrency = Shared.GlobalConfigs.GetInt16Config("FrameworkWideMaxConcurrency");
+            short _FrameworkWideMaxConcurrency = Shared._ApplicationOptions.FrameworkWideMaxConcurrency;
 
             //ToDo: Write Pipelines that need to be checked to Queue for now I have just reduced to only those tasks that have been running for longer than x minutes.
             //CheckLongRunningPipelines(logging);
@@ -88,7 +96,7 @@ namespace AdsGoFast
                     {
                         { "TempTable", TempTarget.QuotedSchemaAndName() }
                     };
-                    string _sql = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "UpdateTaskInstancesWithTaskRunner", _params);
+                    string _sql = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "UpdateTaskInstancesWithTaskRunner", _params);
                     TMD.ExecuteSql(_sql, _con);
                 }
             }
@@ -218,14 +226,20 @@ namespace AdsGoFast
             dtTaskInstance.Columns.Add(new DataColumn("LastExecutionStatus", typeof(string)));
             dtTaskInstance.Columns.Add(new DataColumn("ActiveYN", typeof(bool)));
 
+            //DataTable dtTaskInstanceErrors = new DataTable();
+            //dtTaskInstance.Columns.Add(new DataColumn("TaskMasterId", typeof(long)));
+            //dtTaskInstance.Columns.Add(new DataColumn("ErrorMessage", typeof(string)));
+
             dynamic resTaskInstance = TMD.GetSqlConnection().QueryWithRetry(@"Exec dbo.GetTaskMaster");
             DataTable dtTaskTypeMapping = GetTaskTypeMapping(logging);
 
             foreach (dynamic _row in resTaskInstance)
             {
                 DataRow drTaskInstance = dtTaskInstance.NewRow();
+                //DataRow drTaskInstanceErrors = dtTaskInstance.NewRow();
                 logging.DefaultActivityLogItem.TaskInstanceId = _row.TaskInstanceId;
                 logging.DefaultActivityLogItem.TaskMasterId = _row.TaskMasterId;
+                string InstanceGenerationErrorMessage = "";
                 try
                 {
                     dynamic sourceSystemJson = JsonConvert.DeserializeObject(_row.SourceSystemJSON);
@@ -235,6 +249,9 @@ namespace AdsGoFast
                     string _ADFPipeline = GetTaskTypeMappingName(logging, _row.TaskExecutionType.ToString(), dtTaskTypeMapping, _row.TaskTypeId, _row.SourceSystemType.ToString(), taskMasterJson?.Source.Type.ToString(), _row.TargetSystemType.ToString(), taskMasterJson?.Target.Type.ToString(), _row.TaskDatafactoryIR);
 
                     drTaskInstance["TaskMasterId"] = _row.TaskMasterId ?? DBNull.Value;
+                    //drTaskInstanceErrors["TaskMasterId"] = _row.TaskMasterId ?? DBNull.Value;
+                    //drTaskInstanceErrors["ErrorMessage"] = "";
+
                     drTaskInstance["ScheduleInstanceId"] = 0;//_row.ScheduleInstanceId == null ? DBNull.Value : _row.ScheduleInstanceId;
                     drTaskInstance["ExecutionUid"] = logging.DefaultActivityLogItem.ExecutionUid;
                     drTaskInstance["ADFPipeline"] = _ADFPipeline;
@@ -271,6 +288,10 @@ namespace AdsGoFast
                         {
                             Root["IncrementalValue"] = _row.TaskMasterWaterMark_BigInt ?? -1;
                         }
+                        if ((Root["IncrementalField"] == null) || (Root["IncrementalField"].ToString() == ""))
+                        {
+                            InstanceGenerationErrorMessage += string.Format("TaskMasterId '{0}' has an IncrementalType of Watermark but does not have any entry in the TaskWatermark table. ", logging.DefaultActivityLogItem.TaskInstanceId);
+                        }
                     }
 
                     if (Root == null)
@@ -282,7 +303,14 @@ namespace AdsGoFast
                         drTaskInstance["TaskInstanceJson"] = Root;
                     }
 
-                    dtTaskInstance.Rows.Add(drTaskInstance);
+                    if (String.IsNullOrEmpty(InstanceGenerationErrorMessage))
+                    {
+                        dtTaskInstance.Rows.Add(drTaskInstance);
+                    }
+                    else
+                    {
+                        throw new Exception(InstanceGenerationErrorMessage);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -304,9 +332,27 @@ namespace AdsGoFast
                 { "tmpTaskInstance", tmpTaskInstanceTargetTable.QuotedSchemaAndName() }
             };
 
-            string InsertSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "InsertScheduleInstance_TaskInstance", SqlParams);
-
+            string InsertSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "InsertScheduleInstance_TaskInstance", SqlParams);
             _con.ExecuteWithRetry(InsertSQL);
+
+            //PersistErrors
+            //if (dtTaskInstanceErrors.Rows.Count > 0)
+            //{
+            //    Table tmpTaskInstanceErrorsTargetTable = new Table
+            //    {
+            //        Name = "#TempErrors" + Guid.NewGuid().ToString()
+            //    };
+            //    TMD.BulkInsert(dtTaskInstanceErrors, tmpTaskInstanceErrorsTargetTable, true, _con);
+
+            //    Dictionary<string, string> SqlParamsTIErrors = new Dictionary<string, string>
+            //    {
+            //        { "tmpTaskInstanceErrors", tmpTaskInstanceErrorsTargetTable.QuotedSchemaAndName() }
+            //    };
+
+            //    string InsertSQLTIErrors = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "InsertTaskInstanceErrors", SqlParamsTIErrors);
+            //    _con.ExecuteWithRetry(InsertSQLTIErrors);
+            //}
+
             _con.Close();
         }
 
