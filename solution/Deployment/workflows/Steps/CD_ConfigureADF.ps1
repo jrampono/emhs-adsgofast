@@ -87,6 +87,9 @@ Foreach-Object {
         $jsonobject.properties.typeProperties.functionAppUrl = "https://$env:AdsOpts_CD_Services_CoreFunctionApp_Name.azurewebsites.net"
     }
     
+    #ParseOut the Name Attribute
+    $name = $jsonobject.name
+
     #Persist Back to File
     $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
 
@@ -97,7 +100,11 @@ Foreach-Object {
         )
     {
         write-host $lsName -ForegroundColor Yellow -BackgroundColor DarkGreen
-        Set-AzDataFactoryV2LinkedService -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        #Set-AzDataFactoryV2LinkedService -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -force
+        $body = ($jsonobject | ConvertTo-Json -compress  -Depth 10 | Out-String).Replace('"','\"')
+        $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/linkedservices/$name" 
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body $body --uri-parameters 'api-version=2018-06-01'
+
     }
     else 
     {
@@ -110,6 +117,11 @@ Get-ChildItem "$dfbase/dataset" -Filter *.json |
 Foreach-Object {
     $lsName = $_.BaseName 
     $fileName = $_.FullName
+
+    #ParseOut the Name Attribute
+    $jsonobject = $_ | Get-Content | ConvertFrom-Json
+    $name = $jsonobject.name
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains("_OnPrem_SH_IR") -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains("_SH_IR") -eq $true) -and ($lsName.Contains("_OnPrem_SH_IR") -eq $false)) -or
@@ -117,19 +129,38 @@ Foreach-Object {
         )
     {
         write-host $fileName -ForegroundColor Yellow -BackgroundColor DarkGreen
-        Set-AzDataFactoryV2Dataset -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        #Set-AzDataFactoryV2Dataset -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        $body = ($jsonobject | ConvertTo-Json -compress  -Depth 10 | Out-String).Replace('"','\"')
+        $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/datasets/$name" 
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body $body --uri-parameters 'api-version=2018-06-01'
     }
     else 
     {
         Write-Host "Skipped: $lsName" -ForegroundColor Black -BackgroundColor Yellow
     }
 }
+
+
+#Move to pipelines directory
+$CurrentPath = (Get-Location).Path
+Set-Location "..\bin\publish\unzipped\datafactory\pipeline"
 
 #Data Factory - Pipelines
-Get-ChildItem "$dfbase/pipeline" -Recurse -Include "AZ-Function*.json", "OnP-SQL-Watermark-OnP-SH-IR.json", "AZ-SQL-Watermark-SH-IR.json" | 
+Get-ChildItem "./" -Recurse -Include "AZ-Function*.json", "OnP-SQL-Watermark-OnP-SH-IR.json", "AZ-SQL-Watermark-SH-IR.json" | 
 Foreach-Object {
     $lsName = $_.BaseName 
     $fileName = $_.FullName
+    
+    #ParseOut the Name Attribute
+    $jsonobject = $_ | Get-Content | ConvertFrom-Json
+    $name = $jsonobject.name
+
+    #Persist File Back
+    $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
+
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains('-OnP-SH-IR') -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains('-SH-IR') -eq $true) -and ($lsName.Contains('-OnP-SH-IR') -eq $false)) -or
@@ -137,7 +168,10 @@ Foreach-Object {
         )
     {
         write-host $fileName -ForegroundColor Yellow -BackgroundColor DarkGreen
-        Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        #Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -force
+        #$body = ($jsonobject | ConvertTo-Json -compress  -Depth 100 | Out-String).Replace('"','\"')
+        $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/pipelines/$name" 
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
     }
     else 
     {
@@ -145,10 +179,21 @@ Foreach-Object {
     }
 }
 
-Get-ChildItem "$dfbase/pipeline" -Recurse -Include "az-sql-full-load-sh-ir.json", "sh-sql-full-load-sh-ir.json", "onp-sql-full-load-onp-sh-ir.json", "sh-sql-watermark-sh-ir.json" | 
+Get-ChildItem "./" -Recurse -Include "az-sql-full-load-sh-ir.json", "sh-sql-full-load-sh-ir.json", "onp-sql-full-load-onp-sh-ir.json", "sh-sql-watermark-sh-ir.json" | 
 Foreach-Object {
     $lsName = $_.BaseName 
     $fileName = $_.FullName
+
+    #ParseOut the Name Attribute
+    $jsonobject = $_ | Get-Content | ConvertFrom-Json
+    $name = $jsonobject.name
+
+    #Persist File Back
+    $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
+    
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains('-OnP-SH-IR') -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains('-SH-IR') -eq $true) -and ($lsName.Contains('-OnP-SH-IR') -eq $false)) -or
@@ -156,7 +201,10 @@ Foreach-Object {
         )
     {
         write-host $fileName -ForegroundColor Yellow -BackgroundColor DarkGreen
-        Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        #Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        $body = ($jsonobject | ConvertTo-Json -compress  -Depth 100 | Out-String).Replace('"','\"')
+        $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/pipelines/$name" 
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
     }
     else 
     {
@@ -164,10 +212,18 @@ Foreach-Object {
     }
 }
 
-Get-ChildItem "$dfbase/pipeline" -Filter *chunk*.json | 
+Get-ChildItem "./" -Filter *chunk*.json | 
 Foreach-Object {
     $lsName = $_.BaseName 
     $fileName = $_.FullName
+
+    #ParseOut the Name Attribute
+    $jsonobject = $_ | Get-Content | ConvertFrom-Json
+    $name = $jsonobject.name
+
+    #Persist File Back
+    $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains('-OnP-SH-IR') -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains('-SH-IR') -eq $true) -and ($lsName.Contains('-OnP-SH-IR') -eq $false)) -or
@@ -175,7 +231,10 @@ Foreach-Object {
         )
     {
         write-host $fileName -ForegroundColor Yellow -BackgroundColor DarkGreen
-        Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        #Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        $body = ($jsonobject | ConvertTo-Json -compress  -Depth 100 | Out-String).Replace('"','\"')
+        $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/pipelines/$name" 
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
     }
     else 
     {
@@ -184,10 +243,21 @@ Foreach-Object {
 }
 
 
-Get-ChildItem "$dfbase/pipeline" -Exclude "Master.json","AZ-Function*.json", "OnP-SQL-Watermark-OnP-SH-IR.json", "AZ-SQL-Watermark-SH-IR.json", "*chunk*.json", "az-sql-full-load-sh-ir.json", "sh-sql-full-load-sh-ir.json", "onp-sql-full-load-onp-sh-ir.json", "sh-sql-watermark-sh-ir.json" | 
+Get-ChildItem "./" -Exclude "FileForUpload.json", "Master.json","AZ-Function*.json", "OnP-SQL-Watermark-OnP-SH-IR.json", "AZ-SQL-Watermark-SH-IR.json", "*chunk*.json", "az-sql-full-load-sh-ir.json", "sh-sql-full-load-sh-ir.json", "onp-sql-full-load-onp-sh-ir.json", "sh-sql-watermark-sh-ir.json" | 
 Foreach-Object {
     $lsName = $_.BaseName 
     $fileName = $_.FullName
+
+    #ParseOut the Name Attribute
+    $jsonobject = $_ | Get-Content | ConvertFrom-Json
+    $name = $jsonobject.name
+
+    #Persist File Back
+    $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
+
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains('-OnP-SH-IR') -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains('-SH-IR') -eq $true) -and ($lsName.Contains('-OnP-SH-IR') -eq $false)) -or
@@ -195,7 +265,10 @@ Foreach-Object {
         )
     {
         write-host $fileName -ForegroundColor Yellow -BackgroundColor DarkGreen
-        Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        #Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+        $body = ($jsonobject | ConvertTo-Json -compress  -Depth 100 | Out-String).Replace('"','\"')
+        $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/pipelines/$name" 
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
     }
     else 
     {
@@ -203,10 +276,11 @@ Foreach-Object {
     }
 }
 
-Get-ChildItem "$dfbase/pipeline" -Filter Master.json | 
+Get-ChildItem "./" -Filter Master.json | 
 Foreach-Object {
     #filter out any undelpoyed pipelines
     $jsonobject = $_ | Get-Content | ConvertFrom-Json
+    $name = $jsonobject.name
     $cases = $jsonobject.properties.activities[0].typeProperties.cases
     $casesfiltered = @()
     foreach ($item in $cases) {
@@ -228,10 +302,22 @@ Foreach-Object {
         }
     }
     $jsonobject.properties.activities[0].typeProperties.cases = $casesfiltered
+    
+    #Persist File Back
     $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
 
     $lsName = $_.BaseName 
     $fileName = $_.FullName
+
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"
+
     write-host $fileName -ForegroundColor Yellow -BackgroundColor DarkGreen
-    Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+    #Set-AzDataFactoryV2Pipeline -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
+    $body = ($jsonobject | ConvertTo-Json -compress  -Depth 100 | Out-String).Replace('"','\"')
+    $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/pipelines/$name" 
+    az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
 }
+
+#Change Back to Workflows dir
+Set-Location $CurrentPath
