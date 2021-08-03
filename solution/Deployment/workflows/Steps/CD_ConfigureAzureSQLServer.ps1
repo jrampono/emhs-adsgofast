@@ -1,4 +1,7 @@
 Write-Host "Configuring Azure SQL Server"
+#Install Sql Server Module
+Install-Module -Name SqlServer -Force
+
 $targetserver = $env:AdsOpts_CD_Services_AzureSQLServer_Name + ".database.windows.net"
 if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
 {
@@ -12,8 +15,8 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
     $CurrentPath = (Get-Location).Path
     Set-Location "..\bin\publish\unzipped\database\"
 
-    .\AdsGoFastDbUp.exe -c "Server=$targetserver; Database=$env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name; user id=$env:AdsOpts_CD_Services_AzureSQLServer_AdminUser; password=$env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword" -v True
-    
+    #.\AdsGoFastDbUp.exe -c "Server=$targetserver; Database=$env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name; user id=$env:AdsOpts_CD_Services_AzureSQLServer_AdminUser; password=$env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword" -v True
+    dotnet AdsGoFastDbUp.dll -c "Server=$targetserver; Database=$env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name; user id=$env:AdsOpts_CD_Services_AzureSQLServer_AdminUser; password=$env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword" -v True
     Set-Location $CurrentPath
     
 

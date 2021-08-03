@@ -2,7 +2,7 @@
 $CurrentPath = (Get-Location).Path
 Set-Location "..\..\Database\ADSGoFastDbUp\AdsGoFastDbUp\"
 dotnet restore
-dotnet build --configuration Release --output ".\..\..\..\Deployment\bin\publish\unzipped\database\"
+dotnet build --configuration Release --output ".\..\..\..\Deployment\bin\publish\unzipped\database\" 
 #Move back to workflows 
 Set-Location $CurrentPath
 Set-Location "../bin/publish"
