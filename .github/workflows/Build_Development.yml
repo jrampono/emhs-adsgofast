@@ -60,7 +60,7 @@ jobs:
       run: ./CD_1a_DeployServices.ps1 
       working-directory: ./solution/Deployment/workflows
 
-    - name: CD_2b_ConfigureServices
+    - name: CD_ConfigureAzureSQLServer
       shell: pwsh
-      run: ./CD_2b_ConfigureServices.ps1 
+      run: .\Steps\CD_ConfigureAzureSQLServer.ps1 
       working-directory: ./solution/Deployment/workflows
