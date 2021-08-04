@@ -1,4 +1,6 @@
 #Function for password generator
+$symbols = '!@#$%^&*'.ToCharArray()
+$characterList = 'a'..'z' + 'A'..'Z' + '0'..'9' + $symbols
 function GeneratePassword {
     param(
         [ValidateRange(12, 256)]
