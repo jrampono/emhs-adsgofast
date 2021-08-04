@@ -8,13 +8,13 @@
             "BuildAdsGoFastDatabase": true
         },
         "CD": {
-            "EnableDeploy": true,
+            "EnableDeploy": false,
             "EnableConfigure": true,
             "ServicePrincipals": {
                 "DeploymentSP": {
                     "Enable": true,
-                    "Name": "AdsGFDeploySP",
-                    "ApplyNamePostFix": true
+                    "Name": "AdsGoFastDeployer",
+                    "ApplyNamePostFix": false
                 },
                 "WebAppAuthenticationSP": {
                     "Enable": true,

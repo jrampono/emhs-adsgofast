@@ -1,9 +1,12 @@
 ﻿using CommandLine;
 using DbUp;
+using DbUp.Engine.Transactions;
 using DbUp.Helpers;
 using DbUp.SqlServer;
+using Microsoft.Azure.Services.AppAuthentication;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +59,7 @@ namespace AdsGoFastDbUp
                 Console.WriteLine("Quick Start Example!");
             }
 
+            
             //GetAllScripts so that we can loop through versions
             List<DbUp.Engine.SqlScript> AllScripts = DeployChanges.To
                        .SqlDatabase(o.connectionString, "dbo", false).WithScriptsEmbeddedInAssembly(
