@@ -43,6 +43,13 @@ az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env
 #May Need to add a wait here to allow MSI creation to have propogated completely
 
 #ADS GO FAST DB
+#Deployment SP
+$sqlcommand = "
+        DROP USER IF EXISTS [$env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name] 
+        CREATE USER [$env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name] FROM EXTERNAL PROVIDER;
+        ALTER ROLE db_owner ADD MEMBER [$env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name];
+        GO"
+
 $sqlcommand = "
         DROP USER IF EXISTS [$env:AdsOpts_CD_Services_CoreFunctionApp_Name] 
         CREATE USER [$env:AdsOpts_CD_Services_CoreFunctionApp_Name] FROM EXTERNAL PROVIDER;

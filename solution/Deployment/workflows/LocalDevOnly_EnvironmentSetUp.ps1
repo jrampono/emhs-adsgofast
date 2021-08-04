@@ -10,3 +10,6 @@ ParseEnvFile("$env:ENVIRONMENT_NAME")
 Invoke-Expression -Command  ".\Steps\CD_SetResourceGroupHash.ps1"
 
 
+#Load Secrets into Environment Variables 
+ParseSecretsFile ($SecretFile)
+

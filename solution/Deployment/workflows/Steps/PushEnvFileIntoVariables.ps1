@@ -76,11 +76,9 @@ function ParseEnvFile ($EnvFile)
     $Json = Get-Content -Path "..\environments\$($EnvFile).json"  | ConvertFrom-Json
     ParseEnvFragment -Json $Json -NamePrefix ""
 
-    ParseSecretsFile ($SecretFile)
-
 }
 
-function ParseSecretsFile ($SecretFile)
+function ParseSecretsFile ()
 {
     $path = "..\bin\Secrets.json"
     $test = (Test-Path -Path $path)
