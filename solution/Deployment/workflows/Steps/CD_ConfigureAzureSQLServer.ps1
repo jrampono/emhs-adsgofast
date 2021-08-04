@@ -1,6 +1,32 @@
+#Function for password generator
+function GeneratePassword {
+    param(
+        [ValidateRange(12, 256)]
+        [int] 
+        $length = 14
+    )
+
+    do {
+        $password = -join (0..$length | % { $characterList | Get-Random })
+        [int]$hasLowerChar = $password -cmatch '[a-z]'
+        [int]$hasUpperChar = $password -cmatch '[A-Z]'
+        [int]$hasDigit = $password -match '[0-9]'
+        [int]$hasSymbol = $password.IndexOfAny($symbols) -ne -1
+
+    }
+    until (($hasLowerChar + $hasUpperChar + $hasDigit + $hasSymbol) -ge 3)
+
+    $password | ConvertTo-SecureString -AsPlainText
+}
+
+
 Write-Host "Configuring Azure SQL Server"
 #Install Sql Server Module
 Install-Module -Name SqlServer -Force
+
+#Get Access Token for SQL --Note that the deployment principal or user running locally will need rights on the database
+$token=$(az account get-access-token --resource=https://database.windows.net/ --query accessToken --output tsv)     
+
 
 $targetserver = $env:AdsOpts_CD_Services_AzureSQLServer_Name + ".database.windows.net"
 if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
@@ -15,8 +41,18 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
     $CurrentPath = (Get-Location).Path
     Set-Location "..\bin\publish\unzipped\database\"
 
+    #Create User for DBUp
+    $temppassword = GeneratePassword
+    $sql = "
+            DROP USER IF EXISTS DbUpUser
+            CREATE USER DbUpUser WITH PASSWORD=N'$temppassword', DEFAULT_SCHEMA=[dbo]
+            EXEC sp_addrolemember 'db_owner', 'DbUpUser'
+            GO "
+
+    Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
+
     #.\AdsGoFastDbUp.exe -c "Server=$targetserver; Database=$env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name; user id=$env:AdsOpts_CD_Services_AzureSQLServer_AdminUser; password=$env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword" -v True
-    dotnet AdsGoFastDbUp.dll -c "Server=$targetserver; Database=$env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name; user id=$env:AdsOpts_CD_Services_AzureSQLServer_AdminUser; password=$env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword" -v True
+    dotnet AdsGoFastDbUp.dll -c "Server=$targetserver; Database=$env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name; user id=DbUpUser; password='$temppassword'" -v True 
     Set-Location $CurrentPath
     
 
@@ -36,7 +72,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         where id = 1"
 
         Write-Host "Updating DataFactory in ADS Go Fast DB Config - DataFactory"
-        Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -Username $env:AdsOpts_CD_Services_AzureSQLServer_AdminUser -Password $env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword -Query $sql 
+        Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
     }
     if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_UpdateSourceAndTargetSystems -eq "True")
     {
@@ -74,7 +110,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         "
 
         Write-Host "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Azure SQL Servers"
-        Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -Username $env:AdsOpts_CD_Services_AzureSQLServer_AdminUser -Password $env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword -Query $sql 
+        Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
 
         $sql = 
         "
@@ -130,7 +166,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         "
 
         Write-Host "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Storage Accounts"
-        Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -Username $env:AdsOpts_CD_Services_AzureSQLServer_AdminUser -Password $env:AdsOpts_CD_Services_AzureSQLServer_AdminPassword -Query $sql 
+        Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
 
     }
     

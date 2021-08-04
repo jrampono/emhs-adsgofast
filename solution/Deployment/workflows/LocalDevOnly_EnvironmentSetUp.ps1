@@ -8,3 +8,5 @@ New-Item -Path "../bin/" -Name "GitEnv.txt" -type "file" -value "" -force
 . .\Steps\PushEnvFileIntoVariables.ps1
 ParseEnvFile("$env:ENVIRONMENT_NAME")
 Invoke-Expression -Command  ".\Steps\CD_SetResourceGroupHash.ps1"
+
+
