@@ -1,5 +1,5 @@
 Write-Host "Checking Web App Unzipped Path"
-Get-ChildItem $env:AdsOpts_CD_FolderPaths_PublishUnZip + "/webapplication/"
+Get-ChildItem ($env:AdsOpts_CD_FolderPaths_PublishUnZip + "/webapplication/")
 Write-Host "Configuring Web App"
 
 $SourceFile = $env:AdsOpts_CD_FolderPaths_PublishZip + "/webapplication/Publish.zip"
