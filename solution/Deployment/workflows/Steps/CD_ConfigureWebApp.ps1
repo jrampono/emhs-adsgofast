@@ -1,5 +1,3 @@
-Write-Host "Checking Web App Unzipped Path"
-Get-ChildItem ($env:AdsOpts_CD_FolderPaths_PublishUnZip + "/webapplication/")
 Write-Host "Configuring Web App"
 
 $SourceFile = $env:AdsOpts_CD_FolderPaths_PublishZip + "/webapplication/Publish.zip"
@@ -9,8 +7,7 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     #Update App Settings
     
     $appsettingsfile = $env:AdsOpts_CD_FolderPaths_PublishUnZip + "/webapplication/appsettings.json"
-    $appSettings = Get-Content $appsettingsfile | ConvertFrom-Json
-    Write-Host ($appSettings | ConvertTo-Json)
+    $appSettings = Get-Content $appsettingsfile | ConvertFrom-Json    
     
     $appSettings.ApplicationOptions.UseMSI = $true
     $appSettings.ApplicationOptions.AdsGoFastTaskMetaDataDatabaseServer = "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net"
