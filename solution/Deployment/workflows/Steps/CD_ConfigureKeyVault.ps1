@@ -17,7 +17,7 @@ if($env:AdsOpts_CD_Services_KeyVault_Enable -eq "True")
     az keyvault set-policy --name $env:AdsOpts_CD_Services_KeyVault_Name --certificate-permissions backup create delete deleteissuers get getissuers import list listissuers managecontacts manageissuers purge recover restore setissuers update --key-permissions backup create decrypt delete encrypt get import list purge recover restore sign unwrapKey update verify wrapKey --object-id $AADUserId --resource-group $env:AdsOpts_CD_ResourceGroup_Name --secret-permissions backup delete get list purge recover restore set --storage-permissions backup delete deletesas get getsas list listsas purge recover regeneratekey restore set setsas update --subscription $env:AdsOpts_CD_ResourceGroup_Subscription
 
     #Save Function Key to KeyVault
-    az keyvault secret set --name "AdsGfCoreFunctionAppKey" --vault-name $env:AdsOpts_CD_Services_KeyVault_Name --disabled false --subscription  $env:AdsOpts_CD_ResourceGroup_Subscription --value $functionkey
+    az keyvault secret set --name "AdsGfCoreFunctionAppKey" --vault-name $env:AdsOpts_CD_Services_KeyVault_Name --disabled false --subscription  $env:AdsOpts_CD_ResourceGroup_Subscription --value $functionkey --output none
 
 }
 else 
