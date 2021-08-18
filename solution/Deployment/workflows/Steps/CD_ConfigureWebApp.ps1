@@ -7,6 +7,8 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     #Update App Settings
     $appsettingsfile = $env:AdsOpts_CD_FolderPaths_PublishUnZip + "/webapplication/appsettings.json"
     $appSettings = Get-Content $appsettingsfile | ConvertFrom-Json
+
+    write-host ($appSettings | ConvertTo-Json) -ForegroundColor Yellow
     $appSettings.ApplicationOptions.UseMSI = $true
     $appSettings.ApplicationOptions.AdsGoFastTaskMetaDataDatabaseServer = "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net"
     $appSettings.ApplicationOptions.AdsGoFastTaskMetaDataDatabaseName = $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name
