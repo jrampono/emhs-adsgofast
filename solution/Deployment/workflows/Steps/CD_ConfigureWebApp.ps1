@@ -10,7 +10,7 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     
     $appsettingsfile = $env:AdsOpts_CD_FolderPaths_PublishUnZip + "/webapplication/appsettings.json"
     $appSettings = Get-Content $appsettingsfile | ConvertFrom-Json
-
+    Write-Host ($appSettings | ConvertTo-Json)
     
     $appSettings.ApplicationOptions.UseMSI = $true
     $appSettings.ApplicationOptions.AdsGoFastTaskMetaDataDatabaseServer = "$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net"
