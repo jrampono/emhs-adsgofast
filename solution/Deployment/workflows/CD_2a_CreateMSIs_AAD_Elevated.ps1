@@ -1,4 +1,5 @@
 az config set extension.use_dynamic_install=yes_without_prompt
+#Create MSIs
 if($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
 {
     $id = $null
@@ -18,6 +19,16 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
         $id = ((az webapp identity assign --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_WebSite_Name) | ConvertFrom-Json).principalId
     }
 }
+
+#Get ADF MSI Id
+$dfpid = ((az datafactory show --factory-name $env:AdsOpts_CD_Services_DataFactory_Name --resource-group $env:AdsOpts_CD_ResourceGroup_Name) | ConvertFrom-Json).identity.principalId
+$dfoid = ((az ad sp show --id $dfpid) | ConvertFrom-Json).objectId
+#Allow ADF to Read Key Vault
+az keyvault set-policy --name $env:AdsOpts_CD_Services_KeyVault_Name --certificate-permissions get list --key-permissions get list --object-id $dfoid --resource-group $env:AdsOpts_CD_ResourceGroup_Name --secret-permissions get list --storage-permissions get --subscription $env:AdsOpts_CD_ResourceGroup_Subscription
+
+
+
+
 
 #Give MSIs Required AD Privileges
 #Assign SQL Admin
