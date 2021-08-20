@@ -9,6 +9,11 @@ if($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
         $id = ((az functionapp identity assign --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_CoreFunctionApp_Name) | ConvertFrom-Json).principalId
     }
 }
+else 
+{
+
+    Write-Host "AdsOpts_CD_Services_CoreFunctionApp skipped as flag in environment file is set to false" -ForegroundColor Yellow
+}
 
 if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
 {
@@ -18,6 +23,11 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
         Write-Host "Creating MSI for WebApp"
         $id = ((az webapp identity assign --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_WebSite_Name) | ConvertFrom-Json).principalId
     }
+}
+else 
+{
+
+    Write-Host "AdsOpts_CD_Services_WebSite_Enable skipped as flag in environment file is set to false" -ForegroundColor Yellow
 }
 
 #Get ADF MSI Id
