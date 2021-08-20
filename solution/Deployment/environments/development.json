@@ -8,7 +8,7 @@
             "BuildAdsGoFastDatabase": true
         },
         "CD": {
-            "EnableDeploy": true,
+            "EnableDeploy": false,
             "EnableConfigure": true,
             "ServicePrincipals": {
                 "DeploymentSP": {

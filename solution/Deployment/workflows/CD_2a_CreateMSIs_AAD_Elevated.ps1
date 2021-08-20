@@ -52,7 +52,7 @@ $SqlInstalled = Get-InstalledModule SqlServer
 if($null -eq $SqlInstalled)
 {
     write-host "Installing SqlServer Module"
-    Install-Module -Name SqlServer -Scope CurrentUser 
+    Install-Module -Name SqlServer -Scope CurrentUser -Force
 }
 
 #Add Ip to SQL Firewall

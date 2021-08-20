@@ -90,8 +90,11 @@ Foreach-Object {
     #ParseOut the Name Attribute
     $name = $jsonobject.name
 
-    #Persist Back to File
+    #Persist File Back
     $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
+
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"
 
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains("_OnPrem_Net") -eq $true)) -or
@@ -99,11 +102,12 @@ Foreach-Object {
             (($lsName.Contains("_SH_IR") -eq $false) -and ($lsName.Contains("_OnPrem_Net") -eq $false))
         )
     {
-        write-host $lsName -ForegroundColor Yellow -BackgroundColor DarkGreen
+        write-host ("LinkedService:" + $lsName) -ForegroundColor Yellow -BackgroundColor DarkGreen
         #Set-AzDataFactoryV2LinkedService -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -force
         $body = ($jsonobject | ConvertTo-Json -compress  -Depth 10 | Out-String).Replace('"','\"')
         $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/linkedservices/$name" 
-        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body $body --uri-parameters 'api-version=2018-06-01'
+        write-host $uri
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
 
     }
     else 
@@ -122,17 +126,23 @@ Foreach-Object {
     $jsonobject = $_ | Get-Content | ConvertFrom-Json
     $name = $jsonobject.name
 
+    #Persist File Back
+    $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
+
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains("_OnPrem_SH_IR") -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains("_SH_IR") -eq $true) -and ($lsName.Contains("_OnPrem_SH_IR") -eq $false)) -or
             (($lsName.Contains("_SH_IR") -eq $false) -and ($lsName.Contains("_OnPrem_SH_IR") -eq $false))
         )
     {
-        write-host $fileName -ForegroundColor Yellow -BackgroundColor DarkGreen
+        write-host ("Dataset: " + $fileName) -ForegroundColor Yellow -BackgroundColor DarkGreen
         #Set-AzDataFactoryV2Dataset -DataFactoryName $env:AdsOpts_CD_Services_DataFactory_Name -ResourceGroupName $env:AdsOpts_CD_ResourceGroup_Name -Name $lsName -DefinitionFile $fileName -Force
         $body = ($jsonobject | ConvertTo-Json -compress  -Depth 10 | Out-String).Replace('"','\"')
         $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/datasets/$name" 
-        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body $body --uri-parameters 'api-version=2018-06-01'
+        az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
     }
     else 
     {
