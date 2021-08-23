@@ -18,6 +18,10 @@
     
     # MSI Access from ADF to ADLS Gen2
     az role assignment create --assignee $DataFactoryId --role "Storage Blob Data Contributor" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_ADLS_Name"
+
+    # MSI Access from ADF to Blob
+    az role assignment create --assignee $DataFactoryId --role "Storage Blob Data Contributor" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_Blob_Name"
+
     # MSI Access from ADF to KeyVault
     az keyvault set-policy --name $env:AdsOpts_CD_Services_KeyVault_Name --object-id $DataFactoryId --certificate-permissions get list --key-permissions get list --resource-group $env:AdsOpts_CD_ResourceGroup_Name --secret-permissions get list --subscription $subid
     # MSI Access from WebApp to ADLS Gen2 
