@@ -30,6 +30,10 @@ else
     Write-Host "AdsOpts_CD_Services_WebSite_Enable skipped as flag in environment file is set to false" -ForegroundColor Yellow
 }
 
+
+#Make sure we have the datafactory extension 
+az extension add --name datafactory
+
 #Get ADF MSI Id
 $dfpid = ((az datafactory show --factory-name $env:AdsOpts_CD_Services_DataFactory_Name --resource-group $env:AdsOpts_CD_ResourceGroup_Name) | ConvertFrom-Json).identity.principalId
 $dfoid = ((az ad sp show --id $dfpid) | ConvertFrom-Json).objectId
