@@ -8,7 +8,7 @@
       "BuildAdsGoFastDatabase": true
     },
     "CD": {
-      "EnableDeploy": false,
+      "EnableDeploy": true,
       "EnableConfigure": true,
       "ServicePrincipals": {
         "DeploymentSP": {
@@ -20,13 +20,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "88578370-e0a4-4421-9c70-f596605f9e7f"
+          "ClientId": "d733e6a7-01e6-4af6-a6b8-99b029ed7237"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "99c94b33-e740-41d6-8527-4c23c2c7ebf6"
+          "ClientId": "cb3e089a-6d2d-4b3c-949f-353437b78e23"
         }
       },
       "ResourceGroup": {
@@ -38,10 +38,6 @@
         "Location": "australiaeast",
         "Name": "AdsTest",
         "AADUser": "jorampon@microsoft.com",
-        "ServicePrincipal_Deployment": "AdsGoFastDeploymentSP",
-        "ServicePrincipalNameAFDownstream": "AdsGoFastDeployTestSP",
-        "ServicePrincipalNameWebAuth": "adsgofastwebappauth",
-        "ServicePrincipalNameAFAuth": "adsgofastwebappauth",
         "Hash": "DummyValueToBeReplacedAtRuntime"
       },
       "FolderPaths": {
