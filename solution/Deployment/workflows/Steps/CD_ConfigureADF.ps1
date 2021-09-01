@@ -234,6 +234,9 @@ Foreach-Object {
     #Persist File Back
     $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
 
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"    
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains('-OnP-SH-IR') -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains('-SH-IR') -eq $true) -and ($lsName.Contains('-OnP-SH-IR') -eq $false)) -or
