@@ -717,7 +717,7 @@ namespace AdsGoFast.TaskMetaData
                 case "String": return "nvarchar";
                 case "Single": return "real";
                 case "Int16": return "smallint";
-                case "Object�2": return "sql_variant";
+                case string s when s.StartsWith("Object*"): return "sql_variant";
                 case "TimeSpan": return "time";
                 case "Byte": return "tinyint";
                 case "Guid": return "uniqueidentifier";
