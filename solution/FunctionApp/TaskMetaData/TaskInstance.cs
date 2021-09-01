@@ -527,7 +527,7 @@ namespace AdsGoFast.TaskMetaData
                 {
                     _SQLStatement = @$"
                        SELECT 
-		                    CAST(CEILING(count(*))/{Extraction["ChunkSize"]} + 0.00001 as int) as  batchcount
+		                    CAST(CEILING(count(*)/{Extraction["ChunkSize"]} + 0.00001) as int) as  batchcount
 	                    FROM [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
                     ";
                 }
@@ -558,7 +558,7 @@ namespace AdsGoFast.TaskMetaData
                 {
                     _SQLStatement = @$"
                         SELECT MAX([{Extraction["IncrementalField"]}]) AS newWatermark, 
-		                       CAST(CEILING(count(*))/{Extraction["ChunkSize"]} + 0.00001 as int) as  batchcount
+		                       CAST(CASE when count(*) = 0 then 0 else CEILING(count(*)/{Extraction["ChunkSize"]} + 0.00001) end as int) as  batchcount
 	                    FROM  [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
 	                    WHERE [{Extraction["IncrementalField"]}] > CAST('{Extraction["IncrementalValue"]}' as datetime)
                     ";
@@ -568,7 +568,7 @@ namespace AdsGoFast.TaskMetaData
                 {
                     _SQLStatement = @$"
                         SELECT MAX([{Extraction["IncrementalField"]}]) AS newWatermark, 
-		                       CAST(CEILING(count(*))/{Extraction["ChunkSize"]} + 0.00001 as int) as  batchcount
+		                       CAST(CASE when count(*) = 0 then 0 else CEILING(count(*)/{Extraction["ChunkSize"]} + 0.00001) end as int) as  batchcount
 	                    FROM  [{Extraction["TableSchema"]}].[{Extraction["TableName"]}] 
 	                    WHERE [{Extraction["IncrementalField"]}] > {Extraction["IncrementalValue"]}
                     ";
@@ -717,7 +717,7 @@ namespace AdsGoFast.TaskMetaData
                 case "String": return "nvarchar";
                 case "Single": return "real";
                 case "Int16": return "smallint";
-                case "Object 2": return "sql_variant";
+                case "Objectï¿½2": return "sql_variant";
                 case "TimeSpan": return "time";
                 case "Byte": return "tinyint";
                 case "Guid": return "uniqueidentifier";
