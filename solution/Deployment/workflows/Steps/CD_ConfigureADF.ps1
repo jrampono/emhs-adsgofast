@@ -234,6 +234,9 @@ Foreach-Object {
     #Persist File Back
     $jsonobject | ConvertTo-Json  -Depth 100 | set-content $_
 
+    #Make a copy of the file for upload 
+    Copy-Item  -Path $fileName -Destination "FileForUpload.json"    
+
     if  (
             (($env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable -eq "True") -and ($lsName.Contains('-OnP-SH-IR') -eq $true)) -or
             (($env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Enable -eq "True") -and ($lsName.Contains('-SH-IR') -eq $true) -and ($lsName.Contains('-OnP-SH-IR') -eq $false)) -or
@@ -327,7 +330,10 @@ Foreach-Object {
     $body = ($jsonobject | ConvertTo-Json -compress  -Depth 100 | Out-String).Replace('"','\"')
     $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/pipelines/$name" 
     az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body "@FileForUpload.json" --uri-parameters 'api-version=2018-06-01'
+    
 }
+
+Remove-Item -Path "FileForUpload.json" -ErrorAction SilentlyContinue
 
 #Change Back to Workflows dir
 Set-Location $CurrentPath
