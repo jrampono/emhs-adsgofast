@@ -122,7 +122,14 @@
           "OnPremVnetIr": {
             "Enable": false,
             "Name": "SelfHostedIntegrationRuntime-OnPem-Net",
-            "Type": "ManagedVnet"
+            "Type": "SelfHosted",
+            "IrInstallConfig":{
+                "LocalDrive":"C:",
+                "LocalVMFolder":"ADFInstaller",
+                "IrDownloadURL":"https://download.microsoft.com/download/E/4/7/E4771905-1079-445B-8BF9-8A1A075D8A10/IntegrationRuntime_5.9.7900.1.msi",
+                "JDKDownloadURL":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_windows_hotspot_11.0.12_7.msi",
+                "JDKInstallFolder":"c:\\Program Files\\Eclipse Foundation\\"
+            }
           }
         },
         "WebSite": {
