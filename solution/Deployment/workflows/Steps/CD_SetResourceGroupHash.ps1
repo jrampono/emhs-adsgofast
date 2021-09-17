@@ -7,7 +7,7 @@ function Get-UniqueString ([string]$id, $length=13)
 }
 
 Write-Host "Creating RG Hash"
-$ResourceGroupHash = Get-UniqueString ($id=$env:AdsOpts_CD_ResourceGroup_Name)
+$ResourceGroupHash = Get-UniqueString ($id=$env:AdsOpts_CD_ResourceGroup_Name+$env:AdsOpts_CD_ResourceGroup_TenantId) #Resource Group Name + TenantId to make hash more unique
 Write-Host $ResourceGroupHash
 
 PersistEnvVariable -Name "AdsOpts_CD_ResourceGroup_Hash" -Value $ResourceGroupHash

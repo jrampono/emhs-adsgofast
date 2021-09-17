@@ -40,31 +40,42 @@ Write-Host "Creating IR: $env:AdsOpts_CD_Services_DataFactory_AzVnetIR_Name"
 az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body $body --uri-parameters 'api-version=2018-06-01'
 
 #On Prem - Note we are using a managed VNET IR to mimic on prem
-$body = '
+# $body = '
+# {
+#     "properties": {
+#         "type": "Managed",
+#         "typeProperties": {
+#             "computeProperties": {
+#                 "location": "AutoResolve",
+#                 "dataFlowProperties": {
+#                     "computeType": "General",
+#                     "coreCount": 8,
+#                     "timeToLive": 10,
+#                     "cleanup": true
+#                 }
+#             }
+#         },
+#         "managedVirtualNetwork": {
+#             "type": "ManagedVirtualNetworkReference",
+#             "referenceName": "default"
+#         }
+#     }
+# }' | ConvertFrom-Json
+
+if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Enable")) -eq "True")
 {
-    "properties": {
-        "type": "Managed",
-        "typeProperties": {
-            "computeProperties": {
-                "location": "AutoResolve",
-                "dataFlowProperties": {
-                    "computeType": "General",
-                    "coreCount": 8,
-                    "timeToLive": 10,
-                    "cleanup": true
-                }
-            }
-        },
-        "managedVirtualNetwork": {
-            "type": "ManagedVirtualNetworkReference",
-            "referenceName": "default"
+    $body = '
+    {
+        "properties": {
+            "type": "SelfHosted"
         }
-    }
-}' | ConvertFrom-Json
-$body = ($body | ConvertTo-Json -compress  -Depth 10 | Out-String).Replace('"','\"')
-$uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/integrationRuntimes/$env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Name" + '?api-version=2018-06-01'
-Write-Host "Creating IR: $env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Name"
-az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body $body --uri-parameters 'api-version=2018-06-01'
+    }' | ConvertFrom-Json
+
+    $body = ($body | ConvertTo-Json -compress  -Depth 10 | Out-String).Replace('"','\"')
+    $uri = "https://management.azure.com/$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name/integrationRuntimes/$env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Name" + '?api-version=2018-06-01'
+    Write-Host "Creating IR: $env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Name"
+    az rest --method put --uri $uri --headers '{\"Content-Type\":\"application/json\"}' --body $body --uri-parameters 'api-version=2018-06-01'
+}
 
 $dfbase = "$env:AdsOpts_CD_FolderPaths_PublishUnZip/datafactory"
 
