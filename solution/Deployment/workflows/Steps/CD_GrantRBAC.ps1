@@ -34,3 +34,22 @@
     az role assignment create --assignee $AADUserId --role "Storage Blob Data Contributor" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_ADLS_Name"
     az role assignment create --assignee $AADUserId --role "Owner" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_ADLS_Name"
   
+
+#Transient Storage Account
+if($env:AdsOpts_CD_Services_Storage_ADLSTransient_Enable -eq "True")
+{
+    Write-Host "Granting RBAC on Transient Storage Account (ADLS)"
+    
+    # MSI Access from AF to ADLS Gen2
+    az role assignment create --assignee $AzureFunctionId --role "Storage Blob Data Contributor" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_ADLSTransient_Name"
+
+    # MSI Access from ADF to ADLS Gen2
+    az role assignment create --assignee $DataFactoryId --role "Storage Blob Data Contributor" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_ADLSTransient_Name"
+
+    # MSI Access from WebApp to ADLS Gen2 
+    az role assignment create --assignee $WebAppID --role "Storage Blob Data Contributor" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_ADLSTransient_Name"
+}
+else 
+{
+    Write-Host "Skipped RBAC on Transient Storage Account (ADLS)"
+}
