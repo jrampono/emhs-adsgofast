@@ -19,6 +19,7 @@ SetServiceName -RootElement "AdsOpts_CD_Services_WebSite"
 SetServiceName -RootElement "AdsOpts_CD_Services_AppInsights"
 SetServiceName -RootElement "AdsOpts_CD_Services_Storage_Logging"
 SetServiceName -RootElement "AdsOpts_CD_Services_Storage_ADLS"
+SetServiceName -RootElement "AdsOpts_CD_Services_Storage_ADLSTransient" #Added for Transient Storage
 SetServiceName -RootElement "AdsOpts_CD_Services_Storage_Blob"
 SetServiceName -RootElement "AdsOpts_CD_Services_DataFactory"
 SetServiceName -RootElement "AdsOpts_CD_Services_AppPlans_WebApp"
