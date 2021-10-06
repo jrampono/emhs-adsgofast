@@ -1,0 +1,87 @@
+@using Humanizer; 
+@model WebApplication.Models.TaskTypeMapping
+
+@{
+    ViewData["Title"] = "Edit - " + "TaskTypeMapping".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+        <div class="alert alert-danger" role="alert">Caution. These records are critical to the application and changes may cause certain features to break.</div>    
+
+<h1>Edit</h1>
+
+<h4> @("TaskTypeMapping".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TaskTypeMappingId" />
+            <div class="form-group">
+                <label asp-for="TaskTypeId" class="control-label"></label>
+                <select asp-for="TaskTypeId" class="form-control" asp-items="ViewBag.TaskTypeId"></select>
+                <span asp-validation-for="TaskTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MappingType" class="control-label"></label>
+                <input asp-for="MappingType" class="form-control" />
+                <span asp-validation-for="MappingType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MappingName" class="control-label"></label>
+                <input asp-for="MappingName" class="form-control" />
+                <span asp-validation-for="MappingName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SourceSystemType" class="control-label"></label>
+                <input asp-for="SourceSystemType" class="form-control" />
+                <span asp-validation-for="SourceSystemType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SourceType" class="control-label"></label>
+                <input asp-for="SourceType" class="form-control" />
+                <span asp-validation-for="SourceType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TargetSystemType" class="control-label"></label>
+                <input asp-for="TargetSystemType" class="form-control" />
+                <span asp-validation-for="TargetSystemType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TargetType" class="control-label"></label>
+                <input asp-for="TargetType" class="form-control" />
+                <span asp-validation-for="TargetType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskDatafactoryIr" class="control-label"></label>
+                <input asp-for="TaskDatafactoryIr" class="form-control" />
+                <span asp-validation-for="TaskDatafactoryIr" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskTypeJson" class="control-label"></label>
+                <input asp-for="TaskTypeJson" class="form-control" />
+                <span asp-validation-for="TaskTypeJson" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveYn" /> @Html.DisplayNameFor(model => model.ActiveYn)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskMasterJsonSchema" class="control-label"></label>
+                <input asp-for="TaskMasterJsonSchema" class="form-control" />
+                <span asp-validation-for="TaskMasterJsonSchema" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskInstanceJsonSchema" class="control-label"></label>
+                <input asp-for="TaskInstanceJsonSchema" class="form-control" />
+                <span asp-validation-for="TaskInstanceJsonSchema" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary" ><i class="fa fa-arrow-circle-left"></i> Back</a>            
+                <input type="submit" value="Save" class="btn btn-danger" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

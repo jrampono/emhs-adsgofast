@@ -1,0 +1,109 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "twitter-bootstrap@4.5.2",
+      "destination": "wwwroot/lib/twitter-bootstrap/"
+    },
+    {
+      "library": "octicons@8.5.0",
+      "destination": "wwwroot/lib/octicons/"
+    },
+    {
+      "library": "datatables.net@1.10.22",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "font-awesome@5.14.0",
+      "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "popper.js@2.5.3",
+      "destination": "wwwroot/lib/popper.js/"
+    },
+    {
+      "library": "moment.js@2.29.0",
+      "destination": "wwwroot/lib/moment.js/"
+    },
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr.js/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "smartwizard@5.1.1",
+      "destination": "wwwroot/lib/smartwizard/",
+      "files": [
+        "dist/css/smart_wizard.css",
+        "dist/css/smart_wizard.min.css",
+        "dist/css/smart_wizard_all.css",
+        "dist/css/smart_wizard_all.min.css",
+        "dist/css/smart_wizard_arrows.css",
+        "dist/css/smart_wizard_arrows.min.css",
+        "dist/css/smart_wizard_dark.css",
+        "dist/css/smart_wizard_dark.min.css",
+        "dist/css/smart_wizard_dots.css",
+        "dist/css/smart_wizard_dots.min.css",
+        "dist/css/smart_wizard_progress.css",
+        "dist/css/smart_wizard_progress.min.css",
+        "dist/js/jquery.smartWizard.js",
+        "dist/js/jquery.smartWizard.min.js"
+      ]
+    },
+    {
+      "library": "bootstrap-slider@11.0.2",
+      "destination": "wwwroot/lib/bootstrap-slider/"
+    },
+    {
+      "library": "jquery-jsonview@1.2.3",
+      "destination": "wwwroot/lib/jquery-jsonview/"
+    },
+    {
+      "library": "datatables.net-buttons-bs4@1.6.5",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "datatables.net-bs4@1.10.22",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "datatables.net-select-bs4@1.3.1",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "datatables.net-select@1.3.1",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "jquery@3.5.1",
+      "destination": "wwwroot/lib/jquery/dist/"
+    },
+    {
+      "library": "jquery-validate@1.19.2",
+      "destination": "wwwroot/lib/jquery-validation/dist/"
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.11",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
+    },
+    {
+      "library": "datatables.net-buttons@1.6.5",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "malihu-custom-scrollbar-plugin@3.1.5",
+      "destination": "wwwroot/lib/malihu-custom-scrollbar-plugin/"
+    },
+    {
+      "library": "json-editor@2.5.3",
+      "destination": "wwwroot/lib/json-editor/"
+    },
+    {
+      "provider": "filesystem",
+      "library": "wwwroot/js/bswindow/",
+      "destination": "wwwroot/lib/bswindow/"
+    }
+  ]
+}

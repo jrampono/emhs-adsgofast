@@ -1,0 +1,108 @@
+@model IEnumerable<WebApplication.Models.TaskMaster>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>TaskMasters - Browse</h1>
+
+<p>
+    <a class="btn-sm btn-dark details" asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskGroup)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskMasterName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ScheduleMasterId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SourceSystemId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TargetSystemId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DegreeOfCopyParallelism)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AllowMultipleActiveInstances)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskDatafactoryIr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskMasterJson)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActiveYn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DependencyChainTag)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataFactoryId)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TaskMasterId" class="btn-sm btn-warning details" title="Edit"><i class="fa fa-pencil-square-o"></i></a> |
+                <a asp-action="Details" asp-route-id="@item.TaskMasterId" class="btn-sm btn-info details" title="Details"><i class="fa fa-list-alt" aria-hidden="true"></i></a> |
+                <a asp-action="Delete" asp-route-id="@item.TaskMasterId" class="btn-sm btn-danger details" title="Delete"><i class="fa fa-trash"></i></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskType.TaskTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskGroup.TaskGroupName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ScheduleMasterId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SourceSystemId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetSystemId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DegreeOfCopyParallelism)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AllowMultipleActiveInstances)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskDatafactoryIr)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterJson)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActiveYn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DependencyChainTag)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataFactoryId)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

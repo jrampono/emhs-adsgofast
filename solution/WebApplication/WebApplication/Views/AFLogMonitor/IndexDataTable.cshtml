@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Log";
+}
+
+<h1>Logs</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "AFLogMonitor";
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+            setInterval(function () {
+                table.ajax.reload(null, false); // user paging is not reset on reload
+            }, 30000);
+
+        });
+
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

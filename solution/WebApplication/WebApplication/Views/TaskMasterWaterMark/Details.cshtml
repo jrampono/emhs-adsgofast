@@ -1,0 +1,82 @@
+@using Humanizer;
+@model WebApplication.Models.TaskMasterWaterMark
+
+@{
+    ViewData["Title"] = "Details - " + "TaskMasterWaterMark".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4> @("TaskMasterWaterMark".Humanize(LetterCasing.Title))</h4>
+    <hr />
+    <dl class="row">
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.TaskMaster)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.TaskMaster.TaskDatafactoryIr)
+            </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.TaskMasterWaterMarkColumn)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.TaskMasterWaterMarkColumn)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.TaskMasterWaterMarkColumnType)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.TaskMasterWaterMarkColumnType)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.TaskMasterWaterMarkDateTime)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.TaskMasterWaterMarkDateTime)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.TaskMasterWaterMarkBigInt)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.TaskMasterWaterMarkBigInt)
+                </dd>               
+             <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.TaskWaterMarkJson)
+            </dt>
+            <dd class = "col-sm-10 jsonpretty">
+                <a class="jsonraw">@Html.DisplayFor(model => model.TaskWaterMarkJson)</a>
+                <div class="jsonformatted"></div>
+            </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.ActiveYn)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.ActiveYn)
+                </dd>               
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.UpdatedOn)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.UpdatedOn)
+                </dd>               
+    </dl>
+</div>
+<div>
+    <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Back</a>
+    <a asp-action="Edit" asp-route-id="@Model.TaskMasterId" class="btn btn-warning details" title="Edit"><i class="fa fa-pencil-square-o"></i> Edit</a> 
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+		$(document).ready(function ()
+        {
+            $(".jsonpretty").each(function (index) {
+                $(".jsonformatted", this).JSONView($(".jsonraw", this)[0].innerText);
+                $(".jsonraw", this)[0].innerText = null;
+            });
+
+		});
+    </script>
+}   

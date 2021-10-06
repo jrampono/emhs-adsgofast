@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>7b4e21f5-158c-41f0-8d7f-105d36342273</UserSecretsId>
+    <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
+  </PropertyGroup>
+
+
+	<ItemGroup>
+		<Compile Remove="Controllers\Enums\**" />
+		<Compile Remove="Templates\**" />
+		<Content Remove="Controllers\Enums\**" />
+		<Content Remove="Templates\**" />
+		<EmbeddedResource Remove="Controllers\Enums\**" />
+		<EmbeddedResource Remove="Templates\**" />
+		<None Remove="Controllers\Enums\**" />
+		<None Remove="Templates\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <Compile Remove="EasyAuth.cs" />
+		<Content Include="HelpFiles\*.md" />
+		<None Remove="HelpFiles\TaskMaster\EditPlus.md" />
+		<Content Include="HelpFiles\TaskMaster\EditPlus.md">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="HelpFiles\*.md">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+  </ItemGroup>
+
+
+	<ItemGroup>
+    <PackageReference Include="dapper" Version="2.0.35" />
+    <PackageReference Include="DataTables-Editor-Server" Version="1.9.5" />
+    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="Markdig" Version="0.22.1" />
+
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="1.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" />
+    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\Enums\" />
+    <Folder Include="wwwroot\js\bswindow\" />
+    <Folder Include="Models\Stats\" />
+    <Folder Include="wwwroot\fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebApplication.DataAccess\WebApplication.DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,78 @@
+@model IEnumerable<WebApplication.Models.TaskMasterWaterMark>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>TaskMasterWaterMarks - Browse</h1>
+
+<p>
+    <a class="btn-sm btn-dark details" asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th></th>
+             <th>
+                @Html.DisplayNameFor(model => model.TaskMasterId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskMasterWaterMarkColumn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskMasterWaterMarkColumnType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskMasterWaterMarkDateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskMasterWaterMarkBigInt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskWaterMarkJson)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActiveYn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedOn)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TaskMasterId" class="btn-sm btn-warning details" title="Edit"><i class="fa fa-pencil-square-o"></i></a> |
+                <a asp-action="Details" asp-route-id="@item.TaskMasterId" class="btn-sm btn-info details" title="Details"><i class="fa fa-list-alt" aria-hidden="true"></i></a> |
+                <a asp-action="Delete" asp-route-id="@item.TaskMasterId" class="btn-sm btn-danger details" title="Delete"><i class="fa fa-trash"></i></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterWaterMarkColumn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterWaterMarkColumnType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterWaterMarkDateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskMasterWaterMarkBigInt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskWaterMarkJson)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActiveYn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedOn)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

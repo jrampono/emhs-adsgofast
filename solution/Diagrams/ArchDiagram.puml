@@ -1,0 +1,98 @@
+@startuml "messagebus"
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Container.puml
+
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/release/2-1/dist
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/AzureC4Integration.puml
+!includeurl AzurePuml/Databases/all.puml
+!includeurl AzurePuml/Compute/all.puml
+!includeurl AzurePuml/Storage/all.puml
+!includeurl AzurePuml/Networking/all.puml
+!includeurl AzurePuml/Web/all.puml
+!includeurl AzurePuml/Management/all.puml
+!include icons/SynapseSprite.puml
+!include icons/PowerBISprite.puml
+!include icons/PurviewSprite.puml
+
+!define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
+!includeurl SPRITESURL/flask.puml
+!includeurl SPRITESURL/kafka.puml
+!includeurl SPRITESURL/kotlin.puml
+!includeurl SPRITESURL/aws-s3.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/msql_server.puml
+!include DEVICONS2/oracle_original.puml
+!include FONTAWESOME/users.puml
+
+
+!define MS https://raw.githubusercontent.com/jballe/plantuml-microsoft-icons/master/sprites/Cloud
+!include MS/cloud_office_365.puml
+!include https://raw.githubusercontent.com/jballe/plantuml-microsoft-icons/master/sprites/OtherMicrosoftProd/outlook.puml
+!include https://raw.githubusercontent.com/jballe/plantuml-microsoft-icons/master/sprites/OtherMicrosoftProd/sharepoint.puml
+!include https://raw.githubusercontent.com/jballe/plantuml-microsoft-icons/master/sprites/office-2019-icons/teams.puml
+skinparam wrapWidth 200
+skinparam maxMessageSize 200
+
+LAYOUT_TOP_DOWN()
+'LAYOUT_AS_SKETCH()
+LAYOUT_WITH_LEGEND()
+
+'Styling
+AddElementTag("Orange", $fontColor="orange")
+AddRelTag("Orange", $textColor="orange", $lineColor="orange", $lineStyle = DashedLine())
+
+System_Boundary(SystemAzure, "Azure") { 
+    'Purview(AzurePurview, "Azure Purview", "", "")
+    'AzureAppService(pbiauditor, "Power BI Auditor", "Power BI Embedded", "")
+    Container_Boundary(AdsGoFastCore, "Ads Go Fast Core"){
+        AzureFunction(FunctionApp, "Go Fast Orchestration Function", "C#/.NET", "")
+        AzureWebApp(WebApp, "Go Fast Web Application", "C#/.NET", "")
+        AzureSqlDatabase(GoFastDB, "Go Fast Metadata Repository", "TSQL", "")
+        Container_Boundary(Logs, "Logs"){
+            AzureLogAnalytics(AzureLogAnalytics, "General Logs","...")
+            AzureLogAnalytics(AppInsights, "Application Insights Logs","...")
+        }
+    }
+    'AzureAppService(pbitel, "Telemetry & Usage Gathering Function", "C#/.NET", "")
+    'AzureSqlDatabase(ExploratorySQL, "Exploratory SQL Engine", "TSQL", "")
+    AzureDataLakeStorage(AzureAdls, "Data Lake","...")
+    AzureDataFactory(AzureDataFactory, "ADF Execution Engine","...")
+    AzureDataFactory(AzureDataFactoryIR1, "Integration Runtime","...")
+    
+}
+Rel(GoFastDB, FunctionApp, "Retrieves Task Information", "async, JSON/HTTPS")
+Rel(FunctionApp, AzureDataFactory, "Initiates Pipeline Execution", "async, JSON/HTTPS")
+Rel(GoFastDB,WebApp, "Reads Metadata", "")
+Rel(WebApp, GoFastDB, "Writes Metadata", "")
+Rel(AzureDataFactoryIR1,AzureAdls, "", "")
+Rel(AzureDataFactory,AzureDataFactoryIR1, "Initiates Activities", "async", $tags="Orange")
+Rel(AzureDataFactoryIR1, AzureDataFactory, "Communicates Activity Results", "", $tags="Orange")
+Rel(FunctionApp, AppInsights, "Log Messages", "")
+Rel(WebApp, AppInsights, "Log Messages", "")
+Rel(AzureDataFactory, AzureLogAnalytics, "Log Messages", "")
+
+System_Boundary(SystemOnPrem, "Enterprise - On Premise") {
+    Container(opora, "Oracle DBs","Oracle Databases", $sprite="oracle_original")
+    Container(opsql, "SQL DBs","Sql Server Databases", $sprite="msql_server")
+}
+Rel(opora, AzureDataFactoryIR1, "Scans Databases", "Https, Expressroute, VPN")
+Rel(opsql, AzureDataFactoryIR1, "Scans Databases", "Https, Expressroute, VPN")
+
+
+System_Boundary(SystemPowerPlatform, "Power Platform") {
+    PowerBi(PowerBI, "Power BI", "Reports, Dashboards etc")
+}
+Rel( GoFastDB, PowerBI, "", "")
+
+System_Boundary(SystemOtherClouds, "Other Clouds") {
+    Container(AWS, "AWS", "S3, Oracle, SQL", ,aws-s3)
+}
+
+Rel(AWS, AzureDataFactoryIR1, "Scans Databases", "Https, Expressroute, VPN")
+
+@enduml

@@ -1,0 +1,6 @@
+{
+	"name": "SelfHostedIntegrationRuntime-Azure-VNET",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

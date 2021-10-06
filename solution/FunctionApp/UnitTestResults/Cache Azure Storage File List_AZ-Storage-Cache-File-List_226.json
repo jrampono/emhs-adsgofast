@@ -1,0 +1,14 @@
+{
+    "Source": {
+        "Type": "*"
+    },
+    "Target": {
+        "Type": "*",
+        "Alerts" :[
+          {"AlertCategory": "Generic Task Executed Alert", "EmailTemplateFileName":"PipQI_FileDropped", "EmailRecepient": "jrampono@gmail.com", "EmailRecepientName": "jrampono@gmail.com"},
+          {"AlertCategory": "Generic Task Executed Alert", "EmailTemplateFileName":"PipQI_FileDropped", "EmailRecepient": "jrampono@gmail.com", "EmailRecepientName": "jrampono@gmail.com"}
+        ]
+    }
+    
+
+}

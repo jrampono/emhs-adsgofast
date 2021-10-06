@@ -1,0 +1,59 @@
+{
+  "TaskInstanceId": 7533,
+  "TaskMasterId": 2,
+  "TaskStatus": "InProgress",
+  "TaskType": "Azure Storage to SQL Database",
+  "Enabled": 1,
+  "ExecutionUid": "ed2eeb2c-8b88-45fe-8385-3309b7175838",
+  "NumberOfRetries": 0,
+  "DegreeOfCopyParallelism": 1,
+  "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+  "ScheduleMasterId": "2",
+  "TaskGroupConcurrency": "10",
+  "TaskGroupPriority": 0,
+  "TaskExecutionType": "ADF",
+  "DataFactory": {
+    "Id": 1,
+    "Name": "adsgofastdatakakeacceladf",
+    "ResourceGroup": "AdsGoFastDataLakeAccel",
+    "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
+    "ADFPipeline": "AZ-Storage-CSV-AZ-SQL-SH-IR"
+  },
+  "Source": {
+    "Type": "Azure Blob",
+    "SystemId": 3,
+    "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+    "StorageAccountAccessMethod": "MSI",
+    "StorageAccountContainer": "datalakeraw",
+    "DataFileName": "yellow_tripdata_2017-03.csv",
+    "SchemaFileName": "",
+    "FirstRowAsHeader": "True",
+    "SheetName": null,
+    "SkipLineCount": "0",
+    "MaxConcorrentConnections": "10",
+    "Recursively": null,
+    "DeleteAfterCompletion": null,
+    "UserId": null,
+    "Host": null,
+    "PasswordKeyVaultSecretName": null,
+    "RelativePath": "/NYTaxi/"
+  },
+  "Target": {
+    "Type": "Table",
+    "Database": {
+      "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+      "AuthenticationType": "MSI",
+      "Name": "Staging"
+    },
+    "TableSchema": "dbo",
+    "TableName": "NYTaxiYellowTripData",
+    "StagingTableSchema": "dbo",
+    "StagingTableName": "stg_NYTaxiYellowTripData",
+    "AutoCreateTable": "False",
+    "PreCopySQL": "IF OBJECT_ID('dbo.stg_NYTaxiYellowTripData') IS NOT NULL \r\n            Truncate Table dbo.stg_NYTaxiYellowTripData",
+    "PostCopySQL": "",
+    "MergeSQL": "",
+    "AutoGenerateMerge": "True",
+    "DynamicMapping": {}
+  }
+}

@@ -1,0 +1,22 @@
+[{
+    "TaskExecutionId": 1,
+    "TaskInstanceId": 1,
+    "TaskStatus": "Failed",
+    "StartDateTime":"20200608 10:00",
+    "EndDateTime":"20200608 10:05"
+},
+{
+    "TaskExecutionId": 1,
+    "TaskInstanceId": 3,
+    "TaskStatus": "Suceeded",
+    "StartDateTime":"20200608 10:00",
+    "EndDateTime":"20200608 10:05"
+},
+{
+    "TaskExecutionId": 2,
+    "TaskInstanceId": 1,
+    "TaskStatus": "Succeeded",
+    "StartDateTime":"20200608 11:00",
+    "EndDateTime":"20200608 11:05"
+}
+]

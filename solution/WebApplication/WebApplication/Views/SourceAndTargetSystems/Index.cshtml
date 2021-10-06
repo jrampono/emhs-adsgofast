@@ -1,0 +1,90 @@
+@model IEnumerable<WebApplication.Models.SourceAndTargetSystems>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>SourceAndTargetSystemss - Browse</h1>
+
+<p>
+    <a class="btn-sm btn-dark details" asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemServer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAuthType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemUserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemSecretName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemKeyVaultBaseUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemJson)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActiveYn)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemServer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemAuthType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemUserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemSecretName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemKeyVaultBaseUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystemJson)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActiveYn)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SystemId" class="btn-sm btn-dark details">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SystemId" class="btn-sm btn-info details">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SystemId" class="btn-sm btn-danger details">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,89 @@
+@model IEnumerable<WebApplication.Models.TaskInstance>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1><i id="PageIcon" class="fas fa-list-alt"></i> Task Instances</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>           
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "TaskInstance";
+
+        function UpdateTaskInstanceStatus(dt, Status) 
+        {
+            var selected_indexes = dt.rows({ selected: true }).indexes();
+            var selected_pkeys = [];
+            $.each(selected_indexes, function (index, i) {
+                selected_pkeys.push(dt.data()[i]["TaskInstanceId"]);
+            });
+
+            $.post('@Url.Action("UpdateTaskInstanceStatus")', { Pkeys: JSON.stringify(selected_pkeys, null, 2), Status: Status })
+                .done(function (data) {
+                    dt.ajax.reload(null, false);
+                    toastr.success("Successfully Updated Rows");
+                });            
+        }
+       
+
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+
+            //This is where custom buttons and things would go.
+            buttons = [
+                
+                {
+                    extend: 'selected',
+                    className: 'btn-warning ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Mark as Untried" class="fas fa-sync-alt" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        UpdateTaskInstanceStatus(dt, "Untried");
+                    }
+                }, 
+                {
+                    extend: 'selected',
+                    className: 'btn-danger ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Mark as FailedNoRetry" class="fas fa-stop-circle" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        UpdateTaskInstanceStatus(dt, "FailedNoRetry");
+                    },
+                },
+                {
+                    extend: 'selected',
+                    className: 'btn-success ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Mark as Complete" class="fas fa-flag-checkered" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        UpdateTaskInstanceStatus(dt, "Complete");
+                    }
+                },
+
+            ];
+
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
+        $(document).ready(function () {
+            DataTablesGridPrep();                       
+        });       
+    </script>
+}  

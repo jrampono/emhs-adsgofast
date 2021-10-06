@@ -1,0 +1,19 @@
+{
+    "name": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+    "properties": {
+        "annotations": [],
+        "type": "AzureFunction",
+        "typeProperties": {
+            "functionAppUrl": "https://adsgofastdatalakeaccelfunappprem.azurewebsites.net",
+            "functionKey": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "AdsGoFastKeyVault",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "AdsGfCoreFunctionAppKey"
+            }
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/linkedservices"
+}

@@ -1,0 +1,27 @@
+@model IEnumerable<WebApplication.Models.ScheduleInstance>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>Schedule Instances</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "ScheduleInstance";
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

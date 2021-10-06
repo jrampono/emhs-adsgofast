@@ -1,0 +1,57 @@
+{
+  "TaskInstanceId": 7673,
+  "TaskMasterId": 165,
+  "TaskStatus": "InProgress",
+  "TaskType": "SQL Database to Azure Storage",
+  "Enabled": 1,
+  "ExecutionUid": "041b98e5-ddfb-422a-869c-3cc7b59914b7",
+  "NumberOfRetries": 2,
+  "DegreeOfCopyParallelism": 1,
+  "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+  "ScheduleMasterId": "2",
+  "TaskGroupConcurrency": "10",
+  "TaskGroupPriority": 0,
+  "TaskExecutionType": "ADF",
+  "DataFactory": {
+    "Id": 1,
+    "Name": "adsgofastdatakakeacceladf",
+    "ResourceGroup": "AdsGoFastDataLakeAccel",
+    "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
+    "ADFPipeline": "OnP-SQL-AZ-Storage-Parquet-OnP-SH-IR"
+  },
+  "Source": {
+    "Type": "SQL Server",
+    "Database": {
+      "SystemName": "adsgofast-onpre",
+      "Name": "AdventureWorks2017",
+      "AuthenticationType": "SQLAuth",
+      "Username": "sqladfir",
+      "PasswordKeyVaultSecretName": "adsgofast-onpre-sqladfir-password"
+    },
+    "Extraction": {
+      "Type": "Table",
+      "IncrementalType": "Full",
+      "IncrementalField": null,
+      "IncrementalColumnType": null,
+      "ChunkField": null,
+      "ChunkSize": null,
+      "TableSchema": "dbo",
+      "TableName": "AWBuildVersion",
+      "SQLStatement": "SELECT * FROM dbo.AWBuildVersion"
+    },
+    "Execute": {}
+  },
+  "Target": {
+    "Type": "Azure Blob",
+    "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+    "StorageAccountContainer": "datalakeraw",
+    "StorageAccountAccessMethod": "MSI",
+    "RelativePath": "AdventureWorks2017/dbo/AWBuildVersion/2020/8/8/20/0/",
+    "DataFileName": "dbo.AWBuildVersion.parquet",
+    "SchemaFileName": "dbo.AWBuildVersion.json",
+    "FirstRowAsHeader": null,
+    "SheetName": null,
+    "SkipLineCount": null,
+    "MaxConcorrentConnections": null
+  }
+}

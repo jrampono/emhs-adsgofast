@@ -1,0 +1,102 @@
+@model IEnumerable<WebApplication.Models.TaskMaster>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1><i id="PageIcon" class="fas fa-list"></i> Task Masters</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>           
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "TaskMaster";
+
+        function UpdateTaskMasterActiveYN(dt, Status) {
+            var selected_indexes = dt.rows({ selected: true }).indexes();
+            var selected_pkeys = [];
+            $.each(selected_indexes, function (index, i) {
+                selected_pkeys.push(dt.data()[i]["TaskMasterId"]);
+            });
+
+            $.post('@Url.Action("UpdateTaskMasterActiveYN")', { Pkeys: JSON.stringify(selected_pkeys, null, 2), Status: Status })
+                .done(function (data) {
+                    dt.ajax.reload(null, false);
+                    toastr.success("Successfully Updated Rows");
+                });
+        }
+
+        function CopyTaskMaster(dt, Status) {
+            var selected_indexes = dt.rows({ selected: true }).indexes();
+            var selected_pkeys = [];
+            $.each(selected_indexes, function (index, i) {
+                selected_pkeys.push(dt.data()[i]["TaskMasterId"]);
+            });
+
+            $.post('@Url.Action("CopyTaskMaster")', { Pkeys: JSON.stringify(selected_pkeys, null, 2), Status: Status })
+                .done(function (data) {
+                    dt.ajax.reload(null, false);
+                    toastr.success("Successfully Updated Rows");
+                });
+        }
+
+
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+
+            //This is where custom buttons and things would go.
+            buttons = [
+
+                {
+                    extend: 'selected',
+                    className: 'btn-warning ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Copy Tasks" class="fas fa-copy" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        CopyTaskMaster(dt, "Untried");
+                    }
+                },
+                {
+                    extend: 'selected',
+                    className: 'btn-danger ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Deactivate Tasks" class="fas fa-times-circle" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        UpdateTaskMasterActiveYN(dt, false);
+                    },
+                },
+                {
+                    extend: 'selected',
+                    className: 'btn-success ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Activate Tasks" class="fas fa-check-circle" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        UpdateTaskMasterActiveYN(dt, true);
+                    }
+                },
+
+            ];
+
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

@@ -1,0 +1,77 @@
+@using Humanizer; 
+@model WebApplication.Models.SourceAndTargetSystems
+
+@{
+    ViewData["Title"] = "Edit - " + "SourceAndTargetSystems".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+        <div class="alert alert-danger" role="alert">Caution. These records are critical to the application and changes may cause certain features to break.</div>    
+
+<h1>Edit</h1>
+
+<h4> @("SourceAndTargetSystems".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SystemId" />
+            <div class="form-group">
+                <label asp-for="SystemName" class="control-label"></label>
+                <input asp-for="SystemName" class="form-control" />
+                <span asp-validation-for="SystemName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemType" class="control-label"></label>
+                <input asp-for="SystemType" class="form-control" />
+                <span asp-validation-for="SystemType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemDescription" class="control-label"></label>
+                <input asp-for="SystemDescription" class="form-control" />
+                <span asp-validation-for="SystemDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemServer" class="control-label"></label>
+                <input asp-for="SystemServer" class="form-control" />
+                <span asp-validation-for="SystemServer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemAuthType" class="control-label"></label>
+                <input asp-for="SystemAuthType" class="form-control" />
+                <span asp-validation-for="SystemAuthType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemUserName" class="control-label"></label>
+                <input asp-for="SystemUserName" class="form-control" />
+                <span asp-validation-for="SystemUserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemSecretName" class="control-label"></label>
+                <input asp-for="SystemSecretName" class="form-control" />
+                <span asp-validation-for="SystemSecretName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemKeyVaultBaseUrl" class="control-label"></label>
+                <input asp-for="SystemKeyVaultBaseUrl" class="form-control" />
+                <span asp-validation-for="SystemKeyVaultBaseUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystemJson" class="control-label"></label>
+                <input asp-for="SystemJson" class="form-control" />
+                <span asp-validation-for="SystemJson" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveYn" /> @Html.DisplayNameFor(model => model.ActiveYn)
+                </label>
+            </div>
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary" ><i class="fa fa-arrow-circle-left"></i> Back</a>            
+                <input type="submit" value="Save" class="btn btn-danger" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "AFExecutionSummary";
+}
+
+<h1>Azure Function Executions (Last 24 Hours)</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "AFExecutionSummary";
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+            setInterval(function () {
+                table.ajax.reload(null, false); // user paging is not reset on reload
+            }, 30000);
+
+            var DrillButton = {
+                extend: 'selectedSingle',
+                className: 'btn-outline-primary ads-btn-nav',
+                text: '<i data-toggle="tooltip" class="fas fa-bolt" style=\'width: 16px\' title="View Errors"></i>',
+                action: function (e, dt, node, config) {
+                    window.location = '@Url.Action("IndexDataTable", "AFLogMonitor")' + "?&TimeFrame=24&severityLevel=2&operation_Name=" + dt.data()[dt.rows({ selected: true }).indexes()[0]][0];
+                }
+            };
+            buttons = [];
+            buttons.push(DrillButton);
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+            
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

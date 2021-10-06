@@ -1,0 +1,18 @@
+{
+	"name": "GenericBlobStorage",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureBlobStorage",
+		"parameters": {
+			"StorageAccountEndpoint": {
+				"type": "String",
+				"defaultValue": ""
+			}
+		},
+		"typeProperties": {
+			"serviceEndpoint": "@{linkedService().StorageAccountEndpoint}"
+		},
+		"description": "Test Description",
+		"annotations": []
+	}
+}

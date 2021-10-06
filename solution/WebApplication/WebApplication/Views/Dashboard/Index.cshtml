@@ -1,0 +1,244 @@
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string navpillid = (string)ViewContext.RouteData.Values["id"];
+    if (navpillid == null) { navpillid = "1"; }
+}
+
+
+
+<br />
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <h3><a>Configuration Statistics</a></h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="card-deck">
+            
+            <div class="card primary text-center mb-3 bg-light">
+                <div class="card-header"><i class="fas fa-layer-group"></i>  Subject Areas</div>
+                <div class="card-body text-primary">
+                    <h5 class="card-title">@this.Model[0].SubjectAreas.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/SubjectArea/IndexDataTable" class="btn btn-outline-primary text-center">View Details</a>
+                </div>
+            </div>
+            <div class="card primary text-center mb-3 bg-light">
+                <div class="card-header"><i class="fas fa-object-group"></i>  Task Groups</div>
+                <div class="card-body text-primary">
+                    <h5 class="card-title">@this.Model[0].TaskGroups.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/TaskGroup/IndexDataTable" class="btn btn-outline-primary text-center">View Details</a>
+                </div>
+            </div>
+
+
+            <div class="card primary text-center mb-3 bg-light">
+                <div class="card-header"><i class="fas fa-list"></i>  Task Masters</div>
+                <div class="card-body text-primary">
+                    <h5 class="card-title">@this.Model[0].TaskMasters.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/TaskMaster/IndexDataTable" class="btn btn-outline-primary text-center">View Details</a>
+                </div>
+            </div>
+            <div class="card primary text-center mb-3 bg-light">
+                <div class="card-header"><i class="fas fa-bullseye"></i>  Systems</div>
+                <div class="card-body text-primary">
+                    <h5 class="card-title">@this.Model[0].Systems.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/SourceAndTargetSystems/IndexDataTable" class="btn btn-outline-primary text-center">View Details</a>
+                </div>
+            </div>
+            <div class="card primary text-center mb-3 bg-light">
+                <div class="card-header"><i class="fas fa-calendar-week"></i>  Schedules</div>
+                <div class="card-body text-primary">
+                    <h5 class="card-title">@this.Model[0].Schedules.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/ScheduleMaster/IndexDataTable" class="btn btn-outline-primary text-center">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-sm">
+                <h3><a>Activity Statistics</a></h3>
+            </div>
+            @*<div class="col-sm">
+            <span id="TimeRangeSlider-label-1" class="sr-only">Example slider label</span>
+            <input id="TimeRangeSlider" type="text"
+                   data-provide="slider"
+                   data-slider-ticks="[1, 2, 3, 4]"
+                   data-slider-ticks-labels='["Last Hour", "Last 24 Hours", "Last 72 Hours", "Last 7 Days"]'
+                   data-slider-min="1"
+                   data-slider-max="4"
+                   data-slider-step="1"
+                   data-slider-value="1"
+                   data-slider-tooltip="hide" />
+        </div>*@
+            <div class="btn-group">
+                <ul id="TimeRangeSelector" class="nav nav-pills card-header-pills">
+                    <li class="nav-item">
+                        <a id="1" class="nav-link " href="@Url.Action("Index", "Dashboard", new { id = 1 })">Last Hour</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="24" class="nav-link" href="@Url.Action("Index", "Dashboard", new { id = 24 })">Last 24 Hours</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="72" class="nav-link" href="@Url.Action("Index", "Dashboard", new { id = 72 })">Last 72 Hours</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="168" class="nav-link" href="@Url.Action("Index", "Dashboard", new { id = 168 })">Last 7 Days</a>
+                    </li>
+                </ul>
+            </div>       
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="card-deck">
+
+            <div class="card text-white  text-center  bg-danger mb-3">
+                <div class="card-header"><i class="fas fa-thumbs-down"></i>  Failed Tasks</div>
+                <div class="card-body">
+                    <h5 class="card-title">@this.Model[0].FailedTasks.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/TaskInstance/IndexDataTable?LastExecutionStatus=Failed" class="btn bg-light btn-outline-danger text-center">View Details</a>
+                </div>
+            </div>
+
+
+            <div class="card text-white text-center  bg-success  mb-3">
+                <div class="card-header"><i class="fas fa-thumbs-up"></i>  Succeeded Tasks</div>
+                <div class="card-body">
+                    <h5 class="card-title">@this.Model[0].SucceededTasks.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/TaskInstance/IndexDataTable?LastExecutionStatus=Complete" class="btn bg-light btn-outline-success text-center">View Details</a>
+                </div>
+            </div>
+
+            <div class="card text-white text-center  bg-primary mb-3">
+                <div class="card-header "><i class="fas fa-pause"></i>  Untried Tasks</div>
+                <div class="card-body">
+                    <h5 class="card-title">@this.Model[0].UntriedTasks.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/TaskInstance/IndexDataTable?LastExecutionStatus=Untried" class="btn bg-light btn-outline-primary text-center">View Details</a>
+                </div>
+            </div>
+
+            <div class="card text-white text-center  bg-warning mb-3">
+                <div class="card-header "><i class="fas fa-running"></i>  In Progress Tasks</div>
+                <div class="card-body">
+                    <h5 class="card-title">@this.Model[0].InProgressTasks.ToString("N0")</h5>
+                    <p class="card-text"></p>
+                    <a href="/TaskInstance/IndexDataTable?LastExecutionStatus=InProgress" class="btn bg-light btn-outline-warning text-center">View Details</a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="">
+            @*<div class="card text-center border-primary mb-3">
+                    <div class="card-header "><i class="fas fa-dollar-sign"></i>  Estimated Cost</div>
+                    <div class="card-body text-primary">
+                        <h5 class="card-title">@this.Model[0].EstimatedCost.ToString("C")</h5>
+                        <p class="card-text"></p>
+                        <a href="/ReportsAndStatistics/IndexDataTable?&StatsLevel=TaskGroup" class="btn bg-light btn-outline-primary text-center">View Details</a>
+                    </div>
+                </div>
+                <div class="card text-center border-primary mb-3">
+                    <div class="card-header "><i class="fas fa-copy"></i>  Average Execution Time In Seconds</div>
+                    <div class="card-body text-primary">
+                        <h5 class="card-title">@this.Model[0].AvgExecTimeSec("N0")</h5>
+                        <p class="card-text"></p>
+                        <a href="/ReportsAndStatistics/IndexDataTable?&StatsLevel=TaskGroup" class="btn bg-light btn-outline-primary text-center">View Details</a>
+                    </div>
+                </div>
+                <div class="card text-center border-primary mb-3">
+                    <div class="card-header "><i class="fas fa-copy"></i>  Rows Copied</div>
+                    <div class="card-body text-primary">
+                        <h5 class="card-title">@this.Model[0].RowsCopied.ToString("N0")</h5>
+                        <p class="card-text"></p>
+                        <a href="/ReportsAndStatistics/IndexDataTable?&StatsLevel=TaskGroup" class="btn bg-light btn-outline-primary text-center">View Details</a>
+                    </div>
+                </div>
+                <div class="card text-center border-primary mb-3">
+                    <div class="card-header "><i class="fas fa-book-reader"></i>  Data Read</div>
+                    <div class="card-body text-primary">
+                        <h5 class="card-title">@this.Model[0].DataRead.ToString("N0")</h5>
+                        <p class="card-text"></p>
+                        <a href="/ReportsAndStatistics/IndexDataTable?&StatsLevel=TaskGroup" class="btn bg-light btn-outline-primary text-center">View Details</a>
+                    </div>
+                </div>*@
+            <br />
+            <div class="card text-center bg-light mx-auto" style="max-width: 550px">
+                <div class="card-header "><i class="fas fa-chart-line"></i>  Other Metrics</div>
+                <div class="card-body text-primary">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="fas fa-money-bill"></i></td>
+                                <td class="text-left "><a class="col-form-label">Estimated Cost</a></td>
+                                <td class="text-right">@this.Model[0].EstimatedCost.ToString("C")</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-running"></i></td>
+                                <td class="text-left"><a class="col-form-label">Average Execution Time In Seconds</a></td>
+                                <td class="text-right">@this.Model[0].AvgExecTimeSec("N0")</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-copy"></i></td>
+                                <td class="text-left"><a class="col-form-label">Rows Copied</a></td>
+                                <td class="text-right">@this.Model[0].RowsCopied.ToString("N0")</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-book-reader"></i></td>
+                                <td class="text-left"><a class="col-form-label">Data Read</a></td>
+                                <td class="text-right">@this.Model[0].DataRead.ToString("N0")</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-pen"></i></td>
+                                <td class="text-left"><a class="col-form-label">Data Written</a></td>
+                                <td class="text-right">@this.Model[0].DataWritten.ToString("N0")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    <a id="ReportsAndStatsLink" href="/ReportsAndStatistics/IndexDataTable?&StatsLevel=TaskGroup" class="btn bg-light btn-outline-primary text-center">View Details</a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+    <link rel="stylesheet" href="~/lib/bootstrap-slider/css/bootstrap-slider.min.css" />
+    <script src="~/lib/bootstrap-slider/bootstrap-slider.min.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+                var ModelName = "Dashboard";
+                $(document).ready(function () {
+                    var trs = $("#TimeRangeSelector");
+                    var tr = @navpillid;
+                    if (tr === undefined) { tr = 1;}
+                    //$(".nav li", trs).removeClass("active");//this will remove the active class from
+                    //previously active menu item
+
+                    $("#ReportsAndStatsLink").attr("href","/ReportsAndStatistics/IndexDataTable?&StatsLevel=TaskGroup&TimeFrame=" + tr);
+                    $('#'+tr, trs).addClass('active');
+                    setTimeout("location.reload(true);", 30000);
+                });
+    </script>
+}

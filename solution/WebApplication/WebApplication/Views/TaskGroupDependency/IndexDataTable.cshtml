@@ -1,0 +1,26 @@
+@using Humanizer; 
+@{
+    ViewData["Title"] = typeof(TaskGroupDependency).Name.Pluralize().Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1><i id="PageIcon" class="fas fa-indent"></i> @typeof(TaskGroupDependency).Name.Pluralize().Humanize(LetterCasing.Title)</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "TaskGroupDependency";
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

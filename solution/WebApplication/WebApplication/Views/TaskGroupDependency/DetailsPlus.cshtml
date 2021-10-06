@@ -1,0 +1,55 @@
+@using Humanizer;
+@model WebApplication.Models.TaskGroupDependency
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>@typeof(TaskGroupDependency).Name.Humanize()</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AncestorTaskGroupId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AncestorTaskGroupId)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DescendantTaskGroupId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DescendantTaskGroupId)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DependencyType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DependencyType)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="IndexDataTable" title="Back to List" class="btn-sm btn-secondary"><i class="fa fa-arrow-circle-left"></i> Back</a>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+		$(document).ready(function ()
+        {
+            $(".jsonpretty").each(function (index) {
+                $(".jsonformatted", this).JSONView($(".jsonraw", this)[0].innerText);
+                $(".jsonraw", this)[0].innerText = null;
+            });
+
+		});
+    </script>
+}   

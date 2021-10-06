@@ -1,0 +1,49 @@
+@model IEnumerable<WebApplication.Models.TaskGroupDependency>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>TaskGroupDependencys - Browse</h1>
+
+<p>
+    <a class="btn-sm btn-dark details" asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th></th>
+             <th>
+                @Html.DisplayNameFor(model => model.AncestorTaskGroupId)
+            </th>
+             <th>
+                @Html.DisplayNameFor(model => model.DescendantTaskGroupId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DependencyType)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }, new {class="btn-sm btn-warning details"}) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */, new {class="btn-sm btn-info details"}}) |*@
+           @*         @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ }, new {class= "btn-sm btn-danger details"})*@
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AncestorTaskGroupId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DescendantTaskGroupId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DependencyType)
+                </td>
+            </tr>
+}
+    </tbody>
+</table>

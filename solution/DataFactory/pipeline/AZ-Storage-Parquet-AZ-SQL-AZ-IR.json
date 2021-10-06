@@ -1,0 +1,376 @@
+{
+	"name": "AZ-Storage-Parquet-AZ-SQL-AZ-IR",
+	"properties": {
+		"activities": [
+			{
+				"name": "Switch Storage Type",
+				"type": "Switch",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@pipeline().parameters.TaskObject.Source.Type",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "ADLS",
+							"activities": [
+								{
+									"name": "Copy ADLS to Azure SQL",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Pipeline AF Log - ADLS to Azure SQL Start",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"preCopyScript": {
+												"value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
+												"type": "Expression"
+											},
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"parallelCopies": {
+											"value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLSParquet_AZ_IR",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@pipeline().parameters.TaskObject.Target.DataFileName",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable_AZ_IR",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": {
+													"value": "@pipeline().parameters.TaskObject.Source.StagingTableSchema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@pipeline().parameters.TaskObject.Source.StagingTableName",
+													"type": "Expression"
+												},
+												"Server": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+													"type": "Expression"
+												},
+												"Database": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Pipeline AF Log - ADLS to Azure SQL Start",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ-Function-Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "[\n{\n    \"TaskInstanceId\":@{pipeline().parameters.TaskObject.TaskInstanceId},\n    \"ExecutionUid\":@{pipeline().parameters.TaskObject.ExecutionUid},\n    \"RunId\":@{pipeline().RunId},    \n    \"StartTime\":@{utcnow()},\n    \"Status\":\"Processing\",\n    \"Activity\":\"Copy ADLS to Azure SQL\",\n    \"Comments\":\"\"\n}\n]",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Put"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - ADLS to Azure SQL Succeed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy ADLS to Azure SQL",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ-Function-Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "[\n{\n    \"TaskInstanceId\":@{pipeline().parameters.TaskObject.TaskInstanceId},\n    \"ExecutionUid\":@{pipeline().parameters.TaskObject.ExecutionUid},\n    \"RunId\":@{pipeline().RunId},    \n    \"EndTime\":@{utcnow()},\n    \"Status\":\"Completed\",\n    \"Activity\":\"Copy ADLS to Azure SQL\",\n    \"Comments\":\"\"\n}\n]",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Put"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - ADLS to Azure SQL Failed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy ADLS to Azure SQL",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ-Function-Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "[\n{\n    \"TaskInstanceId\":@{pipeline().parameters.TaskObject.TaskInstanceId},\n    \"ExecutionUid\":@{pipeline().parameters.TaskObject.ExecutionUid},\n    \"RunId\":@{pipeline().RunId},    \n    \"EndTime\":@{utcnow()},\n    \"Status\":\"Failed\",\n    \"Activity\":\"Copy ADLS to Azure SQL\",\n    \"Comments\":@{activity('Copy ADLS to Azure SQL').errors}\n}\n]",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Put"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "Azure Blob",
+							"activities": [
+								{
+									"name": "Copy Blob to Azure SQL",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Pipeline AF Log - Blob to Azure SQL Start",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"preCopyScript": {
+												"value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
+												"type": "Expression"
+											},
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"parallelCopies": {
+											"value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "BlobParquet_AZ_IR",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@pipeline().parameters.TaskObject.Target.DataFileName",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable_AZ_IR",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": {
+													"value": "@pipeline().parameters.TaskObject.Source.StagingTableSchema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@pipeline().parameters.TaskObject.Source.StagingTableName",
+													"type": "Expression"
+												},
+												"Server": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+													"type": "Expression"
+												},
+												"Database": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Pipeline AF Log - Blob to Azure SQL Start",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ-Function-Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "[\n{\n    \"TaskInstanceId\":@{pipeline().parameters.TaskObject.TaskInstanceId},\n    \"ExecutionUid\":@{pipeline().parameters.TaskObject.ExecutionUid},\n    \"RunId\":@{pipeline().RunId},    \n    \"StartTime\":@{utcnow()},\n    \"Status\":\"Processing\",\n    \"Activity\":\"Copy Blob to Azure SQL\",\n    \"Comments\":\"\"\n}\n]",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Put"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - BLOB to Azure SQL Succeed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Blob to Azure SQL",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ-Function-Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "[\n{\n    \"TaskInstanceId\":@{pipeline().parameters.TaskObject.TaskInstanceId},\n    \"ExecutionUid\":@{pipeline().parameters.TaskObject.ExecutionUid},\n    \"RunId\":@{pipeline().RunId},    \n    \"EndTime\":@{utcnow()},\n    \"Status\":\"Completed\",\n    \"Activity\":\"Copy Blob to Azure SQL\",\n    \"Comments\":\"\"\n}\n]",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Put"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - BLOB to Azure SQL Failed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Blob to Azure SQL",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ-Function-Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "[\n{\n    \"TaskInstanceId\":@{pipeline().parameters.TaskObject.TaskInstanceId},\n    \"ExecutionUid\":@{pipeline().parameters.TaskObject.ExecutionUid},\n    \"RunId\":@{pipeline().RunId},    \n    \"EndTime\":@{utcnow()},\n    \"Status\":\"Failed\",\n    \"Activity\":\"Copy Blob to Azure SQL\",\n    \"Comments\":@{activity('Copy Blob to Azure SQL').errors}\n}\n]",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Put"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"TaskObject": {
+				"type": "object"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Data Movement/Auto Resolve IR"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-07-23T08:15:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

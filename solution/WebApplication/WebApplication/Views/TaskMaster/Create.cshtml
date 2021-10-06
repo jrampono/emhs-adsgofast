@@ -1,0 +1,81 @@
+@using Humanizer;
+@model WebApplication.Models.TaskMaster
+
+@{
+    ViewData["Title"] = "Create - " + "TaskMaster".Humanize(LetterCasing.Title);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4> @("TaskMaster".Humanize(LetterCasing.Title))</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TaskMasterName" class="control-label"></label>
+                <input asp-for="TaskMasterName" class="form-control" />
+                <span asp-validation-for="TaskMasterName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskTypeId" class="control-label"></label>
+                <select asp-for="TaskTypeId" class ="form-control" asp-items="ViewBag.TaskTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskGroupId" class="control-label"></label>
+                <select asp-for="TaskGroupId" class ="form-control" asp-items="ViewBag.TaskGroupId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleMasterId" class="control-label"></label>
+                <select asp-for="ScheduleMasterId" class ="form-control" asp-items="ViewBag.ScheduleMasterId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="SourceSystemId" class="control-label"></label>
+                <select asp-for="SourceSystemId" class ="form-control" asp-items="ViewBag.SourceSystemId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TargetSystemId" class="control-label"></label>
+                <select asp-for="TargetSystemId" class ="form-control" asp-items="ViewBag.TargetSystemId"></select>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="AllowMultipleActiveInstances" /> @Html.DisplayNameFor(model => model.AllowMultipleActiveInstances)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskDatafactoryIr" class="control-label"></label>
+                <input asp-for="TaskDatafactoryIr" class="form-control" />
+                <span asp-validation-for="TaskDatafactoryIr" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskMasterJson" class="control-label"></label>
+                <input asp-for="TaskMasterJson" class="form-control" />
+                <span asp-validation-for="TaskMasterJson" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveYn" /> @Html.DisplayNameFor(model => model.ActiveYn)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="DependencyChainTag" class="control-label"></label>
+                <input asp-for="DependencyChainTag" class="form-control" />
+                <span asp-validation-for="DependencyChainTag" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataFactoryId" class="control-label"></label>
+                <input asp-for="DataFactoryId" class="form-control" />
+                <span asp-validation-for="DataFactoryId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <a href="javascript:history.go(-1)" title="Back to List" class="btn btn-secondary" ><i class="fa fa-arrow-circle-left"></i> Back</a>            
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

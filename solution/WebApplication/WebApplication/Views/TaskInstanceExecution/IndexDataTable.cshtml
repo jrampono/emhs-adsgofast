@@ -1,0 +1,69 @@
+@model IEnumerable<WebApplication.Models.TaskInstanceExecution>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1><i id="PageIcon" class="fas fa-bolt"></i> Task Instance Executions</h1>
+<table id="adsgofast_tablelist" class="table table-striped">
+    <thead class="thead">
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var ModelName = "TaskInstanceExecution";
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+
+            //This is where custom buttons and things would go.
+            buttons = [
+
+                {
+                   
+                    extend: 'selectedSingle',
+                    className: 'btn-outline-primary ads-btn-nav',
+                    text:'<i data-toggle="tooltip" class="fas fa-list style="width: 16px" title="View Task Master"></i>',
+                    action: function (e, dt, node, config) {
+                        window.location = "/TaskInstance/IndexDataTable?&TaskInstanceId=" + dt.data()[dt.rows({ selected: true }).indexes()[0]]["TaskInstanceId"];
+                    }
+                },
+                {
+
+                    extend: 'selectedSingle',
+                    className: 'btn-outline-danger ads-btn-nav',
+                    text: '<i data-toggle="tooltip" class="fas fa-industry style="width: 16px;" title="View ADF Activity Errors"></i>',
+                    action: function (e, dt, node, config) {
+                        window.location = "/ADFActivityErrors/IndexDataTable?&TaskInstanceId=" + dt.data()[dt.rows({ selected: true }).indexes()[0]]["TaskInstanceId"] + "&ExecutionUid=" + dt.data()[dt.rows({ selected: true }).indexes()[0]]["ExecutionUid"];
+                    }
+                }
+                 
+                
+
+            ];
+
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
+        $(document).ready(function () {
+            DataTablesGridPrep();
+        });
+    </script>
+}  

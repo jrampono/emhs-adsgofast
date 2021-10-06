@@ -1,0 +1,3 @@
+﻿Hi {Alert.EmailRecepientName},
+We have received the file below and are processing it. We will be in contact with you shortly to inform you if processing was successful.
+File Received is {Source.RelativePath}{Source.DataFileName}.
