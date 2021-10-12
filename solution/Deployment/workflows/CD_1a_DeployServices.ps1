@@ -24,7 +24,10 @@ if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_EnableDeploy")) -eq "True
 
     Invoke-Expression -Command  ".\Steps\CD_DeployFunctionApp.ps1"
 
-    #Invoke-Expression -Command  ".\Steps\CD_DeployVnet.ps1"
+    if($env:AdsOpts_CD_Services_Vnet_Enable -eq "True")
+    {
+        Invoke-Expression -Command  ".\Steps\CD_DeployVnet.ps1"           #vNet Integration
+    }
 
     Invoke-Expression -Command  ".\Steps\CD_DeployAzureSqlServer.ps1"
 
