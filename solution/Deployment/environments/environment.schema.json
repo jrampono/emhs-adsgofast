@@ -785,8 +785,22 @@
                                     },
                                     "Vnet": {
                                         "Enable": true,
-                                        "Name": "AdsGoFastVnet"
-                                    },
+                                        "Name": "AdsGoFastVnet",
+                                        "ApplyNamePostFix": true,
+                                        "vNetAddressRange": "10.3.0.0/16",
+                                        "BastionSubnetAddressRange": "10.3.1.0/27",
+                                        "DataSubnetAddressRange": "10.3.2.0/27",
+                                        "WebAppSubnetAddressRange": "10.3.3.0/27",
+                                        "FuncAppSubnetAddressRange": "10.3.4.0/27",
+                                        "BastionSubnetName":"AzureBastionSubnet",
+                                        "DataSubnetName":"Data",
+                                        "WebAppSubnetName":"WebApp",
+                                        "FuncAppSubnetName":"FuncApp"
+                                      },
+                                    "Bastion": {          
+                                        "Name": "adsgfbastion",
+                                        "ApplyNamePostFix": true
+                                      },
                                     "Storage": {
                                         "Logging": {
                                             "Name": "logstg",
