@@ -86,10 +86,10 @@ namespace AdsGoFast
                     { "TargetSystemUidInPHI", _targetSystemUidInPHI },
 
                 };
-                string _plainTextContent = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("HTMLTemplateLocation") + _emailTemplateFileName + ".txt");
+                string _plainTextContent = System.IO.File.ReadAllText(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.HTMLTemplateLocation,_emailTemplateFileName + ".txt"));
                 _plainTextContent = _plainTextContent.FormatWith(Params, MissingKeyBehaviour.ThrowException, null, '{', '}');
 
-                string _htmlContent = System.IO.File.ReadAllText(Shared.GlobalConfigs.GetStringConfig("HTMLTemplateLocation") + _emailTemplateFileName + ".html");
+                string _htmlContent = System.IO.File.ReadAllText(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.HTMLTemplateLocation, _emailTemplateFileName + ".html"));
                 _htmlContent = _htmlContent.FormatWith(Params, MissingKeyBehaviour.ThrowException, null, '{', '}');
 
                 var apiKey = System.Environment.GetEnvironmentVariable("SENDGRID_APIKEY");

@@ -368,7 +368,7 @@ namespace AdsGoFast
         public static void GetPipelinesByFactory(string subscriptionId, string resourceGroup, string factoryName)
         {
                    
-            var _Token = AdsGoFast.Shared.Azure.AzureSDK.GetAzureRestApiToken("https://management.azure.com");
+            var _Token = Shared._AzureAuthenticationCredentialProvider.GetAzureRestApiToken("https://management.azure.com");
             using (var client = new System.Net.Http.HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _Token);

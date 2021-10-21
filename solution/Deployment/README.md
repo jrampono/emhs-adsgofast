@@ -1,6 +1,22 @@
 # Azure Data Service Go Fast - Deployment
 
-In this section you will automatically provision all Azure resources required to run ADSGoFast Framework. We will use a pre-defined ARM template with the definition of all Azure services used for a small development environment.
+In this section you will automatically provision all Azure resources required to run ADSGoFast Framework. We will use a docker container to provide you with an OS agnostic deployment environment with all of the nessessary tools.
+
+
+--------------------------------------
+## Requirements
+
+Install and/or update with the latest version for the following:
+
+- PowerShell (https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7.1)
+- Latest Azure CLI (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- VS Code (https://code.visualstudio.com/download)
+- Git (https://git-scm.com/downloads)
+- In PowerShell run the following:
+  - Install-Module -Name Az -AllowClobber
+  - Install-Module AzureADPreview
+
+
 
 ## Azure services
 
@@ -28,19 +44,6 @@ hpnw-DM-ADSGoFast-Dev-RG        | App Service plan for Web App ||
 logstg*suffix*                  | Azure Blob Storage | LRS - StorageV2 | https://azure.microsoft.com/en-us/pricing/details/storage/blobs/
 
 <br>**IMPORTANT**: When you deploy the resources in your own subscription you are responsible for the charges related to the use of the services provisioned. If you don't want any extra charges associated with the resources you should delete the resource group and all resources in it.calc
-
---------------------------------------
-## Requirements
-
-Install and/or update with the latest version for the following:
-
-- PowerShell (https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7.1)
-- Latest Azure CLI (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-- VS Code (https://code.visualstudio.com/download)
-- Git (https://git-scm.com/downloads)
-- In PowerShell run the following:
-  - Install-Module -Name Az -AllowClobber
-  - Install-Module AzureADPreview
 
 --------------------------------------
 ## Deploying and Configuring ADS Go Fast

@@ -208,7 +208,7 @@ namespace AdsGoFast
                             { "SourceSystemId", _SourceSystemId.ToString()}
                         };
                         
-                        string MergeSQL = GenerateSQLStatementTemplates.GetSQL(Shared.GlobalConfigs.GetStringConfig("SQLTemplateLocation"), "MergeIntoAzureStorageListing", SqlParams);
+                        string MergeSQL = GenerateSQLStatementTemplates.GetSQL(System.IO.Path.Combine(Shared._ApplicationBasePath, Shared._ApplicationOptions.LocalPaths.SQLTemplateLocation), "MergeIntoAzureStorageListing", SqlParams);
                         _con.ExecuteWithRetry(MergeSQL, 120);
                         if ((JArray)taskInformation["Alerts"] != null)
                         {

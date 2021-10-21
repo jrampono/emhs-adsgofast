@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="0-1-0-beta\A-Journaled\008-SampleTasks_SourceAndTargetSystems.sql" />
+    <None Remove="0-1-0-beta\A-Journaled\009-SampleTasks_TaskMasterWaterMark.sql" />
     <None Remove="0-1-0-beta\B-Always\001-Schemas.sql" />
     <None Remove="0-1-0-beta\B-Always\002-Tables.sql" />
     <None Remove="0-1-0-beta\B-Always\003-StoredProcsEtc.sql" />
@@ -23,6 +25,10 @@
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\005-SampleTasks_Base.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\006-SampleTasks_TaskMaster.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\007-SampleTasks_TaskMasterWaterMark.sql" />
+    <EmbeddedResource Include="0-1-0-beta\A-Journaled\008-SampleTasks_SourceAndTargetSystems.sql" />
+    <EmbeddedResource Include="0-1-0-beta\A-Journaled\009-SampleTasks_TaskMasterWaterMark.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -31,14 +37,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="0-1-0-beta\B-Always\" />
     <Folder Include="0-1-1-beta\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

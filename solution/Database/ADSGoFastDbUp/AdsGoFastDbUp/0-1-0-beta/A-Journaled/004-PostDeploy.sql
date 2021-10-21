@@ -5,6 +5,10 @@
 
 -----------------------------------------------------------------------*/
 
+/* 
+Inserts Task Type and Task Type Mapping
+*/
+
 SET IDENTITY_INSERT [dbo].[TaskType] ON 
 
 INSERT [dbo].[TaskType] ([TaskTypeId], [TaskTypeName], [TaskExecutionType], [TaskTypeJson], [ActiveYN]) VALUES (1, N'Azure Storage to SQL Database', N'ADF', NULL, 1)

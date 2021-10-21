@@ -1,0 +1,196 @@
+{
+  "$schema": "./environment.schema.json",
+  "AdsOpts": {
+    "CI": {
+      "Enable": true,
+      "BuildFunctionApp": true,
+      "BuildWebApp": true,
+      "BuildAdsGoFastDatabase": true
+    },
+    "CD": {
+      "EnableDeploy": true,
+      "EnableConfigure": true,
+      "ServicePrincipals": {
+        "DeploymentSP": {
+          "Enable": true,
+          "Name": "AdsGoFastDeployer",
+          "ApplyNamePostFix": false
+        },
+        "WebAppAuthenticationSP": {
+          "Enable": true,
+          "Name": "AdsGFWebAuthSP",
+          "ApplyNamePostFix": true,
+          "ClientId": "d733e6a7-01e6-4af6-a6b8-99b029ed7237"
+        },
+        "FunctionAppAuthenticationSP": {
+          "Enable": true,
+          "Name": "AdsGFFuncAppAuthSP",
+          "ApplyNamePostFix": true,
+          "ClientId": "cb3e089a-6d2d-4b3c-949f-353437b78e23"
+        }
+      },
+      "ResourceGroup": {
+        "Id": "/subscriptions/035a1364-f00d-48e2-b582-4fe125905ee3/resourceGroups/AdsTest",
+        "Enable": true,
+        "Subscription": "Jorampon Internal Consumption",
+        "Domain": "microsoft.com",
+        "TenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+        "Location": "australiaeast",
+        "Name": "AdsTest",
+        "AADUser": "jorampon@microsoft.com",
+        "Hash": "DummyValueToBeReplacedAtRuntime"
+      },
+      "FolderPaths": {
+        "ArmTemplates": "./arm",
+        "Environments": "./../environments",
+        "PublishZip": "./../bin/publish/zipped",
+        "PublishUnZip": "./../bin/publish/unzipped"
+      },
+      "AzureLoginOptions": {
+        "UseInteractiveAzCliLogin": true
+      },
+      "EnviroInstalls": {
+        "PerformLocalInstalls": true,
+        "PerformLocalInstallsAzCli": false,
+        "PerformLocalInstallsAzCliAddToPath": true
+      },
+      "ArmOptions": {
+        "PerformDeployment": false,
+        "PerformDeploymentStorageLogging": false,
+        "PerformDeploymentAppService": false
+      },
+      "Services": {
+        "UseARMDefaults": false,
+        "AppInsights": {
+          "Enable": true,
+          "Name": "adsgfappin",
+          "ApplyNamePostFix": true
+        },
+        "AppPlans": {
+          "WebApp": {
+            "Enable": true,
+            "Name": "adsgfappplanweb",
+            "ApplyNamePostFix": true,
+            "ResourceGroup": null
+          },
+          "FunctionApp": {
+            "Enable": true,
+            "Name": "adsgfappplanfnc",
+            "ApplyNamePostFix": true,
+            "ResourceGroup": null
+          }
+        },
+        "AzureSQLServer": {
+          "Enable": true,
+          "Name": "adsgfazsql",
+          "ApplyNamePostFix": true,
+          "AdminUser": "AdsAdmin",
+          "AdminPassword": "EPuiX2K0^T4t",
+          "AdsGoFastDB": {
+            "Enable": true,
+            "Name": "AdsGf",
+            "UpdateSourceAndTargetSystems": true,
+            "UpdateDataFactory": true,
+            "ApplyNamePostFix": false
+          },
+          "StagingDB": {
+            "Enable": true,
+            "Name": "AdsGfStaging",
+            "ApplyNamePostFix": false
+          },
+          "SampleDB": {
+            "Enable": true,
+            "Name": "AdsGfSample",
+            "ApplyNamePostFix": false
+          }
+        },
+        "CoreFunctionApp": {
+          "Enable": true,
+          "Name": "adsgofastfunc",
+          "ApplyNamePostFix": true,
+          "PrincipalId": ""
+        },
+        "DataFactory": {
+          "Enable": true,
+          "Name": "adsgfadf",
+          "ApplyNamePostFix": true,
+          "AzVnetIr": {
+            "Enable": true,
+            "Name": "SelfHostedIntegrationRuntime-Azure-VNET",
+            "Type": "ManagedVnet"
+          },
+          "OnPremVnetIr": {
+            "Enable": false,
+            "Name": "SelfHostedIntegrationRuntime-OnPem-Net",
+            "Type": "SelfHosted",
+            "IrInstallConfig":{
+                "LocalDrive":"C:",
+                "LocalVMFolder":"ADFInstaller",
+                "IrDownloadURL":"https://download.microsoft.com/download/E/4/7/E4771905-1079-445B-8BF9-8A1A075D8A10/IntegrationRuntime_5.9.7900.1.msi",
+                "JDKDownloadURL":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_windows_hotspot_11.0.12_7.msi",
+                "JDKInstallFolder":"c:\\Program Files\\Eclipse Foundation\\"
+            }
+          }
+        },
+        "WebSite": {
+          "Enable": true,
+          "Name": "adsgofastweb",
+          "ApplyNamePostFix": true,
+          "PrincipalId": ""
+        },
+        "LogAnalytics": {
+          "Enable": true,
+          "Name": "adsgofastloganalytics",
+          "ApplyNamePostFix": true
+        },
+        "KeyVault": {
+          "Enable": true,
+          "Name": "adsgfkv",
+          "ApplyNamePostFix": true
+        },
+        "Vnet": {
+          "Enable": true,
+          "Name": "AdsGoFastVnet",
+          "ApplyNamePostFix": true,
+          "vNetAddressRange": "10.3.0.0/16",
+          "BastionSubnetAddressRange": "10.3.1.0/27",
+          "DataSubnetAddressRange": "10.3.2.0/27",
+          "WebAppSubnetAddressRange": "10.3.3.0/27",
+          "FuncAppSubnetAddressRange": "10.3.4.0/27",
+          "BastionSubnetName":"AzureBastionSubnet",
+          "DataSubnetName":"Data",
+          "WebAppSubnetName":"WebApp",
+          "FuncAppSubnetName":"FuncApp"
+        },
+        "Bastion": {          
+          "Name": "adsgfbastion",
+          "ApplyNamePostFix": true
+        },
+        "Storage": {
+          "Logging": {
+            "Name": "logstg",
+            "ApplyNamePostFix": true,
+            "Enable": true,
+            "Dummy": ""
+          },
+          "ADLS": {
+            "Name": "adls",
+            "ApplyNamePostFix": true,
+            "Enable": true
+          },
+          "ADLSTransient": {
+            "Name": "adlstran",
+            "ApplyNamePostFix": true,
+            "Enable": false
+          },
+          "Blob": {
+            "Name": "blob",
+            "ApplyNamePostFix": true,
+            "Enable": true,
+            "ResourceId": ""
+          }
+        }
+      }
+    }
+  }
+}

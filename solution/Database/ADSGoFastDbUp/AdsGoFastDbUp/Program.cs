@@ -1,9 +1,12 @@
 ﻿using CommandLine;
 using DbUp;
+using DbUp.Engine.Transactions;
 using DbUp.Helpers;
 using DbUp.SqlServer;
+using Microsoft.Azure.Services.AppAuthentication;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -56,9 +59,10 @@ namespace AdsGoFastDbUp
                 Console.WriteLine("Quick Start Example!");
             }
 
+            
             //GetAllScripts so that we can loop through versions
             List<DbUp.Engine.SqlScript> AllScripts = DeployChanges.To
-                       .SqlDatabase(o.connectionString, "dbo", true).WithScriptsEmbeddedInAssembly(
+                       .SqlDatabase(o.connectionString, "dbo", false).WithScriptsEmbeddedInAssembly(
                               Assembly.GetExecutingAssembly()).Build().GetDiscoveredScripts();
 
             List<string> Releases = new List<string>();
@@ -114,7 +118,7 @@ namespace AdsGoFastDbUp
         private static DbUp.Engine.UpgradeEngine GetEngine(Options o, string filterstring, bool JournalYN)
         {
             DbUp.Builder.UpgradeEngineBuilder engine = DeployChanges.To
-                        .SqlDatabase(o.connectionString, "dbo",true)
+                        .SqlDatabase(o.connectionString, "dbo",false)
                         .WithVariable("TestVariable", "Value")
                         .WithTransactionPerScript()
                         .LogToConsole();
@@ -136,6 +140,6 @@ namespace AdsGoFastDbUp
                               s => s.Contains(filterstring)).JournalTo(new NullJournal())
                         .Build();
             }            
-        }
+        }   
     }
 }
