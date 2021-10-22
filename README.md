@@ -74,9 +74,6 @@ solution/PowerBi | Contains source code for the Power BI files that can be used 
 solution/WebApplication | Contains source code for the ADS Go Fast web front end
 ---
 
-## Documentation
-Documentation for this codebase is mantained in a **separate repository**. You can find it at [https://github.com/microsoft/azure-data-services-go-fast-documentation](https://github.com/microsoft/azure-data-services-go-fast-documentation). Please feel free to contribute to the documentation.
-
 ## Contributing 
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
