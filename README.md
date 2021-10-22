@@ -1,8 +1,83 @@
+# Azure Data Services Go Fast Codebase
+
+## Introduction
+
+The Azure Data Services Go Fast Codebase is a combination of Microsoft components designed to shorten the "time to value" when deploying an Azure Data Platform. Key features include:
+
+- Infrastucture as code (IAC) deployment of MVP Azure Data Platform 
+- "Out of the box" Continuous Integration and Continuous Deployment framework  
+- Enterpise grade security and monitoring with full support for Key Vault, VNETS, Private Enpoints and Managed Service Identities
+- Codeless Ingestion from commonly used enterprise source systems into an enterprise data lake
+- Users can interact with capabilities through a webpage and embedded dashboards.
+
+This project is composed of Microsoft components and Open-Source Software (OSS) and is provided to customers and partners at no charge. 
+
+At its core this project is intended to be an accelerator. As such, it is designed to accelerate the “time to value” in using the Microsoft components. As an accelerator, is it not for sale, nor is it a supported product.  
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+Deployment of this project requires a variety of services across Azure. Please ensure that you have access to these services before continuing on to the deployment section of this guide.
+
+>To get started you will need the following:
+>
+>- An active Azure Subscription & Empty Resource Group *
+>- Contributor rights on the Azure Resource Group
+>- Power BI Workspace
+
+You can sign up for an Azure subscription [here](https://azure.microsoft.com/en-us/free/) 
+
+Once you have your Prerequisite items, please move on to the Deployment Configuration step.
+
+---
+
+## Deployment Configuration
+
+>You will also need some development tools to edit and run the deployment scripts provided. It is recommended you use the following:
+>
+>- A windows based computer (local or cloud)
+>- [Visual Studio Code](https://visualstudio.microsoft.com/downloads/)
+>- [Docker Desktop](https://www.docker.com/products/docker-desktop)
+>- [Windows Store Ubuntu 18.04 LTS](https://www.microsoft.com/store/productId/9N9TNGVNDL3Q)
+
+The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite component without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](docs%2Fdeveloping_inside_a_container.md) guide.
+
+---
+
+## Cost Estimator
+
+Comming Soon.
+
+---
+
+## Deployment
+
+Comming Soon.
+
+---
+
+## Navigating the Source Code
+
+This  has the following structure:
+
+Folder/File | Description
+--- | ---
+solution/ | Primary source code folder with sub-directories for each core technology
+solution/Database | Contains source code for the meta-data database and sample databases
+solution/Deployment | Contains CICD code 
+solution/Diagrams | Contains a Structurizr diagramming project used for creation of architectural diagrams
+solution/FunctionApp | Contains source code for the ADS Go Fast Orchestration Functions
+solution/PowerBi | Contains source code for the Power BI files that can be used to provide reporting
+solution/WebApplication | Contains source code for the ADS Go Fast web front end
+---
+
 ## Documentation
 Documentation for this codebase is mantained in a **separate repository**. You can find it at [https://github.com/microsoft/azure-data-services-go-fast-documentation](https://github.com/microsoft/azure-data-services-go-fast-documentation). Please feel free to contribute to the documentation.
 
 ## Contributing 
-
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
