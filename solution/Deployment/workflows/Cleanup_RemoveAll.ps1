@@ -1,4 +1,4 @@
-[Environment]::SetEnvironmentVariable("ENVIRONMENT_NAME", "development")
+[Environment]::SetEnvironmentVariable("ENVIRONMENT_NAME", "development_test")
 . .\Steps\PushEnvFileIntoVariables.ps1
 ParseEnvFile("$env:ENVIRONMENT_NAME")
 Invoke-Expression -Command  ".\Steps\CD_SetResourceGroupHash.ps1"

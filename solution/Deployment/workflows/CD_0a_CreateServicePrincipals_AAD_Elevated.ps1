@@ -12,7 +12,7 @@ if($env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Enable -eq "True")
     Write-Host "Creating Deployment Service Principal" -ForegroundColor Yellow
     $subid =  ((az account show -s $env:AdsOpts_CD_ResourceGroup_Subscription) | ConvertFrom-Json).id
 
-    $spcheck = az ad sp list --display-name $env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name | ConvertFrom-Json
+    $spcheck = az ad sp list --filter "displayname eq '$env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name'" | ConvertFrom-Json
     if ($null -eq $spcheck)
     {
         Write-Host "Deployment Principal does not exist so creating now." -ForegroundColor Yellow

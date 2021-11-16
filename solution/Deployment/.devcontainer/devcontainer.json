@@ -19,7 +19,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y wget apt-transport-https software-properties-common && wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && sudo apt-get update && sudo apt-get install -y powershell && rm ./packages-microsoft-prod.deb && sudo apt install -y dotnet-sdk-3.1 && printf '#!/bin/bash\n rsync -avzh ~/../../workspaces/azure-data-services-go-fast-codebase ~/' > ~/synccodebase.sh && chmod +x ~/synccodebase.sh",
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y wget apt-transport-https software-properties-common && wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && sudo apt-get update && sudo apt-get install -y powershell && rm ./packages-microsoft-prod.deb && sudo apt install -y dotnet-sdk-3.1 && printf '$var = (Get-ChildItem \"../../workspaces\")[0].Name\n  rsync -avzh ~/../../workspaces/$var ~/    ' > ~/synccodebase.ps1 && chmod +x ~/synccodebase.ps1",
 
 	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
 	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
