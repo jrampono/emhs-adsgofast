@@ -43,7 +43,7 @@ Once you have your Prerequisite items, please move on to the Deployment Configur
 >- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 >- [Windows Store Ubuntu 18.04 LTS](https://www.microsoft.com/store/productId/9N9TNGVNDL3Q)
 
-The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite component without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](docs%2Fdeveloping_inside_a_container.md) guide.
+The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite component without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](https://code.visualstudio.com/docs/remote/containers) guide.
 
 ---
 
