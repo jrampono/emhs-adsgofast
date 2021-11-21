@@ -18,6 +18,10 @@ At its core this project is intended to be an accelerator. As such, it is design
 
 ## Getting Started
 
+Getting started is always the hardest part of any process so help clients & partners get started with this repository we provide a set of online, on-boarding and upskilling workshops. Spaces in these workshops are limited and subject to an application process. If you are intersted then please 
+nominate yourself at [https://forms.office.com/r/qbQrU6jFsj](https://forms.office.com/r/qbQrU6jFsj).
+  
+
 ### Prerequisites
 
 Deployment of this project requires a variety of services across Azure. Please ensure that you have access to these services before continuing on to the deployment section of this guide.
