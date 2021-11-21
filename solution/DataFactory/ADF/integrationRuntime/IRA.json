@@ -1,0 +1,22 @@
+{
+    "name": "IRA",
+    "properties": {
+        "type": "Managed",
+        "description": "Primary integration runtime that sits in the Azure cloud. Used to pull data into the \"Analytics Lockbox\", move data around  the \"Analytics Lockbox\" and push data out of the  \"Analytics Lockbox\".",
+        "typeProperties": {
+            "computeProperties": {
+                "location": "AutoResolve",
+                "dataFlowProperties": {
+                    "computeType": "General",
+                    "coreCount": 8,
+                    "timeToLive": 10,
+                    "cleanup": true
+                }
+            }
+        },
+        "managedVirtualNetwork": {
+            "type": "ManagedVirtualNetworkReference",
+            "referenceName": "default"
+        }
+    }
+}

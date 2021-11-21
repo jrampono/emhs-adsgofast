@@ -95,6 +95,8 @@ namespace WebApplication
                 opt.Filters.Add(new DefaultHelpLinkActionFilter());
             }).AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()));
 
+            //services.AddServerSideBlazor();
+
             services.AddRazorPages();
 
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, "AzureAdAuth");
@@ -141,6 +143,7 @@ namespace WebApplication
                     name: "default",
                     pattern: "{controller=Dashboard}/{action=Index}/{id?}").RequireAuthorization();
                 endpoints.MapRazorPages();
+             //   endpoints.MapBlazorHub();
             });
         }
 

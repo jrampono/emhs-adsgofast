@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
-    <!--<UserSecretsId>3956e7aa-4d13-430a-bb5f-a5f8f5a450ee</UserSecretsId>-->
+    <UserSecretsId>61b94ea1-454a-4cfb-b90d-884ec53464f8</UserSecretsId>    
   </PropertyGroup>
   <ItemGroup>
     <None Remove="SqlTemplates\InsertActivityAudit.sql" />
@@ -30,7 +30,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.13" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.5" />
     <PackageReference Include="Microsoft.Identity.Web" Version="1.9.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
@@ -80,9 +80,6 @@
     </None>
     <None Update="KqlTemplates\GetADFActivityRuns.kql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="SqlTemplates\GenericTruncateInsert.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

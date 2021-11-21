@@ -22,7 +22,7 @@ function GeneratePassword {
 }
 
 
-Write-Host "Configuring Azure SQL Server"
+Write-Debug "Configuring Azure SQL Server"
 #Install Sql Server Module
 Install-Module -Name SqlServer -Force
 
@@ -73,7 +73,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
             LogAnalyticsWorkspaceId = '$LogAnalyticsId'
         where id = 1"
 
-        Write-Host "Updating DataFactory in ADS Go Fast DB Config - DataFactory"
+        Write-Debug "Updating DataFactory in ADS Go Fast DB Config - DataFactory"
         Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
     }
     if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_UpdateSourceAndTargetSystems -eq "True")
@@ -95,7 +95,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         Set 
             SystemServer = '$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net',
             SystemKeyVaultBaseUrl = 'https://$env:AdsOpts_CD_Services_KeyVault_Name.vault.azure.net/',
-            SystemJSON = '{ ""Database"" : ""$env:AdsOpts_CD_Services_AzureSQLServer_Staging_Name"" }'
+            SystemJSON = '{ ""Database"" : ""$env:AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name"" }'
         Where 
             SystemId = '2'
         GO
@@ -111,7 +111,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         GO
         "
 
-        Write-Host "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Azure SQL Servers"
+        Write-Debug "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Azure SQL Servers"
         Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
 
         $sql = 
@@ -167,7 +167,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         GO
         "
 
-        Write-Host "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Storage Accounts"
+        Write-Debug "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Storage Accounts"
         Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
 
     }
@@ -181,5 +181,5 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
 }
 else 
 {
-    Write-Host "Skipped Configuring Azure SQL Server"
+    Write-Warning "Skipped Configuring Azure SQL Server"
 }

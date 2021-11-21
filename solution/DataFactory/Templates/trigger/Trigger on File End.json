@@ -1,0 +1,18 @@
+{
+	"name": "Trigger on File End",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/datalakelanding/blobs/Unprocessed/",
+			"blobPathEndsWith": "final.end",
+			"ignoreEmptyBlobs": false,
+			"scope": "/subscriptions/035a1364-f00d-48e2-b582-4fe125905ee3/resourceGroups/AdsGoFastDataLakeAccel/providers/Microsoft.Storage/storageAccounts/adsgofastdatalakeaccelst",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

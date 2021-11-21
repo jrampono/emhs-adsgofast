@@ -1,4 +1,4 @@
-Write-Host "Configuring Web App"
+Write-Debug"Configuring Web App"
 
 $SourceFile = $env:AdsOpts_CD_FolderPaths_PublishZip + "/webapplication/Publish.zip"
 if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
@@ -43,5 +43,5 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
 }
 else 
 {
-    Write-Host "Skipped Configuring Web App"
+    Write-Warning "Skipped Configuring Web App"
 }

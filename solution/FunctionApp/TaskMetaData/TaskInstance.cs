@@ -448,7 +448,7 @@ namespace AdsGoFast.TaskMetaData
                 JToken _TableSchema = TaskMasterJSON["Source"]["TableSchema"];
                 JToken _TableName = TaskMasterJSON["Source"]["TableName"];
 
-                if (TaskMasterJSON["Source"]["ChunkSize"] != null)
+                if (TaskMasterJSON["Source"]["ChunkSize"] != null && TaskMasterJSON["Source"]["ChunkSize"].ToString() != "0")
                 {
                     if (_IncrementalType.ToString() == "Full" && string.IsNullOrWhiteSpace(TaskMasterJSON["Source"]["ChunkSize"].ToString()))
                     {
@@ -588,11 +588,11 @@ namespace AdsGoFast.TaskMetaData
 
                 if (JSONValue["Source"]["ChunkSize"] != null)
                 {
-                    if (_IncrementalType.ToString() == "Full" && string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()))
+                    if (_IncrementalType.ToString() == "Full" && (string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()) || JSONValue["Source"]["ChunkSize"].ToString() == "0"))
                     {
                         _Type = "Full";
                     }
-                    else if (_IncrementalType.ToString() == "Full" && !string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()))
+                    else if (_IncrementalType.ToString() == "Full" && !string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()) && JSONValue["Source"]["ChunkSize"].ToString() != "0")
                     {
                         _Type = "Full-Chunk";
                     }

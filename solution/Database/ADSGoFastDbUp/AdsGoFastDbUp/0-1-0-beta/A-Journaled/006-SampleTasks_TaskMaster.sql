@@ -23,8 +23,7 @@ INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [Task
         "AutoCreateTable": "False",
         "TableSchema": "dbo",
         "TableName": "AUFinancialLicenses",
-        "PreCopySQL": "IF OBJECT_ID(''dbo.stg_AUFinancialLicenses'') IS NOT NULL 
-            Truncate Table dbo.stg_AUFinancialLicenses",
+        "PreCopySQL": "IF OBJECT_ID(''dbo.stg_AUFinancialLicenses'') IS NOT NULL \r\n Truncate Table dbo.stg_AUFinancialLicenses",
         "PostCopySQL": "",
         "MergeSQL": "",
         "AutoGenerateMerge": "False"
@@ -49,8 +48,7 @@ INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [Task
         "StagingTableSchema": "dbo",
         "StagingTableName": "stg_NYTaxiYellowTripData",
         "AutoCreateTable": "False",
-        "PreCopySQL": "IF OBJECT_ID(''dbo.stg_NYTaxiYellowTripData'') IS NOT NULL 
-            Truncate Table dbo.stg_NYTaxiYellowTripData",
+        "PreCopySQL": "IF OBJECT_ID(''dbo.stg_NYTaxiYellowTripData'') IS NOT NULL \r\n Truncate Table dbo.stg_NYTaxiYellowTripData",
         "PostCopySQL": "",
         "MergeSQL": "",
         "AutoGenerateMerge": "True",
@@ -75,8 +73,7 @@ INSERT [dbo].[TaskMaster] ([TaskMasterId], [TaskMasterName], [TaskTypeId], [Task
         "StagingTableSchema": "dbo",
         "StagingTableName": "stg_BrisbHospRegDeaths",
         "AutoCreateTable": "False",
-        "PreCopySQL": "IF OBJECT_ID(''dbo.stg_BrisbHospRegDeaths'') IS NOT NULL 
-            Truncate Table dbo.stg_BrisbHospRegDeaths",
+        "PreCopySQL": "IF OBJECT_ID(''dbo.stg_BrisbHospRegDeaths'') IS NOT NULL \r\n  Truncate Table dbo.stg_BrisbHospRegDeaths",
         "PostCopySQL": "",
         "MergeSQL": "",
         "AutoGenerateMerge": "True"

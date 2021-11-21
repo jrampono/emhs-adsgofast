@@ -1,7 +1,7 @@
 
 if ($env:AdsOpts_CD_Services_AppPlans_WebApp_Enable -eq "True")
 {
-    Write-Host "Creating App Service for Web App"
+    Write-Debug"Creating App Service for Web App"
     #App Service (Includes both functions and web)
     $storageaccountkey = (az storage account keys list -g $env:AdsOpts_CD_ResourceGroup_Name -n $env:AdsOpts_CD_Services_Storage_Logging_Name | ConvertFrom-Json)[0].value
 
@@ -9,13 +9,13 @@ if ($env:AdsOpts_CD_Services_AppPlans_WebApp_Enable -eq "True")
 }
 else 
 {
-    Write-Host "Skipped Creation of App Service for Web App"
+    Write-Warning "Skipped Creation of App Service for Web App"
 }
 
 
 if ($env:AdsOpts_CD_Services_AppPlans_FunctionApp_Enable -eq "True")
 {
-    Write-Host "Creating App Service for Function App"
+    Write-Debug"Creating App Service for Function App"
     #App Service (Includes both functions and web)
     $storageaccountkey = (az storage account keys list -g $env:AdsOpts_CD_ResourceGroup_Name -n $env:AdsOpts_CD_Services_Storage_Logging_Name | ConvertFrom-Json)[0].value
 
@@ -23,5 +23,5 @@ if ($env:AdsOpts_CD_Services_AppPlans_FunctionApp_Enable -eq "True")
 }
 else 
 {
-    Write-Host "Skipped Creation of App Service For Func App"
+    Write-Warning "Skipped Creation of App Service For Func App"
 }

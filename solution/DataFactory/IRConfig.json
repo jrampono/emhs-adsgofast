@@ -1,0 +1,114 @@
+{
+    "IRList": [
+        {
+            "NameInMetaDataDB": "IRA",
+            "SelfHosted": false,
+            "NameInADF": "IRA",
+            "ADFPostFix": "IRA",
+            "Enable": true,
+            "ADFTemplate": "IRA"
+        },
+        {
+            "NameInMetaDataDB": "IRB",
+            "SelfHosted": false,
+            "NameInADF": "IRB",
+            "ADFPostFix": "IRB",
+            "Enable": true,
+            "ADFTemplate": "IRB"
+        },
+        {
+            "NameInMetaDataDB": "IRC",
+            "SelfHosted": false,
+            "NameInADF": "IRC",
+            "ADFPostFix": "IRC",
+            "Enable": false,
+            "ADFTemplate": "IRC"
+        }
+    ],
+    "ADFTemplates": [
+        {
+            "Name": "IRA",
+            "dataset": [
+                "ADLSBinary_SH_IR.json",
+                "ADLSDelimitedText_SH_IR.json",
+                "ADLSExcel_SH_IR.json",
+                "ADLSJson_SH_IR.json",
+                "ADLSParquet_SH_IR.json",
+                "AzureSqlTable_SH_IR.json",
+                "BlobBinary_SH_IR.json",
+                "BlobDelimitedText_SH_IR.json",
+                "BlobExcel_SH_IR.json",
+                "BlobJson_SH_IR.json",
+                "BlobParquet_SH_IR.json",
+                "FileBinary_SH_IR.json",
+                "FileParquet_SH_IR.json",
+                "SqlServerTable_SH_IR.json"
+            ],
+            "linkedService": [
+                "GenericAzureDataLakeStorage_{IR}.json",
+                "GenericAzureSQL_{IR}.json",
+                "GenericBlobStorage_{IR}.json",
+                "GenericFileServer_{IR}.json",
+                "GenericMsSqlServer_{IR}.json"
+            ],
+            "pipeline": [
+                "AZ_SQL_AZ_Storage_Parquet_SH_IR.json",
+                "AZ-SQL-Create-Table-SH-IR.json",
+                "AZ-SQL-Full-Load-Chunk-SH-IR.json",
+                "AZ-SQL-Full-Load-SH-IR.json",
+                "AZ-SQL-Post-Copy-SH-IR.json",
+                "AZ-SQL-StoredProcedure-SH-IR.json",
+                "AZ-SQL-Watermark-Chunk-SH-IR.json",
+                "AZ-SQL-Watermark-SH-IR.json",
+                "AZ-Storage-Binary-AZ-Storage-Binary-SH-IR.json",
+                "AZ-Storage-CSV-AZ-SQL-SH-IR.json",
+                "AZ-Storage-Excel-AZ-SQL-SH-IR.json",
+                "AZ-Storage-Excel-AZ-Storage-CSV-SH-IR.json",
+                "AZ-Storage-JSON-AZ-SQL-SH-IR.json",
+                "AZ-Storage-Parquet-AZ-SQL-SH-IR.json",
+                "Create-Task-Master-AZ-SQL-OnP-SH-IR.json",
+                "Create-Task-Master-AZ-SQL-SH-IR.json",
+                "GEN-File-Binary-AZ-Storage-Binary-OnP-SH-IR.json",
+                "GEN-File-Binary-AZ-Storage-Binary-SH-IR.json",
+                "OnP-SQL-AZ-Storage-Parquet-OnP-SH-IR.json",
+                "OnP-SQL-Full-Load-Chunk-OnP-SH-IR.json",
+                "OnP-SQL-Full-Load-OnP-SH-IR.json",
+                "OnP-SQL-GEN-File-Parquet-OnP-SH-IR.json",
+                "OnP-SQL-Watermark-Chunk-OnP-SH-IR.json",
+                "OnP-SQL-Watermark-OnP-SH-IR.json",
+                "SH-SQL-AZ-Storage-Parquet-SH-IR.json",
+                "SH-SQL-Full-Load-Chunk-SH-IR.json",
+                "SH-SQL-Full-Load-SH-IR.json",
+                "SH-SQL-Watermark-Chunk-SH-IR.json",
+                "SH-SQL-Watermark-SH-IR.json"
+            ]
+        },
+        {
+            "Name": "OnPrem_Net",
+            "dataset": [
+                "ADLSBinary_OnPrem_Net",
+                "ADLSParquet_OnPrem_Net",
+                "BlobParquet_OnPrem_Net.json",
+                "FileBinary_OnPrem_Net.json",
+                "FileParquet_OnPrem_Net.json",
+                "SqlServerTable_OnPrem_Net.json"
+            ],
+            "linkedService": [
+                "GenericMsSqlServer_OnPrem_Net.json",
+                "GenericFileServer_OnPrem_Net.json",
+                "GenericBlobStorage_OnPrem_Net.json",
+                "GenericAzureDataLakeStorage_OnPrem_Net.json"
+            ],
+            "pipeline": [
+                "Create-Task-Master-AZ-SQL-OnPrem_Net.json",
+                "GEN-File-Binary-AZ-Storage-Binary-OnPrem_Net.json",
+                "OnP-SQL-AZ-Storage-Parquet-OnPrem_Net.json",
+                "OnP-SQL-Full-Load-Chunk-OnP-SH-IR.json",
+                "OnP-SQL-Full-Load-OnP-SH-IR.json",
+                "OnP-SQL-GEN-File-Parquet-OnP-SH-IR.json",
+                "OnP-SQL-Watermark-Chunk-OnP-SH-IR.json",
+                "OnP-SQL-Watermark-OnP-SH-IR.json"
+            ]
+        }
+    ]
+}

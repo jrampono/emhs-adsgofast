@@ -21,5 +21,11 @@ Foreach-Object {
 }
 
 
+#Loop through all Existing Task Master JSON Entries in DB
+#$tm = Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query "Select * from dbo.TaskMaster"
+
+#$ttm = Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query "Select * from dbo.TaskTypeMapping"
+
+
 
 

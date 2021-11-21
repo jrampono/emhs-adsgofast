@@ -2,8 +2,8 @@
 
 if($env:AdsOpts_CD_Services_Vnet_Enable -eq "True")
 {
-    Write-Host "Creating Vnet + Subnets (Bastion, Data, WebApp)"
-    Write-Host $env:AdsOpts_CD_Services_Vnet_Name
+    Write-Debug"Creating Vnet + Subnets (Bastion, Data, WebApp)"
+    Write-Debug$env:AdsOpts_CD_Services_Vnet_Name
 
     #vNet
     az deployment group create -g $env:AdsOpts_CD_ResourceGroup_Name --template-file ./../arm/Networking.json --parameters location=$env:AdsOpts_CD_ResourceGroup_Location vnet-name=$env:AdsOpts_CD_Services_Vnet_Name vnet-address-prefix=$env:AdsOpts_CD_Services_Vnet_vNetAddressRange `
@@ -17,9 +17,9 @@ if($env:AdsOpts_CD_Services_Vnet_Enable -eq "True")
     webapp-subnet-name=$env:AdsOpts_CD_Services_Vnet_WebAppSubnetName `
     funcapp-subnet-name=$env:AdsOpts_CD_Services_Vnet_FuncAppSubnetName
 
-    Write-Host "Creating Vnet"
+    Write-Debug"Creating Vnet"
 }
 else 
 {
-    Write-Host "Skipped Creation of Vnet"
+    Write-Warning "Skipped Creation of Vnet"
 }
