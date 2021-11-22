@@ -22,9 +22,16 @@ function GeneratePassword {
 }
 
 
-Write-Host "Configuring Azure SQL Server"
+Write-Debug "Configuring Azure SQL Server"
+
 #Install Sql Server Module
-Install-Module -Name SqlServer -Force
+if (Get-Module -ListAvailable -Name SqlServer) {
+    Write-Host "SqlServer Module exists"
+} 
+else {
+    Write-Host "Module does not exist.. installing.."
+    Install-Module -Name SqlServer -Force
+}
 
 #Get Access Token for SQL --Note that the deployment principal or user running locally will need rights on the database
 $token=$(az account get-access-token --resource=https://database.windows.net/ --query accessToken --output tsv)     
@@ -36,9 +43,9 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
 
     #Add Ip to SQL Firewall
     $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
-    az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
+    $result = az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
     #Allow Azure services and resources to access this server
-    az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "Azure" --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+    $result = az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "Azure" --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
     $CurrentPath = (Get-Location).Path
     Set-Location "..\bin\publish\unzipped\database\"
@@ -73,7 +80,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
             LogAnalyticsWorkspaceId = '$LogAnalyticsId'
         where id = 1"
 
-        Write-Host "Updating DataFactory in ADS Go Fast DB Config - DataFactory"
+        Write-Debug "Updating DataFactory in ADS Go Fast DB Config - DataFactory"
         Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
     }
     if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_UpdateSourceAndTargetSystems -eq "True")
@@ -95,7 +102,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         Set 
             SystemServer = '$env:AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net',
             SystemKeyVaultBaseUrl = 'https://$env:AdsOpts_CD_Services_KeyVault_Name.vault.azure.net/',
-            SystemJSON = '{ ""Database"" : ""$env:AdsOpts_CD_Services_AzureSQLServer_Staging_Name"" }'
+            SystemJSON = '{ ""Database"" : ""$env:AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name"" }'
         Where 
             SystemId = '2'
         GO
@@ -111,7 +118,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         GO
         "
 
-        Write-Host "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Azure SQL Servers"
+        Write-Debug "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Azure SQL Servers"
         Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
 
         $sql = 
@@ -167,7 +174,7 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
         GO
         "
 
-        Write-Host "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Storage Accounts"
+        Write-Debug "Updating DataFactory in ADS Go Fast DB Config - SourceAndTargetSystems - Storage Accounts"
         Invoke-Sqlcmd -ServerInstance "$targetserver,1433" -Database $env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Name -AccessToken "$token" -Query $sql
 
     }
@@ -181,5 +188,5 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
 }
 else 
 {
-    Write-Host "Skipped Configuring Azure SQL Server"
+    Write-Warning "Skipped Configuring Azure SQL Server"
 }

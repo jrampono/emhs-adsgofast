@@ -4,7 +4,7 @@
 ######################################################Write-Host ([Environment]::GetEnvironmentVariable("AdsOpts_CI_Enable"))
 if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_EnableDeploy")) -eq "True")
 {
-    Write-Host "Starting CD.."
+    Write-Debug "Starting CD.."
 
     Invoke-Expression -Command  ".\Steps\CD_DeployKeyVault.ps1"
 
@@ -33,12 +33,12 @@ if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_EnableDeploy")) -eq "True
 
     Invoke-Expression -Command  ".\Steps\CD_DeployADF.ps1"
 
-    Write-Host "Finishing CD.."
+    Write-Debug "Finishing CD.."
 }
 else 
 {
 
-    Write-Host "CD_1a_DeployServices.ps1 skipped as flag in environment file is set to false" -ForegroundColor Yellow
+    Write-Warning "CD_1a_DeployServices.ps1 skipped as flag in environment file is set to false" 
 }
 
  #Invoke-Expression -Command  ".\Cleanup_RemoveAll.ps1"

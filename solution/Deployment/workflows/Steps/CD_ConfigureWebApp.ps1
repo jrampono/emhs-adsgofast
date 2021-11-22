@@ -1,4 +1,4 @@
-Write-Host "Configuring Web App"
+Write-Debug " Configuring Web App"
 
 $SourceFile = $env:AdsOpts_CD_FolderPaths_PublishZip + "/webapplication/Publish.zip"
 if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
@@ -16,7 +16,7 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     $AppInsightsWPId = (az monitor app-insights component show --app $env:AdsOpts_CD_Services_AppInsights_Name -g $env:AdsOpts_CD_ResourceGroup_Name | ConvertFrom-Json).appId
     $appSettings.ApplicationOptions.AppInsightsWorkspaceId =  $AppInsightsWPId
 
-    $LogAnalyticsWorkspaceId = (az monitor log-analytics workspace show --workspace-name $env:AdsOpts_CD_Services_LogAnalytics_Name -g $env:AdsOpts_CD_ResourceGroup_Name | ConvertFrom-Json).customerId
+    $LogAnalyticsWorkspaceId =  (az monitor log-analytics workspace show --workspace-name $env:AdsOpts_CD_Services_LogAnalytics_Name -g $env:AdsOpts_CD_ResourceGroup_Name | ConvertFrom-Json -AsHashtable).customerId
     $appSettings.ApplicationOptions.LogAnalyticsWorkspaceId =  $LogAnalyticsWorkspaceId
 
     $appSettings.AzureAdAuth.Domain=$env:AdsOpts_CD_ResourceGroup_Domain
@@ -35,7 +35,7 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
     Set-Location $CurrentPath
     
     # Deploy Web App
-    az webapp deployment source config-zip --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_WebSite_Name --src $SourceFile
+    $result = az webapp deployment source config-zip --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_WebSite_Name --src $SourceFile
 
     #Enable App Insights
     #az resource create --resource-group $env:AdsOpts_CD_ResourceGroup_Name --resource-type "Microsoft.Insights/components" --name $env:AdsOpts_CD_Services_WebSite_Name --location $env:AdsOpts_CD_ResourceGroup_Location --properties '{\"Application_Type\":\"web\"}'
@@ -43,5 +43,5 @@ if($env:AdsOpts_CD_Services_WebSite_Enable -eq "True")
 }
 else 
 {
-    Write-Host "Skipped Configuring Web App"
+    Write-Warning "Skipped Configuring Web App"
 }

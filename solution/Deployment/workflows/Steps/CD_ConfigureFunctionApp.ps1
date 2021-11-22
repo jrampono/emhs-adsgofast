@@ -1,4 +1,4 @@
-Write-Host "Configuring Function App"
+Write-Debug "Configuring Function App"
 
 $SourceFile = $env:AdsOpts_CD_FolderPaths_PublishZip + "/functionapp/Publish.zip"
 if($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
@@ -41,10 +41,10 @@ if($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
     Set-Location $CurrentPath
     
     # Deploy CoreFunctionApp App
-    az functionapp deployment source config-zip --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_CoreFunctionApp_Name --src $SourceFile
+    $result = az functionapp deployment source config-zip --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_CoreFunctionApp_Name --src $SourceFile
 
 }
 else 
 {
-    Write-Host "Skipped Configuring Function App"
+    Write-Warning "Skipped Configuring Function App"
 }

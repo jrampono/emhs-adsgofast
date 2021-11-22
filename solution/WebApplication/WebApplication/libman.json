@@ -101,6 +101,10 @@
       "destination": "wwwroot/lib/json-editor/"
     },
     {
+      "library": "ace@1.4.13",
+      "destination": "wwwroot/lib/ace/"
+    },
+    {
       "provider": "filesystem",
       "library": "wwwroot/js/bswindow/",
       "destination": "wwwroot/lib/bswindow/"

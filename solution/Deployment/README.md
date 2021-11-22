@@ -1,6 +1,39 @@
 # Azure Data Service Go Fast - Deployment
 
-In this section you will automatically provision all Azure resources required to run ADSGoFast Framework. We will use a docker container to provide you with an OS agnostic deployment environment with all of the nessessary tools.
+In this section you will automatically provision all Azure resources required to run ADSGoFast Framework. 
+
+
+
+## Deployment Option One - Using Docker & VSCode (Preferred)
+This deployment option wil use a docker container to provide you with an OS agnostic deployment environment with all of the nessessary tools.
+
+### Pre-requisites
+
+1. Install Docker Desktop - [https://docs.docker.com/desktop/](https://docs.docker.com/desktop/) *Note if installing on windows make sure to enable WSL2 [https://docs.docker.com/desktop/windows/wsl/#prerequisites](https://docs.docker.com/desktop/windows/wsl/#prerequisites)
+2. Install VS Code - [https://code.visualstudio.com/](https://code.visualstudio.com/)
+3. Install the VS Code Remote Container Extension - [https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+4. Download / Clone the latest version of the ADS Go Fast Framework codebase ()[]
+5. Open the folder container your cloned ADS Go Fast Framework codebase in VsCode
+6. Select "ReOpen In Container"
+7. Az Login 
+8. Az Account Set
+9. 
+10.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 --------------------------------------

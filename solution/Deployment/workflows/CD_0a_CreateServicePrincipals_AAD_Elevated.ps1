@@ -9,18 +9,18 @@ Invoke-Expression -Command  ".\Steps\CD_DeployResourceGroup.ps1"
 #########################################################################
 if($env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Enable -eq "True")
 {
-    Write-Host "Creating Deployment Service Principal" -ForegroundColor Yellow
+    Write-Debug "Creating Deployment Service Principal"
     $subid =  ((az account show -s $env:AdsOpts_CD_ResourceGroup_Subscription) | ConvertFrom-Json).id
 
-    $spcheck = az ad sp list --display-name $env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name | ConvertFrom-Json
+    $spcheck = az ad sp list --filter "displayname eq '$env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name'" | ConvertFrom-Json
     if ($null -eq $spcheck)
     {
-        Write-Host "Deployment Principal does not exist so creating now." -ForegroundColor Yellow
+        Write-Debug "Deployment Principal does not exist so creating now."
         $SP = az ad sp create-for-rbac --name $env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name --role contributor --scopes /subscriptions/$subid/resourceGroups/$env:AdsOpts_CD_ResourceGroup_Name    
     }
     else {
-        Write-Host "Deployment Prinicpal Already Exists So Just Adding Contributor Role on Resource Group" -ForegroundColor Yellow
-        az role assignment create --assignee $spcheck[0].objectId --role "Contributor" --scope  /subscriptions/$subid/resourceGroups/$env:AdsOpts_CD_ResourceGroup_Name   
+        Write-Debug "Deployment Prinicpal Already Exists So Just Adding Contributor Role on Resource Group"
+        $SP = az role assignment create --assignee $spcheck[0].objectId --role "Contributor" --scope  /subscriptions/$subid/resourceGroups/$env:AdsOpts_CD_ResourceGroup_Name   
     }
 }
 
@@ -30,7 +30,7 @@ $envsettings = Get-Content $environmentfile | ConvertFrom-Json
 
 if($env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Enable -eq "True")
 {
-    Write-Host "Creating WebAppAuthentication Service Principal" -ForegroundColor Yellow
+    Write-Debug "Creating WebAppAuthentication Service Principal"
     
     $roleid = [guid]::NewGuid()
     $roles = '[{\"allowedMemberTypes\":  [\"Application\"],\"description\":  \"Administrator\",\"displayName\":  \"Administrator\",\"id\":  \"@Id\",\"isEnabled\":  true,\"lang\":  null,\"origin\":  \"Users\\Groups\",\"value\":  \"Administrator\"}]'
@@ -40,13 +40,14 @@ if($env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Enable -eq "True")
 
     $subid =  ((az account show -s $env:AdsOpts_CD_ResourceGroup_Subscription) | ConvertFrom-Json).id
     $appid = ((az ad app create --display-name $env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name --homepage "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name"  --identifier-uris "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name" --app-roles $roles --reply-urls $replyurls) | ConvertFrom-Json).appId
+    $appid = ((az ad app show --id "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name") | ConvertFrom-Json).appId
     $spid = ((az ad sp create --id $appid) | ConvertFrom-Json).ObjectId
 
 }
 
 if($env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Enable -eq "True")
 {
-    Write-Host "Creating FunctionAppAuthentication Service Principal" -ForegroundColor Yellow
+    Write-Debug "Creating FunctionAppAuthentication Service Principal"
     
     $roleid = [guid]::NewGuid()
     $roles = '[{\"allowedMemberTypes\":  [\"Application\"],\"description\":  \"Used to applications to call the ADS Go Fast functions\",\"displayName\":  \"FunctionAPICaller\",\"id\":  \"@Id\",\"isEnabled\":  true,\"lang\":  null,\"origin\":  \"Application\",\"value\":  \"FunctionAPICaller\"}]'
@@ -54,6 +55,7 @@ if($env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Enable -eq "Tru
 
     $subid =  ((az account show -s $env:AdsOpts_CD_ResourceGroup_Subscription) | ConvertFrom-Json).id
     $appid = ((az ad app create --display-name $env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name --homepage "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name"  --identifier-uris "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name" --app-roles $roles) | ConvertFrom-Json).appId
+    $appid = ((az ad app show --id "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name") | ConvertFrom-Json).appId
     $spid = ((az ad sp create --id $appid) | ConvertFrom-Json).ObjectId
     #Will need to do below during service creation to add the Azure Function MSI to role
 
@@ -74,5 +76,5 @@ $envsettings | ConvertTo-Json  -Depth 10 | set-content $environmentfile
 
 #Check Status of Errors 
 
-Write-Host "Script Complete Please Check below for Errors:" -ForegroundColor Yellow
+Write-Host "Script Complete Please Check below for Errors:"
 Write-Host $error

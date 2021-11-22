@@ -50,7 +50,7 @@ namespace AdsGoFast
             var config = new ConfigurationBuilder()
               .SetBasePath(actual_root)
               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-              .AddUserSecrets("3956e7aa-4d13-430a-bb5f-a5f8f5a450ee"/*Assembly.GetExecutingAssembly()*/, true)
+              .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
               .AddEnvironmentVariables()
               .Build();
 

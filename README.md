@@ -18,6 +18,10 @@ At its core this project is intended to be an accelerator. As such, it is design
 
 ## Getting Started
 
+Getting started is always the hardest part of any process so help clients & partners get started with this repository we provide a set of online, on-boarding and upskilling workshops. Spaces in these workshops are limited and subject to an application process. If you are intersted then please 
+nominate yourself at [https://forms.office.com/r/qbQrU6jFsj](https://forms.office.com/r/qbQrU6jFsj).
+  
+
 ### Prerequisites
 
 Deployment of this project requires a variety of services across Azure. Please ensure that you have access to these services before continuing on to the deployment section of this guide.
@@ -36,24 +40,56 @@ Once you have your Prerequisite items, please move on to the Deployment Configur
 
 ## Deployment Configuration
 
->You will also need some development tools to edit and run the deployment scripts provided. It is recommended you use the following:
+You will also need some development tools to edit and run the deployment scripts provided. It is recommended you use the following:
 >
 >- A windows based computer (local or cloud)
 >- [Visual Studio Code](https://visualstudio.microsoft.com/downloads/)
 >- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 >- [Windows Store Ubuntu 18.04 LTS](https://www.microsoft.com/store/productId/9N9TNGVNDL3Q)
 
+
+The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite components without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](https://code.visualstudio.com/docs/remote/containers) guide.
+
+Once you have set up these pre-requisites you will then need to [Clone](https://docs.github.com/en/enterprise-server@3.1/repositories/creating-and-managing-repositories/cloning-a-repository) this repository to your local machine. Once you have done this then open Visual Studio Code and carry out the following steps.
+
+>- [ ] From the menu select "File" then "Open Folder". Navigate the directory into which you cloned the solution and from there to "solution/Deployment". Choose this folder to open in Visual Studio Code. 
+>- [ ] Next, from the menu, select "View", "Command Palette". When the search box opens type "Remote-Containers: Reopen in Container". **Note** that you Docker Desktop needs to be running before you perform this step. 
+>- [ ] From the menu select "Terminal", "New Terminal". A new Powershell Core window will open at the bottom of your screen. You are now running within the Docker container.
+>- [ ] Deployment specifics are controlled by an environment file. You can set these specifics using a small node web application that is embedded within the source code. To access the application use the Terminal window that was creeated in the previous step and type the following commands: 
+```bash
+bash
+cd environments/Node/
+npm install 
+node server.js 
+```
+>- [ ] Next Open an Internet Browser and navigate to http://localhost:8080/EditSettings.html. You  should see a screen that looks like the picture belo. For a vanilla deployment you only need to fill out the section titled "Primary Resource Group Settings". Fill this out now with your Azure Environment Specifics and, once done, click on the red button at the top of the form labelled "Click here to update the environment file with form changes". 
+
+![Form](./documentation/images/DeploymentForm.png)
+
+>- [ ] Next return to the terminal window and press "Ctrl+c" twice to stop your Node application. Next type the following commands:
+```powershell
+pwsh
+cd ../../workflows/
+ls
+```
+>- [ ] You will now see a listing of powershell (*.ps1) files. These are the scripts that drive the deployment. To deploy the solution run the commands below in your terminal window. **Note** it is recommended that you run these one at a time and check output during each command execution for errors. 
+```powershell
+az login #Logs you in to your Azure environment
+./LocalDevOnly_EnvironmentSetUp.ps1 #Loads your environment settings
+./CI_1a_BuildCode.ps1 #Builds the source code binaries 
+./CD_0a_CreateServicePrincipals_AAD_Elevated.ps1 #Creates your Azure resource group and application registrations
+./CD_1a_DeployServices.ps1 #Deploys the core Azure Services     
+./CD_2a_CreateMSIs_AAD_Elevated.ps1 #Sets up the Azure Managed Service Identities and grants privileges and access
+./CD_2b_ConfigureServices.ps1 #Publishes source code to Azure Services.
+```
+
+## Post Deployment Set-up and Instructions
+=======
 The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite component without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](https://code.visualstudio.com/docs/remote/containers) guide.
 
 ---
 
 ## Cost Estimator
-
-Comming Soon.
-
----
-
-## Deployment
 
 Comming Soon.
 
