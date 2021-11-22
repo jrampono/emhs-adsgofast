@@ -47,6 +47,7 @@ You will also need some development tools to edit and run the deployment scripts
 >- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 >- [Windows Store Ubuntu 18.04 LTS](https://www.microsoft.com/store/productId/9N9TNGVNDL3Q)
 
+
 The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite components without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](https://code.visualstudio.com/docs/remote/containers) guide.
 
 Once you have set up these pre-requisites you will then need to [Clone](https://docs.github.com/en/enterprise-server@3.1/repositories/creating-and-managing-repositories/cloning-a-repository) this repository to your local machine. Once you have done this then open Visual Studio Code and carry out the following steps.
@@ -83,6 +84,12 @@ az login #Logs you in to your Azure environment
 ```
 
 ## Post Deployment Set-up and Instructions
+=======
+The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite component without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](https://code.visualstudio.com/docs/remote/containers) guide.
+
+---
+
+## Cost Estimator
 
 Comming Soon.
 
