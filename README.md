@@ -73,12 +73,13 @@ ls
 ```
 >- [ ] You will now see a listing of powershell (*.ps1) files. These are the scripts that drive the deployment. To deploy the solution run the commands below in your terminal window. **Note** it is recommended that you run these one at a time and check output during each command execution for errors. 
 ```powershell
-./LocalDevOnly_EnvironmentSetUp.ps1
-./CI_1a_BuildCode.ps1
-./CD_0a_CreateServicePrincipals_AAD_Elevated.ps1
-./CD_1a_DeployServices.ps1     
-./CD_2a_CreateMSIs_AAD_Elevated.ps1
-./CD_2b_ConfigureServices.ps1
+az login #Logs you in to your Azure environment
+./LocalDevOnly_EnvironmentSetUp.ps1 #Loads your environment settings
+./CI_1a_BuildCode.ps1 #Builds the source code binaries 
+./CD_0a_CreateServicePrincipals_AAD_Elevated.ps1 #Creates your Azure resource group and application registrations
+./CD_1a_DeployServices.ps1 #Deploys the core Azure Services     
+./CD_2a_CreateMSIs_AAD_Elevated.ps1 #Sets up the Azure Managed Service Identities and grants privileges and access
+./CD_2b_ConfigureServices.ps1 #Publishes source code to Azure Services.
 ```
 
 ## Post Deployment Set-up and Instructions

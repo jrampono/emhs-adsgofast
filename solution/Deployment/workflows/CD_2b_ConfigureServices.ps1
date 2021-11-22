@@ -27,6 +27,8 @@ if (([Environment]::GetEnvironmentVariable("AdsOpts_CD_EnableConfigure")) -eq "T
 
     Invoke-Expression -Command ".\Steps\CD_ConfigureAzureSqlServer_UpdateTaskTypeMappingJson.ps1"
 
+    Invoke-Expression -Command ".\Steps\CD_ConfigureSampleData.ps1"
+
     Write-Host "Finishing CD.."
 }
 

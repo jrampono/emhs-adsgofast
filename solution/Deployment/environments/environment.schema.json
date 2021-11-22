@@ -1726,8 +1726,24 @@
                       "title": "Name",
                       "description": "",
                       "default": "",
+                      "options": {
+                        "inputAttributes": {
+                          "placeholder": "eg. AdsGoFastVnet"
+                        }
+                      },
                       "examples": [
                         "AdsGoFastVnet"
+                      ]
+                    }, 
+                    "ApplyNamePostFix": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Vnet/properties/Logging/properties/ApplyNamePostFix",
+                      "type": "boolean",
+                      "format": "checkbox",
+                      "title": "Apply Postfix to Resource Name",
+                      "description": "",
+                      "default": false,
+                      "examples": [
+                        true
                       ]
                     }
                   },

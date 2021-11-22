@@ -12,16 +12,16 @@ $ADFJDKDownloadURL = $env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_IrInstall
 $ADFJDKLocalFileName = $ADFJDKDownloadURL.Split("/")[$ADFJDKDownloadURL.Split("/").Length-1]                #Get the .msi filename.
 $ADFJDKInstallerLocalFileLocation = $ADFLocalDrive + '\' +  $ADFLocalVMFolder + '\' + $ADFJDKLocalFileName  #Local Path of downloaded installer.
 
-Write-Debug"Creating directory to download the SHIR installable."
+Write-Debug " Creating directory to download the SHIR installable."
 New-Item -Path $ADFLocalDrive -Name $ADFLocalVMFolder -ItemType Directory -Force                            #'-Force' Ok if directory already exists.
 
-Write-Debug"Downloading the SHIR installable at $ADFIRInstallerLocalFileLocation."
+Write-Debug " Downloading the SHIR installable at $ADFIRInstallerLocalFileLocation."
 Invoke-WebRequest -Uri $ADFIRDownloadURL -OutFile $ADFIRInstallerLocalFileLocation                          #Download SHIR installable.
 
-Write-Debug"Downloading the OpenJDK for SHIR at $ADFJDKInstallerLocalFileLocation."
+Write-Debug " Downloading the OpenJDK for SHIR at $ADFJDKInstallerLocalFileLocation."
 Invoke-WebRequest -Uri $ADFJDKDownloadURL -OutFile $ADFJDKInstallerLocalFileLocation                        #Download OpenJDK.
 
-Write-Debug"Installing OpenJDK."
+Write-Debug " Installing OpenJDK."
 #msiexec /i $ADFJDKInstallerLocalFileLocation ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome /quiet
 
 #Ensure command prompt is run as administrator
@@ -34,17 +34,17 @@ $MSIInstallArguments = @(
     "/qb!"
     "/norestart" 
 )
-Write-Debug$MSIInstallArguments
+Write-Debug $MSIInstallArguments
 Start-Process "msiexec.exe" -ArgumentList $MSIInstallArguments  -Wait -NoNewWindow
 
-Write-Debug"Installing SHIR."
+Write-Debug " Installing SHIR."
 # Data Factory - VM AZ IR - Install IR
 # $irKey1 = az datafactory integration-runtime list-auth-key --factory-name $DataFactoryName --name "SelfHostedIntegrationRuntime-Azure-VNET" --resource-group $ResourceGroupName --query authKey1 --out tsv
 # az vm run-command invoke  --command-id RunPowerShellScript --name $VMAzIR -g $ResourceGroupName --scripts "$ADFIRInstallerLocalFileLocation -path $ADFIRLocalFileLocation -authKey '$irKey1'"
 # 
 
 $irKey1 = az datafactory integration-runtime list-auth-key --factory-name $env:AdsOpts_CD_Services_DataFactory_Name --name $env:AdsOpts_CD_Services_DataFactory_OnPremVnetIr_Name --resource-group $env:AdsOpts_CD_ResourceGroup_Name --query authKey1 --out tsv
-Write-Debug"irKey1 retrieved."
+Write-Debug " irKey1 retrieved."
 
 # #Ensure command prompt is run as administrator
 # $MSIInstallArguments = @(
@@ -54,7 +54,7 @@ Write-Debug"irKey1 retrieved."
 #     "/qb!"
 #     "/norestart" 
 # )
-# Write-Debug$MSIInstallArguments
+# Write-Debug $MSIInstallArguments
 # Start-Process "msiexec.exe" -ArgumentList $MSIInstallArguments  -Wait -NoNewWindow
 
 . .\Steps\InstallGatewayFunctions.ps1 -path "$ADFIRInstallerLocalFileLocation" -authKey "$irKey1"

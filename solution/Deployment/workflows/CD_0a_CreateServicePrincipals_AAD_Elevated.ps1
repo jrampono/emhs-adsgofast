@@ -40,6 +40,7 @@ if($env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Enable -eq "True")
 
     $subid =  ((az account show -s $env:AdsOpts_CD_ResourceGroup_Subscription) | ConvertFrom-Json).id
     $appid = ((az ad app create --display-name $env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name --homepage "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name"  --identifier-uris "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name" --app-roles $roles --reply-urls $replyurls) | ConvertFrom-Json).appId
+    $appid = ((az ad app show --id "api://$env:AdsOpts_CD_ServicePrincipals_WebAppAuthenticationSP_Name") | ConvertFrom-Json).appId
     $spid = ((az ad sp create --id $appid) | ConvertFrom-Json).ObjectId
 
 }
@@ -54,6 +55,7 @@ if($env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Enable -eq "Tru
 
     $subid =  ((az account show -s $env:AdsOpts_CD_ResourceGroup_Subscription) | ConvertFrom-Json).id
     $appid = ((az ad app create --display-name $env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name --homepage "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name"  --identifier-uris "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name" --app-roles $roles) | ConvertFrom-Json).appId
+    $appid = ((az ad app show --id "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name") | ConvertFrom-Json).appId
     $spid = ((az ad sp create --id $appid) | ConvertFrom-Json).ObjectId
     #Will need to do below during service creation to add the Azure Function MSI to role
 

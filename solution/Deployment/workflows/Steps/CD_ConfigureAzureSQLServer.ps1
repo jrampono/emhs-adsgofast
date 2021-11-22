@@ -23,8 +23,15 @@ function GeneratePassword {
 
 
 Write-Debug "Configuring Azure SQL Server"
+
 #Install Sql Server Module
-Install-Module -Name SqlServer -Force
+if (Get-Module -ListAvailable -Name SqlServer) {
+    Write-Host "SqlServer Module exists"
+} 
+else {
+    Write-Host "Module does not exist.. installing.."
+    Install-Module -Name SqlServer -Force
+}
 
 #Get Access Token for SQL --Note that the deployment principal or user running locally will need rights on the database
 $token=$(az account get-access-token --resource=https://database.windows.net/ --query accessToken --output tsv)     
@@ -36,9 +43,9 @@ if($env:AdsOpts_CD_Services_AzureSQLServer_AdsGoFastDB_Enable -eq "True")
 
     #Add Ip to SQL Firewall
     $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
-    az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
+    $result = az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "MySetupIP" --start-ip-address $myIp --end-ip-address $myIp
     #Allow Azure services and resources to access this server
-    az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "Azure" --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+    $result = az sql server firewall-rule create -g $env:AdsOpts_CD_ResourceGroup_Name -s $env:AdsOpts_CD_Services_AzureSQLServer_Name -n "Azure" --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
     $CurrentPath = (Get-Location).Path
     Set-Location "..\bin\publish\unzipped\database\"

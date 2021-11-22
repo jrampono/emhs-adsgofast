@@ -38,7 +38,7 @@
 #Transient Storage Account
 if($env:AdsOpts_CD_Services_Storage_ADLSTransient_Enable -eq "True")
 {
-    Write-Debug"Granting RBAC on Transient Storage Account (ADLS)"
+    Write-Debug " Granting RBAC on Transient Storage Account (ADLS)"
     
     # MSI Access from AF to ADLS Gen2
     $result = az role assignment create --assignee $AzureFunctionId --role "Storage Blob Data Contributor" --scope "$basescope/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_ADLSTransient_Name"

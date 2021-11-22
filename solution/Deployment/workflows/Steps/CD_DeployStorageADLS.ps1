@@ -1,9 +1,9 @@
-Write-Debug"Creating Storage Account (ADLS) For Data Lake"
+Write-Debug " Creating Storage Account (ADLS) For Data Lake"
 if($env:AdsOpts_CD_Services_Storage_ADLS_Enable -eq "True")
 {
     #StorageAccount For Logging
-    az deployment group create -g $env:AdsOpts_CD_ResourceGroup_Name --template-file ./../arm/Storage_ADLS.json --parameters location=$env:AdsOpts_CD_ResourceGroup_Location storage-account-name=$env:AdsOpts_CD_Services_Storage_ADLS_Name
-    Write-Debug"Creating Storage Account (ADLS) For Data Lake"
+    $result = az deployment group create -g $env:AdsOpts_CD_ResourceGroup_Name --template-file ./../arm/Storage_ADLS.json --parameters location=$env:AdsOpts_CD_ResourceGroup_Location storage-account-name=$env:AdsOpts_CD_Services_Storage_ADLS_Name
+    Write-Debug " Creating Storage Account (ADLS) For Data Lake"
 }
 else 
 {
@@ -13,9 +13,9 @@ else
 #Transient Storage Account
 if($env:AdsOpts_CD_Services_Storage_ADLSTransient_Enable -eq "True")
 {
-    Write-Debug"Creating Transient Storage Account (ADLS)"
+    Write-Debug " Creating Transient Storage Account (ADLS)"
     
-    az deployment group create -g $env:AdsOpts_CD_ResourceGroup_Name --template-file ./../arm/Storage_ADLS.json --parameters location=$env:AdsOpts_CD_ResourceGroup_Location storage-account-name=$env:AdsOpts_CD_Services_Storage_ADLSTransient_Name storage-raw-container-name=transient
+    $result = az deployment group create -g $env:AdsOpts_CD_ResourceGroup_Name --template-file ./../arm/Storage_ADLS.json --parameters location=$env:AdsOpts_CD_ResourceGroup_Location storage-account-name=$env:AdsOpts_CD_Services_Storage_ADLSTransient_Name storage-raw-container-name=transient
 }
 else 
 {

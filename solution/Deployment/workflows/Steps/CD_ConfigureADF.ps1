@@ -2,7 +2,7 @@
 $logsSetting = "[{'category':'ActivityRuns','enabled':true,'retentionPolicy':{'days': 30,'enabled': true}},{'category':'PipelineRuns','enabled':true,'retentionPolicy':{'days': 30,'enabled': true}},{'category':'TriggerRuns','enabled':true,'retentionPolicy':{'days': 30,'enabled': true}}]".Replace("'",'\"')
 $metricsSetting = "[{'category':'AllMetrics','enabled':true,'retentionPolicy':{'days': 30,'enabled': true}}]".Replace("'",'\"')
 
-az monitor diagnostic-settings create --name ADF-Diagnostics --export-to-resource-specific true --resource "$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name" --logs $logsSetting --metrics $metricsSetting --storage-account "$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_Logging_Name" --workspace "$env:AdsOpts_CD_ResourceGroup_Id/providers/microsoft.operationalinsights/workspaces/$env:AdsOpts_CD_Services_LogAnalytics_Name"
+$result = az monitor diagnostic-settings create --name ADF-Diagnostics --export-to-resource-specific true --resource "$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name" --logs $logsSetting --metrics $metricsSetting --storage-account "$env:AdsOpts_CD_ResourceGroup_Id/providers/Microsoft.Storage/storageAccounts/$env:AdsOpts_CD_Services_Storage_Logging_Name" --workspace "$env:AdsOpts_CD_ResourceGroup_Id/providers/microsoft.operationalinsights/workspaces/$env:AdsOpts_CD_Services_LogAnalytics_Name"
 
 #Create IRs
 
