@@ -57,12 +57,7 @@ if($env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Enable -eq "Tru
     $appid = ((az ad app create --display-name $env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name --homepage "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name"  --identifier-uris "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name" --app-roles $roles) | ConvertFrom-Json).appId
     $appid = ((az ad app show --id "api://$env:AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticationSP_Name") | ConvertFrom-Json).appId
     $spid = ((az ad sp create --id $appid) | ConvertFrom-Json).ObjectId
-    #Will need to do below during service creation to add the Azure Function MSI to role
-
-    #az role assignment create --assignee $appid  --role $roleid --scope "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceSubType}/{resourceName}"
-
-    #az rest --method patch --uri "https://graph.microsoft.com/beta/applications/<object-id>" --headers '{"Content-Type":"application/json"}' --body '{"api":{"preAuthorizedApplications":[{"appId":"a37c1158-xxxxx94f2b","permissionIds":["5479xxxxx522869e718f0"]}]}}'
-
+    
 }
 
 

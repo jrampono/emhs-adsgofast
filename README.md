@@ -28,9 +28,11 @@ Deployment of this project requires a variety of services across Azure. Please e
 
 >To get started you will need the following:
 >
->- An active Azure Subscription & Empty Resource Group *
->- Contributor rights on the Azure Resource Group
->- Power BI Workspace
+>- An active Azure Subscription & Empty Resource Group*
+>- Owner rights on the Azure Resource Group
+>- Power BI Workspace (Optional)
+
+*Note that for a fully functioning deployment the deployment process will create a Deployment Service principal and two Azure Application Registrtions within the Azure Active Directory (AAD) domain that is connected to your Azure subscription. It is recommended that you use an Azure subscription and AAD on which you have the necessary priveleges to perform these operations. 
 
 You can sign up for an Azure subscription [here](https://azure.microsoft.com/en-us/free/) 
 
@@ -47,10 +49,12 @@ You will also need some development tools to edit and run the deployment scripts
 >- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 >- [Windows Store Ubuntu 18.04 LTS](https://www.microsoft.com/store/productId/9N9TNGVNDL3Q)
 
-
 The deployment uses a concept of **Developing inside a Container** to containerize all the necessary pre-requisite components without requiring them to be installed on the local machine. Follow our [Configuring your System for Development Containers](https://code.visualstudio.com/docs/remote/containers) guide.
 
-Once you have set up these pre-requisites you will then need to [Clone](https://docs.github.com/en/enterprise-server@3.1/repositories/creating-and-managing-repositories/cloning-a-repository) this repository to your local machine. Once you have done this then open Visual Studio Code and carry out the following steps.
+Once you have set up these pre-requisites you will then need to [Clone](https://docs.github.com/en/enterprise-server@3.1/repositories/creating-and-managing-repositories/cloning-a-repository) this repository to your local machine. 
+
+## Deployment
+To deploy the solution open **Visual Studio Code** and carry out the following steps.
 
 >- [ ] From the menu select "File" then "Open Folder". Navigate the directory into which you cloned the solution and from there to "solution/Deployment". Choose this folder to open in Visual Studio Code. 
 >- [ ] Next, from the menu, select "View", "Command Palette". When the search box opens type "Remote-Containers: Reopen in Container". **Note** that you Docker Desktop needs to be running before you perform this step. 
