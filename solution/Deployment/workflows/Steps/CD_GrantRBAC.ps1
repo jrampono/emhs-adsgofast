@@ -2,12 +2,15 @@
     $basescope = "/subscriptions/$subid/resourceGroups/$env:AdsOpts_CD_ResourceGroup_Name/providers"
     $DataFactoryId = az ad sp list --display-name $env:AdsOpts_CD_Services_DataFactory_Name --output tsv --query "[].{id:objectId}"
     $AzureFunctionId = ((az webapp identity show --resource-group $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_CoreFunctionApp_Name) | ConvertFrom-Json).principalId
+    $DeploymentSpId =  (az ad sp list --filter "displayname eq '$env:AdsOpts_CD_ServicePrincipals_DeploymentSP_Name'" | ConvertFrom-Json).appId
     $WebAppID = ((az webapp identity show --resource-group  $env:AdsOpts_CD_ResourceGroup_Name --name $env:AdsOpts_CD_Services_WebSite_Name) | ConvertFrom-Json).principalId 
     $AADUserId = (az ad signed-in-user show | ConvertFrom-Json).objectId
     
     #RBAC Rights
     # MSI Access from Azure Function to ADF
     $result = az role assignment create --assignee $AzureFunctionId --role "Contributor" --scope "$basescope/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name"
+    # Deployment Principal to ADF
+    $result = az role assignment create --assignee $DeploymentSpId --role "Contributor" --scope "$basescope/Microsoft.DataFactory/factories/$env:AdsOpts_CD_Services_DataFactory_Name"
 
     # MSI Access from Azure Function to ADF Log Analytics
     $result = az role assignment create --assignee $AzureFunctionId --role "Contributor" --scope "$basescope/microsoft.operationalinsights/workspaces/$env:AdsOpts_CD_Services_LogAnalytics_Name"
