@@ -85,7 +85,7 @@
           "Name": "adsgfazsql",
           "ApplyNamePostFix": true,
           "AdminUser": "AdsAdmin",
-          "AdminPassword": "EPuiX2K0^T4t",
+          "AdminPassword": "*******",
           "AdsGoFastDB": {
             "Enable": true,
             "Name": "AdsGf",
