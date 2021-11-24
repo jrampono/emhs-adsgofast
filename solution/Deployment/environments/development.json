@@ -31,13 +31,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "68787e1f-68ca-4874-a8f9-c701277da8c1"
+          "ClientId": "bf09a940-0d93-4a6c-8db4-49a03edfe58a"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "ab1fe11b-37fb-42c1-aa9c-19197634df33"
+          "ClientId": null
         }
       },
       "FolderPaths": {
@@ -85,7 +85,7 @@
           "Name": "adsgfsvr",
           "ApplyNamePostFix": true,
           "AdminUser": "AdsAdmin",
-          "AdminPassword": "EPuiX2K0^T4t",
+          "AdminPassword": "*********",
           "AdsGoFastDB": {
             "Enable": true,
             "Name": "AdsGF",
