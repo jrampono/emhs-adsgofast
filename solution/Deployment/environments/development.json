@@ -31,13 +31,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "15ebf945-aec3-43b8-9fc4-2f2309570fb5"
+          "ClientId": "68787e1f-68ca-4874-a8f9-c701277da8c1"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "59f4da37-a8bb-4e24-b810-6b7dabd6ad20"
+          "ClientId": "ab1fe11b-37fb-42c1-aa9c-19197634df33"
         }
       },
       "FolderPaths": {

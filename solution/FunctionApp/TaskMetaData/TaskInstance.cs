@@ -447,7 +447,8 @@ namespace AdsGoFast.TaskMetaData
                 JToken _ChunkField = TaskMasterJSON["Source"]["ChunkField"];
                 JToken _TableSchema = TaskMasterJSON["Source"]["TableSchema"];
                 JToken _TableName = TaskMasterJSON["Source"]["TableName"];
-                JToken _ExtractionSQL = Shared.JsonHelpers.GetStringValueFromJSON(logging, "ExtractionSQL", TmSource, "",false);
+                string _ExtractionSQL = Shared.JsonHelpers.GetStringValueFromJSON(logging, "ExtractionSQL", TmSource, "",false);
+                dynamic _ChunkSize = Shared.JsonHelpers.GetDynamicValueFromJSON(logging, "ChunkSize", TmSource, "", false);
 
                 //If Extraction SQL Explicitly set then overide _SQLStatement with that explicit value
                 if (!string.IsNullOrWhiteSpace(_ExtractionSQL.ToString()))
