@@ -8,20 +8,20 @@ function Install-Gateway([string] $gwPath)
     # uninstall any existing gateway
     UnInstall-Gateway
 
-    Write-Host "Start Gateway installation"
+    Write-Debug " Start Gateway installation"
     
     Start-Process "msiexec.exe" "/i $path /quiet /passive" -Wait
     Start-Sleep -Seconds 30	
 
-    Write-Host "Succeed to install gateway"
+    Write-Debug " Succeed to install gateway"
 }
 
 function Register-Gateway([string] $key)
 {
-    Write-Host "Start to register gateway with key: $key"
+    Write-Debug " Start to register gateway with key: $key"
     $cmd = Get-CmdFilePath
     Start-Process $cmd "-k $key" -Wait
-    Write-Host "Succeed to register gateway"
+    Write-Debug " Succeed to register gateway"
 
 }
 
@@ -58,11 +58,11 @@ function UnInstall-Gateway()
 
     if ($installed -eq $false)
     {
-        Write-Host "Microsoft Integration Runtime Preview is not installed."
+        Write-Debug " Microsoft Integration Runtime Preview is not installed."
         return
     }
 
-    Write-Host "Microsoft Integration Runtime has been uninstalled from this machine."
+    Write-Debug " Microsoft Integration Runtime has been uninstalled from this machine."
 }
 
 function Get-CmdFilePath()

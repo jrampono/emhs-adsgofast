@@ -78,7 +78,7 @@ namespace AdsGoFast.GetTaskInstanceJSON
                     }
 
                     Extraction["IncrementalType"] = TaskMetaData.TaskInstancesStatic.IncrementalType(_TaskMasterJson);
-                    Extraction["SQLStatement"] = TaskMetaData.TaskInstancesStatic.CreateSQLStatement(_TaskMasterJson, _TaskInstanceJson);
+                    Extraction["SQLStatement"] = TaskMetaData.TaskInstancesStatic.CreateSQLStatement(_TaskMasterJson, _TaskInstanceJson, logging);
 
                     Source["Extraction"] = Extraction;
                 }

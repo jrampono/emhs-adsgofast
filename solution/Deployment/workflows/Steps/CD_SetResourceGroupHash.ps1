@@ -6,13 +6,13 @@ function Get-UniqueString ([string]$id, $length=13)
         -join ($hashArray[1..$length] | ForEach-Object { [char]($_ % 26 + [byte][char]'a') })
 }
 
-Write-Host "Creating RG Hash"
+Write-Debug "Creating RG Hash"
 $ResourceGroupHash = Get-UniqueString ($id=$env:AdsOpts_CD_ResourceGroup_Name+$env:AdsOpts_CD_ResourceGroup_TenantId) #Resource Group Name + TenantId to make hash more unique
-Write-Host $ResourceGroupHash
+Write-Debug $ResourceGroupHash
 
 PersistEnvVariable -Name "AdsOpts_CD_ResourceGroup_Hash" -Value $ResourceGroupHash
-Write-Host "Created RG Hash"
-Write-Host "Setting Service Names"
+Write-Debug "Created RG Hash"
+Write-Debug "Setting Service Names"
 SetServiceName -RootElement "AdsOpts_CD_Services_AzureSQLServer"
 SetServiceName -RootElement "AdsOpts_CD_Services_CoreFunctionApp"
 SetServiceName -RootElement "AdsOpts_CD_Services_WebSite" 

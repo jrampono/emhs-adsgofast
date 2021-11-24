@@ -8,6 +8,8 @@
   <ItemGroup>
     <None Remove="0-1-0-beta\A-Journaled\008-SampleTasks_SourceAndTargetSystems.sql" />
     <None Remove="0-1-0-beta\A-Journaled\009-SampleTasks_TaskMasterWaterMark.sql" />
+    <None Remove="0-1-0-beta\A-Journaled\010-TaskTypeMapping_Update.sql" />
+    <None Remove="0-1-0-beta\A-Journaled\011-SampleTasks_SourceAndTargetSystems_Updated.sql" />
     <None Remove="0-1-0-beta\B-Always\001-Schemas.sql" />
     <None Remove="0-1-0-beta\B-Always\002-Tables.sql" />
     <None Remove="0-1-0-beta\B-Always\003-StoredProcsEtc.sql" />
@@ -29,6 +31,8 @@
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\009-SampleTasks_TaskMasterWaterMark.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="0-1-0-beta\A-Journaled\010-TaskTypeMapping_Update.sql" />
+    <EmbeddedResource Include="0-1-0-beta\A-Journaled\011-SampleTasks_SourceAndTargetSystems_Updated.sql" />
   </ItemGroup>
 
   <ItemGroup>

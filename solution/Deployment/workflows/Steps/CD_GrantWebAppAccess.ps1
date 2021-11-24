@@ -18,4 +18,4 @@ $body.appRoleId =  ($authapp.appRoles | Where-Object {$_.value -eq "Administrato
 $body.principalId = $callinguser
 $body = ($body | ConvertTo-Json -compress | Out-String).Replace('"','\"')
 
-az rest --method post --uri "https://graph.microsoft.com/v1.0/servicePrincipals/$authappobjectid/appRoleAssignedTo" --headers '{\"Content-Type\":\"application/json\"}' --body $body
+$result = az rest --method post --uri "https://graph.microsoft.com/v1.0/servicePrincipals/$authappobjectid/appRoleAssignedTo" --headers '{\"Content-Type\":\"application/json\"}' --body $body

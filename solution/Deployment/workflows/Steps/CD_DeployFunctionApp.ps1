@@ -1,5 +1,5 @@
 
-Write-Host "Creating Function App"
+Write-Debug " Creating Function App"
 if ($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
 {   
     if ($env:AdsOpts_CD_Services_AppPlans_FunctionApp_ResourceGroup -eq $null)
@@ -18,10 +18,10 @@ if ($env:AdsOpts_CD_Services_CoreFunctionApp_Enable -eq "True")
 
     $key = az storage account keys list -g $env:AdsOpts_CD_ResourceGroup_Name -n $env:AdsOpts_CD_Services_Storage_Logging_Name --query [0].value -o tsv
 
-    az deployment group create -g $rg --template-file ./../arm/FunctionApp.json --parameters azure-function-site-name=$env:AdsOpts_CD_Services_CoreFunctionApp_Name app-insights-name=$env:AdsOpts_CD_Services_AppInsights_Name storage-log-account-name=$env:AdsOpts_CD_Services_Storage_Logging_Name storage-log-account-key=$key appservice-name=$sn
+    $result = az deployment group create -g $rg --template-file ./../arm/FunctionApp.json --parameters azure-function-site-name=$env:AdsOpts_CD_Services_CoreFunctionApp_Name app-insights-name=$env:AdsOpts_CD_Services_AppInsights_Name storage-log-account-name=$env:AdsOpts_CD_Services_Storage_Logging_Name storage-log-account-key=$key appservice-name=$sn
 }
 else 
 {
-    Write-Host "Skipped Creation of Function App"
+    Write-Warning "Skipped Creation of Function App"
 }
 

@@ -186,6 +186,9 @@
                 var taskTypeMappings;
                 var editor;
                 $(document).ready(function () {
+                    //SetAceBasePath
+                    window.ace.config.set("basePath", "~/lib/ace/");
+
                     // SmartWizard initialize
                     $('#smartwizard').smartWizard({
                         theme: 'dots',
@@ -259,7 +262,7 @@
                     //        TaskTypeId: $('#TaskTypeId').val()
                     //    };
                     //}
-
+                    $('#smartwizard').smartWizard("loader", "show");
                     $.ajax({
                         url: "/TaskTypeMapping/FindMapping",
                         dataType: "json",
@@ -268,9 +271,11 @@
                         success: function (data, textStatus, jqXHR) {
                             taskTypeMappings = data;
                             EnterStep2();
+                            $('#smartwizard').smartWizard("loader", "hide");
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             alert("Error");
+                            $('#smartwizard').smartWizard("loader", "hide");
                         }
                     });
 
@@ -279,7 +284,9 @@
                 }
 
 
-                function EnterStep2() {                 
+                function EnterStep2() {
+                
+                    
                     currentSourceSystemSelectedOption = $(':selected', $('#SourceSystemId'));
                     $('#SourceSystemId option').remove();
                     $.each(taskTypeMappings.ValidSourceSystems, function (key, value) {
@@ -289,6 +296,8 @@
                         }
                         $('#SourceSystemId').append(opt);
                     })
+
+                    
                
                 }
 
@@ -479,15 +488,22 @@
                             if ($('#editor_holder').children().length > 0) {
                                 editor.destroy();
                             }
+                            $('#editor_holder').show();
                             editor = new JSONEditor(document.getElementById('editor_holder'), {
                                 theme: 'bootstrap4',
                                 iconlib: "fontawesome5",
                                 schema: JSON.parse(SelectedTaskTypeMapping.TaskMasterJsonSchema),
                                 startval: JSON.parse($('#TaskMasterJson').val())
                             });
-                            $('.je-switcher').parent().addClass("alert-warning");
-                            $('#editor_holder').show();
+                            $('.je-switcher').parent().addClass("alert-warning");                            
                             $('#TaskMasterJsonShowHide').hide();
+                            setTimeout(function () {
+                                $(".ace_editor").height(400);
+                            }, 2000);
+
+                            
+                            
+
                         }
                         catch (err)
                         {

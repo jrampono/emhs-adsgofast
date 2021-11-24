@@ -1,0 +1,22 @@
+{
+    "name": "IRB",
+    "properties": {
+        "type": "Managed",
+        "description": "Mock On-Premise Network IR For Testing.",
+        "typeProperties": {
+            "computeProperties": {
+                "location": "AutoResolve",
+                "dataFlowProperties": {
+                    "computeType": "General",
+                    "coreCount": 8,
+                    "timeToLive": 10,
+                    "cleanup": true
+                }
+            }
+        },
+        "managedVirtualNetwork": {
+            "type": "ManagedVirtualNetworkReference",
+            "referenceName": "default"
+        }
+    }
+}

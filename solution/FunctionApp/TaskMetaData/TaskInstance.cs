@@ -218,7 +218,7 @@ namespace AdsGoFast.TaskMetaData
                         Extraction["TableSchema"] = JObject.Parse(T.TaskMasterJson)["Source"]["TableSchema"];
                         Extraction["TableName"] = JObject.Parse(T.TaskMasterJson)["Source"]["TableName"];
 
-                        Extraction["SQLStatement"] = CreateSQLStatement(JObject.Parse(T.TaskMasterJson), JObject.Parse(T.TaskInstanceJson));
+                        Extraction["SQLStatement"] = CreateSQLStatement(JObject.Parse(T.TaskMasterJson), JObject.Parse(T.TaskInstanceJson), logging);
 
                         Extraction["IncrementalSQLStatement"] = CreateIncrementalSQLStatement(Extraction);
 
@@ -435,10 +435,10 @@ namespace AdsGoFast.TaskMetaData
         }
 
 
-        public static string CreateSQLStatement(JObject TaskMasterJSON, JObject TaskInstanceJson)
+        public static string CreateSQLStatement(JObject TaskMasterJSON, JObject TaskInstanceJson, Logging logging)
         {
             string _SQLStatement = "";
-
+            JObject TmSource = (JObject)TaskMasterJSON["Source"];
             if (TaskMasterJSON["Source"]["IncrementalType"] != null)
             {
                 JToken _IncrementalType = TaskMasterJSON["Source"]["IncrementalType"];
@@ -447,8 +447,19 @@ namespace AdsGoFast.TaskMetaData
                 JToken _ChunkField = TaskMasterJSON["Source"]["ChunkField"];
                 JToken _TableSchema = TaskMasterJSON["Source"]["TableSchema"];
                 JToken _TableName = TaskMasterJSON["Source"]["TableName"];
+                string _ExtractionSQL = Shared.JsonHelpers.GetStringValueFromJSON(logging, "ExtractionSQL", TmSource, "",false);
+                dynamic _ChunkSize = Shared.JsonHelpers.GetDynamicValueFromJSON(logging, "ChunkSize", TmSource, "", false);
 
-                if (TaskMasterJSON["Source"]["ChunkSize"] != null)
+                //If Extraction SQL Explicitly set then overide _SQLStatement with that explicit value
+                if (!string.IsNullOrWhiteSpace(_ExtractionSQL.ToString()))
+                {
+                    _SQLStatement = _ExtractionSQL.ToString();
+                    goto EndOfSQLStatementSet;
+                }
+
+
+                //Chunk branch
+                if (TaskMasterJSON["Source"]["ChunkSize"] != null && TaskMasterJSON["Source"]["ChunkSize"].ToString() != "0")
                 {
                     if (_IncrementalType.ToString() == "Full" && string.IsNullOrWhiteSpace(TaskMasterJSON["Source"]["ChunkSize"].ToString()))
                     {
@@ -486,6 +497,7 @@ namespace AdsGoFast.TaskMetaData
                     }
                 }
                 else
+                //Non Chunk
                 {
                     if (_IncrementalType.ToString() == "Full")
                     {
@@ -505,10 +517,11 @@ namespace AdsGoFast.TaskMetaData
                         }
                     }
                 }
-
+                
             }
 
-            return _SQLStatement;
+            EndOfSQLStatementSet:
+                return _SQLStatement;
         }
 
         public static string CreateIncrementalSQLStatement(JObject Extraction)
@@ -588,11 +601,11 @@ namespace AdsGoFast.TaskMetaData
 
                 if (JSONValue["Source"]["ChunkSize"] != null)
                 {
-                    if (_IncrementalType.ToString() == "Full" && string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()))
+                    if (_IncrementalType.ToString() == "Full" && (string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()) || JSONValue["Source"]["ChunkSize"].ToString() == "0"))
                     {
                         _Type = "Full";
                     }
-                    else if (_IncrementalType.ToString() == "Full" && !string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()))
+                    else if (_IncrementalType.ToString() == "Full" && !string.IsNullOrWhiteSpace(JSONValue["Source"]["ChunkSize"].ToString()) && JSONValue["Source"]["ChunkSize"].ToString() != "0")
                     {
                         _Type = "Full-Chunk";
                     }

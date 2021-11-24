@@ -64,6 +64,7 @@
     <Folder Include="wwwroot\js\bswindow\" />
     <Folder Include="Models\Stats\" />
     <Folder Include="wwwroot\fonts\" />
+    <Folder Include="Components\" />
   </ItemGroup>
 
   <ItemGroup>

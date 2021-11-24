@@ -12,7 +12,7 @@ function SetServiceName($RootElement)
 
 function PersistEnvVariable($Name, $Value)
 {
-    Write-Host "Writing $Name to env file"
+    Write-Debug "Writing $Name to env file"
     echo "$Name=$Value" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
     #Also Push Variables to the Session Env Variables for local testing
     [Environment]::SetEnvironmentVariable($Name, "$Value")
@@ -22,14 +22,14 @@ function PersistEnvVariable($Name, $Value)
 
 function ParseEnvFragment([object]$Json, [string]$NamePrefix)
 {   
-    $Json
+    #$Json
     foreach($p in ($Json.psobject.properties.where({$_.MemberType -eq "NoteProperty"})))
     { 
         $Name = $p.Name
-        Write-Host "Parsing $($Name)"
+        Write-Debug "Parsing $($Name)"
         if($NamePrefix -ne "")
         {
-            Write-Host "Prefix is $NamePrefix"
+            Write-Debug "Prefix is $NamePrefix"
             $Name =  $NamePrefix + "_" + $p.Name
         } 
         $Value =  $p.Value   
@@ -39,14 +39,14 @@ function ParseEnvFragment([object]$Json, [string]$NamePrefix)
             PersistEnvVariable -Name $Name -Value $Value
 
             ##Push Variables to the GitHub Actions Compatible Store
-            #Write-Host "Writing $Name to env file"
-            #Write-Host $p.TypeNameOfValue
+            #Write-Debug "Writing $Name to env file"
+            #Write-Debug $p.TypeNameOfValue
             #echo "$Name=$Value" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
             ##Also Push Variables to the Session Env Variables for local testing
             #[Environment]::SetEnvironmentVariable($Name, "$Value")
         }
         else {
-            Write-Host "Further Parsing of $Name required"
+            Write-Debug "Further Parsing of $Name required"
             $JsonString = $p.Value #| ConvertTo-Json
             ParseEnvFragment -Json $JsonString -NamePrefix $Name
         }
@@ -74,6 +74,15 @@ function ParseEnvFile ($EnvFile)
     }
 
     $Json = Get-Content -Path "..\environments\$($EnvFile).json"  | ConvertFrom-Json
+    #$JsonForSchemaValidation = $Json | ConvertTo-Json -Depth 100
+    #$schema = Get-Content "..\environments\environment.schema.json"
+    #$schema = ($schema | ConvertFrom-Json | ConvertTo-Json -depth 100)
+    #$SchemaValidation = $JsonForSchemaValidation | Test-Json -Schema $schema
+    #if($SchemaValidation -eq $false)
+    #{
+    #    Write-Warning "..\environments\$($EnvFile).json does not adhere to environment.schema.json!"
+    #}
+
     ParseEnvFragment -Json $Json -NamePrefix ""
 
 }
